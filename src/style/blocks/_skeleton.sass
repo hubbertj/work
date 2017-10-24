@@ -1,0 +1,189 @@
+transflo-skeleton
+  display: block
+  min-width: 860px
+
+.skeleton
+  width: 430px
+  margin: 22px auto 0
+  position: relative
+  &:before
+    content: ''
+    display: block
+    position: absolute
+    left: 50%
+    top: 0
+    bottom: 0
+    z-index: 0
+    background-color: #f2f4f6
+    width: 2px
+    margin-left: -1px
+
+.skeleton-item
+  position: relative
+
+.skeleton-item-container
+  position: relative
+  padding: 35px 40px
+  background-color: #f2f4f6
+  border-radius: 4px
+  font-size: 13px
+  z-index: 2
+  p
+    margin: 0
+    font-size: 16px
+    line-height: 1.2
+    span
+      font-size: 14px
+  strong
+    font-weight: 500
+  &.-danger
+    background-color: #f87535
+    color: #FFFFFF
+
+.skeleton-item:first-child .skeleton-item-container:before
+  border-top-color: $color-body
+
+.skeleton-item-footer
+  margin-top: 25px
+  margin-bottom: 25px
+  text-align: center
+  clear: both
+  .skeleton-item:last-child &
+    clear: none
+
+.skeleton-item-add
+  height: 30px
+  line-height: 30px
+  font-size: 14px
+  color: $color-main
+  border-radius: 15px
+  padding: 0 22px
+  border: none
+  font-weight: 500
+  cursor: pointer
+  background-color: #f2f4f6
+  white-space: nowrap
+  &, &:focus
+    outline: none
+  &[disabled]
+    color: #b7b7b7
+    cursor: not-allowed
+
+.skeleton-bubble
+  z-index: 3
+  position: relative
+  width: 240px
+  border-radius: 4px
+  padding: 25px
+  margin: 0 -265px 20px
+  color: #FFFFFF
+  &:before
+    content: ''
+    display: block
+    position: absolute
+    top: 38px
+    width: 25px
+    height: 2px
+  &.-left
+    float: left
+    background-color: #30a46f
+    text-align: left
+    &:before
+      left: 100%
+      background-color: #30a46f
+  &.-right
+    float: right
+    background-color: #309da4
+    text-align: right
+    &:before
+      background-color: #309da4
+      right: 100%
+  a
+    color: #FFFFFF
+    text-decoration: underline
+    cursor: pointer
+
+.skeleton-bubble-header
+  margin-bottom: 20px
+  strong
+    font-size: 18px
+  small
+    font-size: 13px
+    font-weight: 500
+    padding-right: 10px
+
+.skeleton-bubble-list
+  margin: 0
+  padding: 0
+  white-space: nowrap
+  li
+    list-style: none
+    span + span
+      margin-left: 8px
+    strong
+      font-weight: 500
+      display: block
+      padding-top: 2px
+    & + li:before
+      height: 1px
+      background-color: #000000
+      margin: 12px 0
+      content: ''
+      display: block
+      opacity: 0.15
+
+.skeleton-item-hint
+  text-transform: uppercase
+  line-height: 1
+  font-weight: 500
+  font-size: 11px
+  opacity: 0.7
+
+.skeleton-sign
+  font-size: 20px
+  float: left
+  margin: -0.5em -14px
+
+.skeleton-item-controls
+  color: $color-main
+  margin: 0
+  padding: 15px 20px 0 20px
+  position: absolute
+  z-index: 4
+  top: -22px
+  right: 0
+  background-color: #f2f4f6
+  border-radius: 22px 22px 0 0
+  &.-danger
+    background-color: #f87535
+    color: #ffffff
+  li
+    list-style: none
+    display: inline-block
+    & + li
+      &:before
+        content: ''
+        display: inline-block
+        width: 1px
+        height: 14px
+        background-color: currentColor
+        vertical-align: middle
+        margin: -4px 7px -1px 7px
+        opacity: 0.5
+  button
+    cursor: pointer
+    padding: 0
+    margin: 0
+    vertical-align: middle
+    border: none
+    background: none
+    color: currentColor
+    opacity: 0.5
+    &:hover, &:focus
+      opacity: 1
+    &, &:focus
+      outline: none
+    &[disabled]
+      display: none
+    & + button
+      margin-left: 5px

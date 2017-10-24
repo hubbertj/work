@@ -1,0 +1,46 @@
+﻿<style type="text/css">
+  .wrapper {
+    display: flex;
+    background-color: #195f93;
+    background-image: url('images/signin-bg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
+  }
+  .header, .footer {
+    display: none;
+  }
+  .container.-main {
+    flex: 1;
+  }
+</style>
+
+<div class="signin">
+  <div class="signin-header">
+    <svg class="icon -logo-lg"><use xlink:href="#svg_logo_lg"/></svg>
+  </div>
+  <div class="signin-body">
+    <div class="signin-content">
+      <h2 class="signin-h2 center">Sign in</h2>
+      <form novalidate>
+        <div class="form-group">
+          <input class="signin-form-control" type="email" placeholder="Email" autofocus />
+        </div>
+        <div class="form-group -x2">
+          <input class="signin-form-control" type="password" placeholder="Password" />
+        </div>
+        <div class="form-group -x2 flex">
+          <div class="col-6 pr2">
+            <a href="#" class="signin-button -outline -block">I forgot My Password</a>
+          </div>
+          <div class="col-6 pl2">
+            <button class="signin-button -block" type="submit">Sign in</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="signin-footer">
+    &copy; Transflo, 2017
+  </div>
+</div>

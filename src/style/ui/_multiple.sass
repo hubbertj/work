@@ -1,0 +1,116 @@
+.multiple
+  position: relative
+  height: auto
+  padding: 2px 2px 0
+  min-height: 30px
+
+.multiple-selected
+  outline: 0
+  margin: 0 2px 2px 0
+  background: $color-active
+  border: none
+  border-radius: 13px
+  color: $color-main
+  height: 26px
+  line-height: 25px
+  position: relative
+  padding: 0 24px 0 10px
+  float: left
+  appearance: initial
+  font-weight: 500
+  font-size: 13px
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+  max-width: 100%
+
+  &.-available
+    background-color: transparent
+    box-shadow: inset 0 0 0 1px #efde04
+  &.-transit
+    background-color: transparent
+    box-shadow: inset 0 0 0 1px #fa91d3
+  &.-assigned
+    background-color: transparent
+    box-shadow: inset 0 0 0 1px #9eeb5a
+  &.-offered
+    background-color: transparent
+    box-shadow: inset 0 0 0 1px #FD9455
+  &.-declined
+    background-color: transparent
+    box-shadow: inset 0 0 0 1px #FF4A4E
+  &.-delivered
+    background-color: transparent
+    box-shadow: inset 0 0 0 1px #62CCFD
+  &.-accepted
+    background-color: transparent
+    box-shadow: inset 0 0 0 1px #30A46F
+
+.multiple-selected-delete
+  background: none
+  border: none
+  padding: 0
+  font-size: 15px
+  line-height: 25px
+  font-weight: bold
+  position: absolute
+  width: 21px
+  height: 26px
+  right: 0
+  top: 0
+  display: block
+  cursor: pointer
+  color: $color-main
+  outline: none
+  text-align: center
+
+.multiple-field
+  background-color: transparent
+  border: none
+  outline: none
+  margin: 0 0 2px
+  width: auto
+  padding: 2px 0 2px 10px
+  height: 26px
+  &::placeholder
+    color: #7f7f7f
+    font-weight: normal
+  &.-w100
+    width: 100%
+
+.multiple-menu
+  display: block
+  user-select: none
+  li + li
+    border-top: 1px solid #f1f1f1
+  label
+    display: block
+    position: relative
+    padding: 12px 20px 12px 40px
+    cursor: pointer
+    &:before
+      content: ''
+      display: block
+      position: absolute
+      width: 17px
+      height: 17px
+      border: 1px solid #e0e0e0
+      border-radius: 4px
+      left: 13px
+      top: 12px
+      background-color: #ffffff
+    input
+      display: none
+    span:before
+      content: ''
+      display: block
+      width: 17px
+      height: 17px
+      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTdweCIgaGVpZ2h0PSIxN3B4IiB2aWV3Qm94PSIwIDAgMTcgMTciIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+ICAgIDxwb2x5Z29uIGlkPSJTaGFwZV8xX2NvcHlfMjIiIHN0cm9rZT0ibm9uZSIgZmlsbD0iI0ZGRDIwMCIgZmlsbC1ydWxlPSJldmVub2RkIiBwb2ludHM9IjE2Ljk4OSAxLjU2MSA1LjM4MSAxNi4wODMgMC4wMTEgMTAuMzgzIDEuNTkyIDguODMyIDUuMjgzIDEyLjg1NiAxNS40MDggMC4wMTEiPjwvcG9seWdvbj48L3N2Zz4=)
+      background-repeat: no-repeat
+      position: absolute
+      left: 16px
+      top: 8px
+      opacity: 0
+    input:checked + span:before
+      opacity: 1

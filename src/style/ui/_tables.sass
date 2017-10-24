@@ -1,0 +1,266 @@
+th
+  text-align: left
+
+.table
+  width: 100%
+  max-width: 100%
+  border-collapse: separate
+  border-spacing: 0
+  user-select: none
+  > thead,
+  > tbody,
+  > tfoot
+    > tr
+      > td, th
+        padding-left: 20px
+        line-height: $line-height-base
+        border-bottom: 1px solid $color-border
+        &:first-child
+          padding-left: 0
+        &.-half
+          padding-left: 10px
+      > th
+        padding-top: 0
+        padding-bottom: 10px
+        font-weight: normal
+        font-size: 13px
+        color: #8c8c8c
+        vertical-align: bottom
+        cursor: default
+      > td
+        padding-top: 20px
+        padding-bottom: 20px
+        vertical-align: top
+      &.-new
+        background-color: #fffdf2
+        > td
+          border-bottom-color: #ffe986
+          box-shadow: 0 -1px 0 0 #ffe986
+          &:first-child:before, &:last-child:before
+            z-index: 2
+            background-color: #fffdf2
+            box-shadow: 0 1px 0 0 #ffe986, 0 -1px 0 0 #ffe986
+
+
+  // Remove top border from thead by default
+  > caption + thead,
+  > colgroup + thead,
+  > thead:first-child
+    > tr:first-child
+      > th,
+      > td
+        border-top: 0
+
+  // Account for multiple tbody instances
+  > tbody + tbody > tr > th
+    padding-top: 30px
+
+  &.-simple
+    > thead,
+    > tbody,
+    > tfoot
+      > tr
+        > td
+          border-bottom: none
+          padding-bottom: 0
+
+  &.-compact
+    > thead,
+    > tbody,
+    > tfoot
+      > tr
+        > th
+          padding-bottom: 5px
+        > td
+          padding-top: 10px
+          padding-bottom: 10px
+          border-bottom: none
+
+  &.-lined
+    border-bottom: 1px solid $color-border
+    > thead,
+    > tbody,
+    > tfoot
+      > tr
+        > th, > td
+          border-bottom: 1px solid $color-border
+
+  &.-matrix
+    width: auto
+    min-width: 100%
+    > thead,
+    > tbody,
+    > tfoot
+      > tr
+        > th, > td
+          width: 100px
+
+  &.-list
+    > thead,
+    > tbody,
+    > tfoot
+      > tr
+        > td
+          padding-top: 10px
+          padding-bottom: 0
+          border-bottom: none
+          padding-left: 10px
+          &:first-child
+            position: inherit
+            padding-left: 0
+            &:before
+              display: none
+          &:last-child
+            position: inherit
+            &:before
+              display: none
+        &:first-child > td
+          padding-top: 0
+
+// Hover effect
+.table-hover
+  > tbody > tr
+    cursor: default
+    > td
+      height: 1px
+      &:first-child
+        position: relative
+        &:before
+          content: ''
+          display: block
+          position: absolute
+          top: 0
+          bottom: 0
+          right: 100%
+          width: 10000px
+          box-shadow: 0 1px 0 0 $color-border, 0 -1px 0 0 $color-border
+      &:last-child
+        position: relative
+        &:before
+          content: ''
+          display: block
+          position: absolute
+          top: 0
+          bottom: 0
+          left: 100%
+          width: 10000px
+          box-shadow: 0 1px 0 0 $color-border, 0 -1px 0 0 $color-border
+    &:hover
+      background-color: #f8f8f9
+      > td
+        box-shadow: 0 -1px 0 0 $color-border, 0 0 0 0 $color-border
+        border-color: $color-border
+        &:first-child:before, &:last-child:before
+          z-index: 3
+          box-shadow: 0 -1px 0 0 $color-border, 0 1px 0 0 $color-border
+          background-color: #f8f8f9
+
+// Table cell sizing
+table col[class*="col-"]
+  position: static
+  float: none
+  display: table-column
+
+table
+  td,
+  th
+    &[class*="col-"]
+      position: static
+      float: none
+      display: table-cell
+
+
+.table-actions
+  height: 23px
+  width: 23px
+  vertical-align: middle
+  line-height: 0.5em
+  font-size: 10px
+  color: $color-main
+  cursor: pointer
+  outline: none
+  padding: 0
+  margin: 0
+  border: none
+  background: none
+  &:before, &:after
+    display: block
+    content: '•'
+  &:hover, &:active, .open > &
+    border-radius: 50%
+    background-color: $color-main
+    color: #FFFFFF
+
+.table-head-sort
+  display: inline-block
+  position: relative
+  cursor: pointer
+  font-weight: bold
+  z-index: 3
+  &:hover
+    color: $color-main
+  &:before
+    content: ''
+    display: block
+    position: absolute
+    width: 19px
+    height: 19px
+    background-color: #FFFFFF
+    bottom: -20px
+    left: 50%
+    margin-left: -10px
+    border-radius: 50%
+  &:after
+    content: ''
+    display: inline-block
+    position: absolute
+    left: 50%
+    margin-left: -3px
+    border-top: 2px solid $color-main
+    border-left: 2px solid $color-main
+    width: 5px
+    height: 5px
+    bottom: -14px
+  &.-asc:after
+    transform: rotate(45deg)
+  &.-desc:after
+    transform: rotate(225deg)
+    bottom: -12px
+
+.table-head-short
+  display: inline-block
+  margin-left: -10px
+
+.table-remove
+  float: right
+  position: relative
+  cursor: pointer
+  width: 12px
+  height: 12px
+  overflow: hidden
+  margin: 9px -27px
+  border: none
+  outline: none
+  padding: 0
+  text-indent: -999em
+  background: none
+  &:before, &:after
+    content: ''
+    display: block
+    height: 2px
+    width: 14px
+    background-color: #e5324c
+    position: absolute
+    left: -1px
+    top: 5px
+  &:before
+    transform: rotate(45deg)
+  &:after
+    transform: rotate(-45deg)
+
+.table-container
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  &.-xlg2
+    margin: -30px -35px -35px
+    padding: 30px 35px 35px

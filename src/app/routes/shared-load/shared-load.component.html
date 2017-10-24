@@ -1,0 +1,534 @@
+﻿<div class="loading-page" [hidden]="!loading"><em></em><em></em><em></em></div>
+
+<header class="flex header-fake">
+  <span class="header-item header-logo">
+    <svg class="icon -logo"><use xlink:href="#svg_logo"/></svg>
+  </span>
+ 
+</header>
+	
+<div class="container -main">
+
+  <header class="page-header -margined">
+    <div class="flex items-center">
+      <div class="flex-auto flex items-baseline">
+        <h1>Load #{{load.carrierLoadNumber}} </h1>
+        <div class="label-green label-lg pl2">{{load.status}}</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="error-page" *ngIf="errorShown">
+   <h2 class="fs24 regular">{{errorText}}</h2>
+  </div>
+  <div class="page-content" *ngIf="!errorShown">
+    
+    <div class="form-group">
+      <div class="flex form-group">
+        <div class="col-3 pr4">
+          <div class="form-group -x2">
+            <div class="form-label -text">BOL</div>
+            <div class="fs15 medium">{{load.bolNumber}}</div>
+          </div>
+          <!--<div class="form-group -x2">
+            <div class="form-label -text">Division</div>
+            <div>{{load.carrierDivision ? load.carrierDivision.name : load.brokerDivision && load.brokerDivision.name}}</div>
+          </div>-->
+        </div>
+        <div class="col-3 pl3 pr4">
+          <div class="form-label -text">Origin</div>
+          <div class="label-lg form-group">{{stops[0] && stops[0].addressLines && stops[0].addressLines.join(', ')}}<br /> {{stops[0] && stops[0].city}}, {{stops[0] && stops[0].state}}, {{stops[0] && stops[0].postalCode}}</div>
+          <div class="label-md form-group">{{stops[0] && stops[0].date}} &mdash; {{stops[0] && stops[0].time}}</div>
+        </div>
+        <div class="col-3 center self-center pl3 pr2">
+          <div class="wayline">
+            <div class="wayline-content" [hidden]="stops.length < 3"><span class="label-count">{{stops.length - 2}}</span> Intermediate stop</div>
+          </div>
+        </div>
+        <div class="col-3 pl6 right-align">
+          <div class="form-label -text">Destination</div>
+          <div class="label-lg form-group">{{stops[stops.length - 1] && stops[stops.length - 1].addressLines && stops[stops.length - 1].addressLines.join(', ')}}<br /> {{stops[stops.length - 1] && stops[stops.length - 1].city}}, {{stops[stops.length - 1] && stops[stops.length - 1].state}}, {{stops[stops.length - 1] && stops[stops.length - 1].postalCode}}</div>
+          <div class="label-md form-group">{{stops[stops.length - 1] && stops[stops.length - 1].date}} &mdash; {{stops[stops.length - 1] && stops[stops.length - 1].time}}</div>
+        </div>
+      </div>
+      <!--<div class="flex items-end form-group -x2">
+        <div class="col-3 pr4">
+          <transflo-drivers [drivers]="load.carrierTenderingInfo" [isCarrier]="isCarrier"></transflo-drivers>
+        </div>
+        <div class="pr4 pl3">
+          <div class="form-label -text">Freight Terms</div>
+          <div class="fs15 medium">{{load.freightTerms}}</div>
+        </div>
+        <div class="pr4 pl3">
+          <div class="form-label -text">Ext Load Data</div>
+          <transflo-attributes class="flex items-center form-group -x05" [attrs]="load.loadAttributes"></transflo-attributes>
+        </div>
+        <div class="pr4 pl3">
+          <div class="form-label -text">Special Instructions</div>
+          <div dropdown keyboardNav="true">
+            <button type="button" class="button -link -sm -dotted" dropdownToggle>Read Instructions</button>
+            <div class="dropdown-menu -lg -text -center" role="menu" dropdownMenu>
+              <h3>Special Instructions</h3>
+              {{load.carrierSpecialInstructions}}
+            </div>
+          </div>
+        </div>
+      </div>-->
+    </div>
+
+    <div class="map" *ngIf="load.showMap">
+      <div class="map-wrapper">
+        <div class="map-container" map [breadcrumbs]="breadcrumbs" [truck]="load.truckLocation" [stops]="stops" [nextStop]="load.nextStop" [show]="load.showMap" style="height: 430px;"></div>
+        <div class="map-sidebar" [ngClass]="{'-hidden': mapSidebarOpened == false}">
+          <button type="button" class="map-sidebar-toggle" (click)="mapSidebarOpened = !mapSidebarOpened" [ngClass]="{'-hidden': mapSidebarOpened == false}"></button>
+          <!--div class="map-sidebar-header flex justify-center items-center">
+		  <div class="col-4">
+			<strong class="fs15 medium">Mar 20</strong>
+			<div>00:00 AM</div>
+		  </div>
+		  <div class="col-4 center flex items-center justify-center">
+			<div class="map-sidebar-line -left"></div>
+			<svg class="icon -datepicker"><use xlink:href="#svg_datepicker"/></svg>
+			<div class="map-sidebar-line -right"></div>
+		  </div>
+		  <div class="col-4 right-align">
+			<strong class="fs15 medium">Mar 22</strong>
+			<div>1:59 PM</div>
+		  </div>
+		</div-->
+          <div class="map-sidebar-list">
+            <div class="form-group -x2" *ngFor="let message of messages">
+              <div class="medium">{{message.title}}</div>
+              <div class="form-label -text fs12"><transflo-date [date]="message.timestamp" dontShowTime="true"></transflo-date> &bull; {{getTime(message.timestamp)}}</div>
+              <div>{{message.message}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <div class="form-group -x3">
+        <tabset [justified]="true">
+          <tab class="tab-pane" heading="Trip">
+            <transflo-skeleton [load]="load"></transflo-skeleton>
+          </tab>
+          <tab heading="Shipments">
+
+            <div class="form-group -x6" *ngFor="let shipment of shipments; let idx = index">
+              <div class="form-group flex">
+                <div class="col-4 label-lg pr4">
+                  Shipment {{idx + 1}}
+                  <small class="badge -green">{{shipment.status}}</small>
+                </div>
+                <div class="col-8 label-lg pl3">
+                  BOL {{shipment.shipmentBOL}}
+                </div>
+              </div>
+              <hr class="form-group -x15" />
+              <div class="form-group flex -x2">
+                <div class="col-4 pr4">
+                  <div class="form-group" [hidden]="!shipment.shipmentCarrierSpecInstructions">
+                    <div class="form-label -text">Special Instructions</div>
+                    <div>
+                      {{shipment.shipmentCarrierSpecInstructions}}
+                      <!--button class="button -link -sm -dotted" type="button">Read more</button-->
+                    </div>
+                  </div>
+                  <div class="form-group -x3" [hidden]="!shipment.orders || (shipment.orders && !shipment.orders.length)">
+                    <div class="form-label -text">Order / Purchase order</div>
+                    <div *ngFor="let order of shipment.orders">{{order.orderNUmber}} / {{order.purchaseOrderNumber}}</div>
+                  </div>
+                </div>
+                <div class="col-8 pl3">
+                  <div class="form-group flex">
+                    <div class="col-4 pr4">
+                      <div class="form-label -text">Origin</div>
+                      <div class="form-group label-md medium">
+                        {{stopsHash[shipment.pickup] && stopsHash[shipment.pickup].addressLines && stopsHash[shipment.pickup].addressLines.join(', ')}}<br /> {{stopsHash[shipment.pickup] && stopsHash[shipment.pickup].city}}, {{stopsHash[shipment.pickup] && stopsHash[shipment.pickup].state}}, {{stopsHash[shipment.pickup] && stopsHash[shipment.pickup].postalCode}}
+                      </div>
+                      <div class="form-group">{{stopsHash[shipment.pickup] && stopsHash[shipment.pickup].date}} &mdash; {{stopsHash[shipment.pickup] && stopsHash[shipment.pickup].time}}</div>
+                    </div>
+                    <div class="col-4 self-center pl2 pr2">
+                      <div class="wayline -sm"></div>
+                    </div>
+                    <div class="col-4 right-align pl4">
+                      <div class="form-label -text">Destination</div>
+                      <div class="form-group label-md medium">{{stopsHash[shipment.dropoff] && stopsHash[shipment.dropoff].addressLines && stopsHash[shipment.dropoff].addressLines.join(', ')}}<br /> {{stopsHash[shipment.dropoff] && stopsHash[shipment.dropoff].city}}, {{stopsHash[shipment.dropoff] && stopsHash[shipment.dropoff].state}}, {{stopsHash[shipment.dropoff] && stopsHash[shipment.dropoff].postalCode}}</div>
+                      <div class="form-group">{{stopsHash[shipment.dropoff] && stopsHash[shipment.dropoff].date}} &mdash; {{stopsHash[shipment.dropoff] && stopsHash[shipment.dropoff].time}}</div>
+                    </div>
+                  </div>
+                  <table class="table -compact -lined form-group -x3">
+                    <thead>
+                      <tr>
+                        <th>Type</th>
+                        <th>Qty</th>
+                        <th class="right-align">Weight</th>
+                        <th class="right-align">Volume</th>
+                        <th class="right-align">Height</th>
+                        <th class="right-align">Freight Class</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let package of shipment.packages">
+                        <td>{{package.type}}</td>
+                        <td>{{package.quantity || 0}}</td>
+                        <td class="right-align">{{package.weight || 0}} lb</td>
+                        <td class="right-align">{{package.volume || 0}} ft³</td>
+                        <td class="right-align">{{package.height || 0}} in</td>
+                        <td class="right-align">{{package.freightClass}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </tab>
+        </tabset>
+      </div>
+
+    </div>
+
+
+  <!--<tabset class="xs-show">-->
+    <!--<tab class="tab-pane" heading="Info">-->
+      <!--<template tabHeading>-->
+        <!--<strong><img src="images/mobile/icon-info.png" alt="Info" width="23" height="23" /></strong>-->
+        <!--<em><img src="images/mobile/icon-info_a.png" alt="Info" width="23" height="23" /></em>-->
+      <!--</template>-->
+
+      <!--<div class="page-content">-->
+        <!--<div class="form-group">-->
+          <!--<h2 class="fs24 mb0">Load #8234593</h2>-->
+          <!--<div class="label-md bold">BOL 9078 123-543-876 0001</div>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+          <!--<svg class="icon -danger"><use xlink:href="#svg_danger"/></svg>-->
+          <!--<svg class="icon -ruby"><use xlink:href="#svg_ruby"/></svg>-->
+          <!--<svg class="icon -fragile"><use xlink:href="#svg_fragile"/></svg>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2 flex">-->
+          <!--<div class="col-4 form-label -text fs12 uppercase">Status</div>-->
+          <!--<div class="col-8 pl3">-->
+            <!--<div class="label-green medium">In Transit</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2 flex">-->
+          <!--<div class="col-4 form-label -text fs12 uppercase">Division</div>-->
+          <!--<div class="col-8 pl3">Div NY</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2 flex">-->
+          <!--<div class="col-4 form-label -text fs12 uppercase">Assigned to</div>-->
+          <!--<div class="col-8 pl3">-->
+            <!--<div>Sebastian P. Fletcher</div>-->
+            <!--<div>Jorge A. Seachin</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2 flex">-->
+          <!--<div class="col-4 form-label -text fs12 uppercase">Origin</div>-->
+          <!--<div class="col-8 pl3">-->
+            <!--1800 NE Alberta St, Portland, OR 97211-->
+            <!--<div class="label-gray">Mar 20, 2016 &mdash; All Day</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2 flex">-->
+          <!--<div class="col-4 form-label -text fs12 uppercase"></div>-->
+          <!--<div class="col-8 pl3">-->
+            <!--1445 14th St, Baker City, OR97211-->
+            <!--<div class="label-gray">Mar 20, 2016 &mdash; All Day</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2 flex">-->
+          <!--<div class="col-4 form-label -text fs12 uppercase">Destination</div>-->
+          <!--<div class="col-8 pl3">-->
+            <!--8642 S Vaquero Dr, Sandy, UT 84094-->
+            <!--<div class="label-gray">Mar 20, 2016 &mdash; All Day</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2 flex">-->
+          <!--<div class="col-4 form-label -text fs12 uppercase">Freight Terms</div>-->
+          <!--<div class="col-8 pl3">50</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2 flex">-->
+          <!--<div class="col-4 form-label -text fs12 uppercase">Parameters</div>-->
+          <!--<div class="col-8 pl3">127 ft³ &nbsp;&bull;&nbsp; 421 lbs &nbsp;&bull;&nbsp; 6 pcs</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2 flex">-->
+          <!--<div class="col-4 form-label -text fs12 uppercase">Ext Load Data</div>-->
+          <!--<div class="col-8 pl3">-->
+            <!--<button type="button" class="button -link -sm -dotted" (click)="extLoadDataModal.show()">Read Ext Load Data</button>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2 flex">-->
+          <!--<div class="col-4 form-label -text fs12 uppercase">Special Instructions</div>-->
+          <!--<div class="col-8 pl3">-->
+            <!--<button type="button" class="button -link -sm -dotted" (click)="specialInstructionsModal.show()">Read Instructions</button>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+
+    <!--</tab>-->
+    <!--<tab class="tab-pane" heading="Map">-->
+      <!--<template tabHeading>-->
+        <!--<strong><img src="images/mobile/icon-map.png" alt="Map" width="26" height="22" /></strong>-->
+        <!--<em><img src="images/mobile/icon-map_a.png" alt="Map" width="26" height="22" /></em>-->
+      <!--</template>-->
+
+      <!--&lt;!&ndash;div class="relative">-->
+        <!--<iframe class="map-mobile" frameBorder="0" src="http://umap.openstreetmap.co/en/map/trip_703?scaleControl=false&miniMap=false&scrollWheelZoom=false&zoomControl=true&allowEdit=false&moreControl=false&datalayersControl=false&onLoadPanel=undefined"></iframe>-->
+        <!--<button type="button" class="map-mobile-toggle" (click)="mapListModal.show()">-->
+          <!--<img src="images/mobile/icon-list.png" alt="List" width="17" height="13" />-->
+        <!--</button>-->
+      <!--</div&ndash;&gt;-->
+
+    <!--</tab>-->
+    <!--<tab class="tab-pane" heading="Shipments">-->
+      <!--<template tabHeading>-->
+        <!--<strong><img src="images/mobile/icon-shipments.png" alt="Shipments" width="39" height="22" /></strong>-->
+        <!--<em><img src="images/mobile/icon-shipments_a.png" alt="Shipments" width="39" height="22" /></em>-->
+      <!--</template>-->
+
+      <!--<div class="page-content">-->
+        <!--<div class="form-group -x4">-->
+          <!--<div class="form-group">-->
+            <!--<div class="label-gray label-md">Shipment 1 <small class="badge -green">Picked</small></div>-->
+            <!--<h3>BOL 2342 342-465-335 0043</h3>-->
+          <!--</div>-->
+          <!--<div class="form-group -x2 flex">-->
+            <!--<div class="col-4 form-label -text fs12 uppercase">Origin</div>-->
+            <!--<div class="col-8 pl3">-->
+              <!--1800 NE Alberta St, Portland, OR 97211-->
+              <!--<div class="label-gray">Mar 20, 2016 &mdash; All Day</div>-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<div class="form-group -x2 flex">-->
+            <!--<div class="col-4 form-label -text fs12 uppercase">Destination</div>-->
+            <!--<div class="col-8 pl3">-->
+              <!--8642 S Vaquero Dr, Sandy, UT 84094-->
+              <!--<div class="label-gray">Mar 20, 2016 &mdash; All Day</div>-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<div class="form-group -x2 flex">-->
+            <!--<div class="col-4 form-label -text fs12 uppercase">Order</div>-->
+            <!--<div class="col-8 pl3">-->
+              <!--183ew23-212-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<div class="form-group -x2 flex">-->
+            <!--<div class="col-4 form-label -text fs12 uppercase">Purchase order</div>-->
+            <!--<div class="col-8 pl3">-->
+              <!--0003888573999-5435-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<div class="form-group -x2 flex">-->
+            <!--<div class="col-4 form-label -text fs12 uppercase">Special Instructions</div>-->
+            <!--<div class="col-8 pl3">-->
+              <!--Accept/I can PU another load afterwards & T-CALL it at the Romeoville drop yard. I will have...-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<table class="table -compact -lined form-group -x2">-->
+            <!--<thead>-->
+            <!--<tr>-->
+              <!--<th>Type</th>-->
+              <!--<th>Qty</th>-->
+              <!--<th class="right-align">Weight</th>-->
+              <!--<th class="right-align">Volume</th>-->
+            <!--</tr>-->
+            <!--</thead>-->
+            <!--<tbody>-->
+            <!--<tr>-->
+              <!--<td>Palette</td>-->
+              <!--<td>2</td>-->
+              <!--<td class="right-align">481 lb</td>-->
+              <!--<td class="right-align">127 ft³</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+              <!--<td>Box</td>-->
+              <!--<td>2</td>-->
+              <!--<td class="right-align">160 lb</td>-->
+              <!--<td class="right-align">115 ft³</td>-->
+            <!--</tr>-->
+            <!--</tbody>-->
+          <!--</table>-->
+        <!--</div>-->
+        <!--<div class="form-group -x4">-->
+          <!--<div class="form-group">-->
+            <!--<div class="label-gray label-md">Shipment 2 <small class="badge -green">Picked</small></div>-->
+            <!--<h3>S/ID 6778 120-0043-53</h3>-->
+          <!--</div>-->
+          <!--<div class="form-group -x2 flex">-->
+            <!--<div class="col-4 form-label -text fs12 uppercase">Origin</div>-->
+            <!--<div class="col-8 pl3">-->
+              <!--1800 NE Alberta St, Portland, OR 97211-->
+              <!--<div class="label-gray">Mar 20, 2016 &mdash; All Day</div>-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<div class="form-group -x2 flex">-->
+            <!--<div class="col-4 form-label -text fs12 uppercase">Destination</div>-->
+            <!--<div class="col-8 pl3">-->
+              <!--8642 S Vaquero Dr, Sandy, UT 84094-->
+              <!--<div class="label-gray">Mar 20, 2016 &mdash; All Day</div>-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<div class="form-group -x2 flex">-->
+            <!--<div class="col-4 form-label -text fs12 uppercase">Order</div>-->
+            <!--<div class="col-8 pl3">-->
+              <!--183ew23-212-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<div class="form-group -x2 flex">-->
+            <!--<div class="col-4 form-label -text fs12 uppercase">Purchase order</div>-->
+            <!--<div class="col-8 pl3">-->
+              <!--0003888573999-5435-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<div class="form-group -x2 flex">-->
+            <!--<div class="col-4 form-label -text fs12 uppercase">Special Instructions</div>-->
+            <!--<div class="col-8 pl3">-->
+              <!--Accept/I can PU another load afterwards & T-CALL it at the Romeoville drop yard. I will have...-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<table class="table -compact -lined form-group -x2">-->
+            <!--<thead>-->
+            <!--<tr>-->
+              <!--<th>Type</th>-->
+              <!--<th>Qty</th>-->
+              <!--<th class="right-align">Weight</th>-->
+              <!--<th class="right-align">Volume</th>-->
+            <!--</tr>-->
+            <!--</thead>-->
+            <!--<tbody>-->
+            <!--<tr>-->
+              <!--<td>Palette</td>-->
+              <!--<td>2</td>-->
+              <!--<td class="right-align">481 lb</td>-->
+              <!--<td class="right-align">127 ft³</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+              <!--<td>Box</td>-->
+              <!--<td>2</td>-->
+              <!--<td class="right-align">160 lb</td>-->
+              <!--<td class="right-align">115 ft³</td>-->
+            <!--</tr>-->
+            <!--</tbody>-->
+          <!--</table>-->
+        <!--</div>-->
+      <!--</div>-->
+
+    <!--</tab>-->
+  <!--</tabset>-->
+
+</div>
+
+<footer class="footer">
+  &copy; Transflo, 2017
+</footer>
+<div class="footer-placeholder"></div>
+
+
+
+<!--&lt;!&ndash; Mobile Special Instructions &ndash;&gt;-->
+<!--<div bsModal #extLoadDataModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">-->
+  <!--<div class="modal-dialog">-->
+    <!--<div class="modal-content">-->
+      <!--<div class="modal-header">-->
+        <!--<button type="button" class="modal-close" aria-label="Close" (click)="extLoadDataModal.hide()" title="Close">&times;</button>-->
+      <!--</div>-->
+      <!--<div class="modal-body">-->
+        <!--<h3>Ext Load Data</h3>-->
+        <!--<table class="table -list">-->
+          <!--<tbody>-->
+          <!--<tr>-->
+            <!--<td class="align-middle center">-->
+              <!--<svg class="icon -danger m0"><use xlink:href="#svg_danger"/></svg>-->
+            <!--</td>-->
+            <!--<td>Hazardous</td>-->
+          <!--</tr>-->
+          <!--<tr>-->
+            <!--<td class="align-middle center">-->
+              <!--<svg class="icon -ruby m0"><use xlink:href="#svg_ruby"/></svg>-->
+            <!--</td>-->
+            <!--<td>High Value</td>-->
+          <!--</tr>-->
+          <!--<tr>-->
+            <!--<td class="align-middle center">-->
+              <!--&bull;-->
+            <!--</td>-->
+            <!--<td>Number of stop: 5</td>-->
+          <!--</tr>-->
+          <!--<tr>-->
+            <!--<td class="align-middle center">-->
+              <!--<svg class="icon -fragile m0"><use xlink:href="#svg_fragile"/></svg>-->
+            <!--</td>-->
+            <!--<td>Fragile</td>-->
+          <!--</tr>-->
+          <!--<tr>-->
+            <!--<td class="align-middle center">-->
+              <!--&bull;-->
+            <!--</td>-->
+            <!--<td>Phone number: (555) 555-1234</td>-->
+          <!--</tr>-->
+          <!--</tbody>-->
+        <!--</table>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Mobile Ext Load Data &ndash;&gt;-->
+<!--<div bsModal #specialInstructionsModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">-->
+  <!--<div class="modal-dialog">-->
+    <!--<div class="modal-content">-->
+      <!--<div class="modal-header">-->
+        <!--<button type="button" class="modal-close" aria-label="Close" (click)="specialInstructionsModal.hide()" title="Close">&times;</button>-->
+      <!--</div>-->
+      <!--<div class="modal-body">-->
+        <!--<h3>Special Instructions</h3>-->
+        <!--Accept/I can PU another load afterwards & T-CALL it at the Romeoville drop yard. I will have to drop the TRLR there anyways. either that or help out with local runs for a couple days. meaning the rest of the 8th & 9th.-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Mobile Map List &ndash;&gt;-->
+<!--<div bsModal #mapListModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">-->
+  <!--<div class="modal-dialog">-->
+    <!--<div class="modal-content">-->
+      <!--<div class="modal-header">-->
+        <!--<button type="button" class="modal-close" aria-label="Close" (click)="mapListModal.hide()" title="Close">&times;</button>-->
+      <!--</div>-->
+      <!--<div class="modal-body">-->
+        <!--<div class="form-group -x2">-->
+          <!--<div class="form-label -text">Mar 22 &bull; 17:31</div>-->
+          <!--<div>One way</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2">-->
+          <!--<div class="form-label -text">Mar 22 &bull; 17:31</div>-->
+          <!--<div>Shipped to Alabama</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2">-->
+          <!--<div class="form-label -text">Mar 22 &bull; 17:31</div>-->
+          <!--<div>On the way shipped to Alabama</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2">-->
+          <!--<div class="form-label -text">Mar 22 &bull; 17:31</div>-->
+          <!--<div>One way</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2">-->
+          <!--<div class="form-label -text">Mar 22 &bull; 17:31</div>-->
+          <!--<div>Shipped to Alabama</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2">-->
+          <!--<div class="form-label -text">Mar 22 &bull; 17:31</div>-->
+          <!--<div>One way</div>-->
+        <!--</div>-->
+        <!--<div class="form-group -x2">-->
+          <!--<div class="form-label -text">Mar 22 &bull; 17:31</div>-->
+          <!--<div>Shipped to Alabama</div>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
+

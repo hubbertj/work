@@ -1,0 +1,44 @@
+.register-error
+  align-self: flex-start
+  font-weight: 500px
+  text-align: center
+  position: relative
+  padding: 15px 30px
+  color: $color-danger
+  &:before, &:after
+    content: ''
+    display: block
+    position: absolute
+    top: 0
+    bottom: 0
+    width: 14px
+    border-top: 1px solid $color-danger
+    border-bottom: 1px solid $color-danger
+  &:before
+    left: 0
+    border-left: 1px solid $color-danger
+    border-radius: 6px 0 0 6px
+  &:after
+    right: 0
+    border-right: 1px solid $color-danger
+    border-radius: 0 6px 6px 0
+
+.upload-error
+  align-self: flex-start
+  font-weight: 500px
+  text-align: center
+  position: relative
+  padding: 15px 30px
+  color: $color-danger
+
+.upload-succeeded
+  align-self: flex-start
+  font-weight: 500px
+  text-align: center
+  position: relative
+  padding: 15px 30px
+  color: green
+
+.register-eula
+  margin-top: 20px
+  margin-left: 10px

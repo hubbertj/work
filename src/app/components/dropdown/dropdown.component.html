@@ -1,0 +1,15 @@
+<div class="form-control multiple id{{id}}" xmlns="http://www.w3.org/1999/html" [ngClass]="{'-active': shown }">
+  <span *ngFor="let selected of selectedList" class="multiple-selected" [ngClass]="selected.className">
+    <span>{{selected.name || selected.text}}</span>
+    <span class="multiple-selected-delete" (click)="deleteStatus(selected)" title="Delete">×</span>
+  </span>
+  <input type="text" autocomplete="off" [ngModel]="searchString" (ngModelChange)="filter($event)" class="multiple-field" (focus)="onFocus($event)" (keydown)="onKey($event)" [placeholder]="placeholder" />
+  <ul class="dropdown-menu -hover multiple-menu" [hidden]="!shown || !filteredScope.length">
+    <li *ngFor="let el of filteredScope">
+      <label>
+        <input type="checkbox" [ngModel]="getSelected(el)" (ngModelChange)="setSelected(el, $event)"/>
+        <span>{{el.name || el.text}}</span>
+      </label>
+    </li>
+  </ul>
+</div>

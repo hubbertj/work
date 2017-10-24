@@ -1,0 +1,56 @@
+<div *ngIf="driversList.length != 0" class="label-title nowrap">
+  {{status}} to&nbsp;
+  <button *ngIf="isCarrier" [disabled]="loadStatus == 'Delivered'" class="button -outline -xs -icon" type="button" title="Edit" (click)="goToTendering($event)">
+    <svg class="icon -pen"><use xlink:href="#svg_pen"/></svg>
+  </button>
+</div>
+
+<ul class="user-selected-list" [hidden]="driversList.length > 2">
+  <li *ngFor="let driver of driversList">
+    <a href="javascript:;" *ngIf="isCarrier" messages [divisionId]="divisionId" [driverId]="driver.id" [ngClass]="{'-active': driver.isNewMessage}">
+      <span class="user-selected-list_bubble"><svg class="icon -quote"><use xlink:href="#svg_quote"/></svg></span>
+      <span class="label-link medium">{{driver.name}}</span>
+      <span class="block label-text">#{{driver.id}}</span>
+    </a>
+    <span *ngIf="!isCarrier">
+      <span class="medium">{{driver.name}}</span>
+      <span class="block label-text">#{{driver.id}}</span>
+    </span>
+  </li>
+</ul>
+
+<ul class="user-selected-list" [hidden]="driversList.length <= 2">
+  <li *ngIf="isCarrier">
+    <a href="javascript:;" messages [divisionId]="divisionId" [driverId]="driversList && driversList[0] && driversList[0].id" [ngClass]="{'-active':  driversList && driversList[0] && driversList[0].isNewMessage}">
+      <span class="user-selected-list_bubble"><svg class="icon -quote"><use xlink:href="#svg_quote"/></svg></span>
+      <span class="label-link medium">{{driversList[0] && driversList[0].name}}</span>
+      <span class="block label-text">#{{driversList[0] && driversList[0].id}}</span>
+    </a>
+  </li>
+  <li *ngIf="!isCarrier" class="-no-bubble">
+    <span class="medium">{{driversList[0] && driversList[0].name}}</span>
+    <span class="block label-text">#{{driversList[0] && driversList[0].id}}</span>
+  </li>
+  <li class="dropdown" dropdown keyboardNav="true" (onToggle)="toggled($event)">
+    <a href="javascript:;" dropdownToggle>
+      and {{driversList.length - 1}} others
+    </a>
+    <ul class="dropdown-menu user-selected-list-dropdown" role="menu" dropdownMenu>
+      <li *ngFor="let driver of driversList.slice(1)">
+        <a href="javascript:;" *ngIf="isCarrier" messages [divisionId]="divisionId" [driverId]="driver.id" [ngClass]="{'-active': driver.isNewMessage}">
+          <span class="user-selected-list_bubble"><svg class="icon -quote"><use xlink:href="#svg_quote"/></svg></span>
+          <span class="label-link medium">{{driver.name}}</span>
+          <span class="block label-text">#{{driver.id}}</span>
+        </a>
+        <span *ngIf="!isCarrier">
+          <span class="medium">{{driver.name}}</span>
+          <span class="block label-text">#{{driver.id}}</span>
+        </span>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<button *ngIf="driversList.length == 0 && isCarrier" [disabled]="loadStatus == 'Delivered'" class="button -outline -xs" type="button" (click)="goToTendering($event)">+ Assign</button>
+
+<br *ngIf="driversList.length == 0 && !isCarrier"/>

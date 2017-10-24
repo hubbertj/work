@@ -1,0 +1,47 @@
+﻿<div class="loading-page" [hidden]="!loading" style="top: 0; left: 0; height: 100vh;"><em></em><em></em><em></em></div>
+
+<div class="signin">
+  <div class="signin-header">
+    <svg class="icon -logo-lg"><use xlink:href="#svg_logo_lg"/></svg>
+  </div>
+  <div class="signin-body">
+    <div class="signin-content">
+      <h2 class="signin-h2 center" [hidden]="restoreShown">Sign in</h2>
+      <form novalidate (submit)="signin(login, password)" [hidden]="restoreShown">
+        <div class="form-group signin-error" [hidden]="!error">User with specified login and password is not found</div>
+        <div class="form-group -x2">
+          <input class="signin-form-control" [ngClass]="{'error': error}" type="email" placeholder="Username" autofocus [(ngModel)]="login" />
+        </div>
+        <div class="form-group -x2">
+		  <input class="signin-form-control form-control-password" [ngClass]="{'error': error}" placeholder="Password" [(ngModel)]="password" 
+				type="password" onmousedown="this.type='text'" onmouseup="this.type='password'" onmousemove="this.type='password'"/>
+		</div>
+        <div class="form-group -x2 flex">
+          <div class="col-6 pr2">
+            <a [routerLink]="['Register']" class="signin-button -outline -block" tabindex="-1">Register</a>
+          </div>
+          <div class="col-6 pl2">
+            <button class="signin-button -block" type="submit">Sign in</button>
+          </div>
+        </div>
+	    <div class="form-group -x3 ">
+		  By using Transflo Command Center, you are agreeing to the terms and conditions. Click <a (click)="showEULA()">here</a> to read more.
+	    </div>
+      </form>
+      <form novalidate [hidden]="!restoreShown">
+        <div class="form-group">
+          <a class="signin-back" (click)="restoreShown = false">Back to login</a>
+        </div>
+        <div class="form-group -x3 fs24">
+          To create password please follow the link which have been sent to <a>{{email}}</a>
+        </div>
+        <div class="signin-hr"></div>
+        <div class="fs16">Check email and follow the link.</div>
+      </form>
+    </div>
+  </div>
+  <div class="signin-footer">
+    &copy; Transflo, 2017
+  </div>
+</div>
+<transflo-eula></transflo-eula>

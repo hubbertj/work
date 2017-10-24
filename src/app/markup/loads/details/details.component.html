@@ -1,0 +1,1005 @@
+﻿<header class="page-header xs-hide">
+  <div class="flex items-center">
+    <div class="flex-auto flex items-center">
+      <h1 class="self-baseline">Load #8234593</h1>
+      <div class="label-md bold pl3 self-baseline">BOL 9078 123-543-876 0001</div>
+      <div class="pl3 self-baseline">
+        <svg class="icon -danger -md"><use xlink:href="#svg_danger"/></svg>
+        <svg class="icon -ruby -md"><use xlink:href="#svg_ruby"/></svg>
+        <svg class="icon -fragile -md"><use xlink:href="#svg_fragile"/></svg>
+      </div>
+    </div>
+    <div>
+      <div class="dropdown -inline" dropdown keyboardNav="true" autoClose="outsideClick">
+        <button type="button" class="button -link -sm" dropdownToggle>Share</button>
+        <div class="dropdown-menu -xlg2 -center" role="menu" dropdownMenu>
+          <h2>Tracking Link</h2>
+          <div class="form-group">
+            <input autocomplete="off" class="form-control" value="https://transflo.com/gcmhnh_uiy8yi.ouoiu/oj9ujn" readonly />
+          </div>
+          <div class="form-group -x2 nowrap flex items-center">
+            <div class="bold label-danger pr2">Expires</div>
+            <div class="pr2 col-4 flex">
+              <div class="col-5 -merged">
+                <input autocomplete="off" type="number" class="form-control" value="3" />
+              </div>
+              <div class="col-7 -merged">
+                <select class="form-control">
+                  <option>hours</option>
+                  <option>days</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex-auto">after the load arrives at the destination.</div>
+          </div>
+          <hr />
+          <div class="right-align" *ngIf="!emailTracking">
+            <button type="button" class="button -link" (click)="emailTracking = true">Email Tracking Link</button>
+          </div>
+          <div class="flex items-center" *ngIf="emailTracking">
+            <div class="pr2">Email tracking to</div>
+            <div class="pr2 flex-auto">
+              <input autocomplete="off" class="form-control" type="email" placeholder="Email address" autofocus />
+            </div>
+            <button class="button -outline" type="button">Send</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="button -link -sm">Document scans</button>
+      <div class="dropdown -inline" [ngClass]="{'open': notificationsDropdown}">
+        <button type="button" class="button -link -sm" (click)="notificationsDropdown = true">Notifications</button>
+        <div class="dropdown-menu -xlg2 -right" role="menu">
+          <button class="dropdown-close" type="button" (click)="notificationsDropdown = false">&times;</button>
+          <h2>Notifications</h2>
+          <div class="table-container -xlg2">
+            <table class="table -compact -matrix">
+              <tbody>
+              <tr>
+                <th class="nowrap">
+                  <h3 class="m0 label-text">Load</h3>
+                </th>
+                <th class="center nowrap">
+                  <span class="label-text">Me</span>
+                </th>
+                <th class="center nowrap">
+                  <span class="label-text">Customer</span>
+                  <button class="button -link label-danger bold">&times;</button>
+                </th>
+                <th class="center">
+                  <div class="dropdown -inline" dropdown keyboardNav="true" autoClose="outsideClick">
+                    <button class="button -link -sm medium" dropdownToggle>+ Add Email</button>
+                    <div class="dropdown-menu -lg -text -right" role="menu" dropdownMenu>
+                      <div class="flex items-end">
+                        <div class="flex-auto">
+                          <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input autocomplete="off" class="form-control" type="email" />
+                          </div>
+                          <div class="form-group">
+                            <label class="form-label">Name</label>
+                            <input autocomplete="off" class="form-control" type="text" />
+                          </div>
+                        </div>
+                        <div class="pl2">
+                          <button class="button -outline" type="button">Send</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </th>
+              </tr>
+              <tr>
+                <td class="align-middle">Picked</td>
+                <td class="center">
+                  <label><input type="checkbox" hidden checked /><em class="form-switcher"></em></label>
+                </td>
+                <td class="center">
+                  <label><input type="checkbox" hidden checked /><em class="form-switcher"></em></label>
+                </td>
+                <td class="center">
+                  <div class="form-switcher-placeholder"></div>
+                </td>
+              </tr>
+              <tr>
+                <td class="align-middle">Delivered</td>
+                <td class="center">
+                  <label><input type="checkbox" hidden checked /><em class="form-switcher"></em></label>
+                </td>
+                <td class="center">
+                  <label><input type="checkbox" hidden checked /><em class="form-switcher"></em></label>
+                </td>
+                <td class="center">
+                  <div class="form-switcher-placeholder"></div>
+                </td>
+              </tr>
+              </tbody>
+              <tbody>
+              <tr>
+                <th>
+                  <h3 class="m0 label-text">Package</h3>
+                </th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              <tr>
+                <td class="align-middle">Picked Up</td>
+                <td class="center">
+                  <label><input type="checkbox" hidden /><em class="form-switcher"></em></label>
+                </td>
+                <td class="center">
+                  <label><input type="checkbox" hidden /><em class="form-switcher"></em></label>
+                </td>
+                <td class="center">
+                  <div class="form-switcher-placeholder"></div>
+                </td>
+              </tr>
+              </tbody>
+              <tbody>
+              <tr>
+                <th>
+                  <h3 class="m0 label-text">Stop</h3>
+                </th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              <tr>
+                <td class="align-middle">Reached</td>
+                <td class="center">
+                  <label><input type="checkbox" hidden /><em class="form-switcher"></em></label>
+                </td>
+                <td class="center">
+                  <label><input type="checkbox" hidden /><em class="form-switcher"></em></label>
+                </td>
+                <td class="center">
+                  <div class="form-switcher-placeholder"></div>
+                </td>
+              </tr>
+              <tr>
+                <td class="align-middle">Passed</td>
+                <td class="center">
+                  <label><input type="checkbox" hidden /><em class="form-switcher"></em></label>
+                </td>
+                <td class="center">
+                  <label><input type="checkbox" hidden /><em class="form-switcher"></em></label>
+                </td>
+                <td class="center">
+                  <div class="form-switcher-placeholder"></div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <span class="buttons-separator"></span>
+      <button type="button" class="button -primary">Edit Load</button>
+    </div>
+  </div>
+</header>
+
+<div class="page-content xs-hide">
+
+  <div class="form-group">
+    <div class="flex form-group">
+      <div class="col-3 pr4">
+        <div class="form-group">
+          <div class="form-label -text">Status</div>
+          <div class="label-green label-lg">In Transit</div>
+        </div>
+        <div class="form-group -x2">
+          <div class="form-label -text">Division</div>
+          <div>Div NY</div>
+        </div>
+      </div>
+      <div class="col-3 pl3 pr4">
+        <div class="form-label -text">Origin</div>
+        <div class="label-lg form-group">1800 NE Alberta St Portland, OR 97211 USA, CA,15229</div>
+        <div class="label-md form-group">Mar 20, 2016 &mdash; All Day</div>
+      </div>
+      <div class="col-3 center self-center pl3 pr2">
+        <div class="wayline">
+          <div class="wayline-content"><span class="label-count">3</span> Intermediate stop</div>
+        </div>
+      </div>
+      <div class="col-3 pl6 right-align">
+        <div class="form-label -text">Destination</div>
+        <div class="label-lg form-group">8462 S Vaquero Dr Sandy, UT 84094 USA, CA,15229</div>
+        <div class="label-md form-group">Mar 21, 2016 &mdash; All Day</div>
+      </div>
+    </div>
+    <div class="flex items-end form-group -x2">
+      <div class="col-3 pr4">
+        <div class="form-label -text">Assigned to</div>
+        <ul class="user-selected-list">
+          <li>
+            <a href="#" class="user-selected-list_bubble">
+              <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+            </a>
+            <a href="#">Sebastian P. Fleteefwewrgf</a>
+          </li>
+          <li>
+            <a href="#" class="user-selected-list_bubble -active">
+              <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+            </a>
+            <a href="#">Jorge A. Seachin</a>
+          </li>
+        </ul>
+      </div>
+      <div class="pr4 pl3">
+        <div class="form-label -text">Freight Terms</div>
+        <div>50</div>
+      </div>
+      <div class="pr4 pl3">
+        <div class="form-label -text">Ext Load Data</div>
+        <div dropdown keyboardNav="true">
+          <button type="button" class="button -link -sm -dotted" dropdownToggle>Read Ext Load Data</button>
+          <div class="dropdown-menu -lg -text -center" role="menu" dropdownMenu>
+            <h3>Ext Load Data</h3>
+            <table class="table -list">
+              <tbody>
+                <tr>
+                  <td class="align-middle center">
+                    <svg class="icon -danger m0"><use xlink:href="#svg_danger"/></svg>
+                  </td>
+                  <td>Hazardous</td>
+                </tr>
+                <tr>
+                  <td class="align-middle center">
+                    <svg class="icon -ruby m0"><use xlink:href="#svg_ruby"/></svg>
+                  </td>
+                  <td>High Value</td>
+                </tr>
+                <tr>
+                  <td class="align-middle center">
+                    &bull;
+                  </td>
+                  <td>Number of stop: 5</td>
+                </tr>
+                <tr>
+                  <td class="align-middle center">
+                    <svg class="icon -fragile m0"><use xlink:href="#svg_fragile"/></svg>
+                  </td>
+                  <td>Fragile</td>
+                </tr>
+                <tr>
+                  <td class="align-middle center">
+                    &bull;
+                  </td>
+                  <td>Phone number: (555) 555-1234</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="pr4 pl3">
+        <div class="form-label -text">Special Instructions</div>
+        <div dropdown keyboardNav="true">
+          <button type="button" class="button -link -sm -dotted" dropdownToggle>Read Instructions</button>
+          <div class="dropdown-menu -lg -text -center" role="menu" dropdownMenu>
+            <h3>Special Instructions</h3>
+            Accept/I can PU another load afterwards & T-CALL it at the Romeoville drop yard. I will have to drop the TRLR there anyways. either that or help out with local runs for a couple days. meaning the rest of the 8th & 9th.
+          </div>
+        </div>
+      </div>
+      <div class="flex-auto right-align pl3">
+        <div class="form-label -text">Paremeters</div>
+        <div>127 ft³ &nbsp;&bull;&nbsp; 421 lbs &nbsp;&bull;&nbsp; 6 pcs</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group -x3 flex">
+    <div class="col-9">
+      <div class="map-container">
+        <iframe width="100%" height="420px" frameBorder="0" src="http://umap.openstreetmap.co/en/map/trip_703?scaleControl=false&miniMap=false&scrollWheelZoom=false&zoomControl=true&allowEdit=false&moreControl=false&datalayersControl=false&onLoadPanel=undefined"></iframe>
+      </div>
+    </div>
+    <div class="col-3 relative">
+      <div class="map-sidebar">
+        <div class="map-sidebar-header flex justify-center items-center">
+          <div class="col-4">
+            <strong class="fs15 medium">Mar 20</strong>
+            <div>00:00 AM</div>
+          </div>
+          <div class="col-4 center flex items-center justify-center">
+            <div class="map-sidebar-line -left"></div>
+            <svg class="icon -datepicker"><use xlink:href="#svg_datepicker"/></svg>
+            <div class="map-sidebar-line -right"></div>
+          </div>
+          <div class="col-4 right-align">
+            <strong class="fs15 medium">Mar 22</strong>
+            <div>1:59 PM</div>
+          </div>
+        </div>
+        <div class="map-sidebar-list">
+          <div class="form-group -x2">
+            <div class="medium">Accepted</div>
+            <div class="form-label -text fs12">Mar 22 &bull; 17:31</div>
+            <div>Accept/I can PU another load afterwards & T-CALL it at the Romeoville drop yard. I will have to drop the TRLR there anyways. either that or help out with local runs for a couple days. meaning the rest of the 8th & 9th.</div>
+          </div>
+          <div class="form-group -x2">
+            <div class="medium">Decline</div>
+            <div class="form-label -text fs12">Mar 22 &bull; 17:31</div>
+            <div>Decline/and pre-loaded I'll go ahead and do it this place is a joke we have Drop trailers there that never get pre-loaded and we end up sitting there for hours and hours waiting to get loaded like I said if they could have the trailer loaded when I get there then I'll take it no problem</div>
+          </div>
+          <div class="form-group -x2">
+            <div class="medium">Decline</div>
+            <div class="form-label -text fs12">Mar 22 &bull; 17:31</div>
+            <div>On the way shipped to Alabama</div>
+          </div>
+          <div class="form-group -x2">
+            <div class="medium">Decline</div>
+            <div class="form-label -text fs12">Mar 22 &bull; 17:31</div>
+            <div>One way</div>
+          </div>
+          <div class="form-group -x2">
+            <div class="medium">Decline</div>
+            <div class="form-label -text fs12">Mar 22 &bull; 17:31</div>
+            <div>Shipped to Alabama</div>
+          </div>
+          <div class="form-group -x2">
+            <div class="medium">Decline</div>
+            <div class="form-label -text fs12">Mar 22 &bull; 17:31</div>
+            <div>One way</div>
+          </div>
+          <div class="form-group -x2">
+            <div class="medium">Decline</div>
+            <div class="form-label -text fs12">Mar 22 &bull; 17:31</div>
+            <div>Shipped to Alabama</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group m0">
+    <tabset [justified]="true">
+      <tab class="tab-pane" heading="Trip">
+
+        <div class="skeleton">
+
+          <div class="skeleton-item">
+            <div class="skeleton-bubble -left">
+              <div class="skeleton-bubble-header flex items-baseline">
+                <strong class="flex-auto">Pick Up</strong>
+                <small>480 ft³</small>
+                <small>1,009 lbs</small>
+              </div>
+              <ul class="skeleton-bubble-list">
+                <li>
+                  <span>1 pcs</span>
+                  <span>57 ft³</span>
+                  <span>57 lbs</span>
+                  <strong><a href="#">BOL 907</a></strong>
+                </li>
+                <li>
+                  <span>1 pcs</span>
+                  <span>57 ft³</span>
+                  <span>32 lbs</span>
+                  <strong><a href="#">S/ID 754</a></strong>
+                </li>
+                <li>
+                  <span>1 pcs</span>
+                  <span>68 ft³</span>
+                  <span>68 lbs</span>
+                  <strong><a href="#">S/ID 754</a></strong>
+                </li>
+                <li>
+                  <span>1 pcs</span>
+                  <span>123 ft³</span>
+                  <span>481 lbs</span>
+                  <strong><a href="#">BOL 8346</a></strong>
+                </li>
+              </ul>
+            </div>
+            <div class="skeleton-item-container">
+              <div class="flex flex-wrap content-stretch">
+                <p class="col-6 pr2"><strong>Mar 21</strong> All Day</p>
+                <div class="col-6 right-align pl2">
+                  <strong class="pl2">127 ft³</strong>
+                  <strong class="pl2">481 lbs</strong>
+                  <div class="skeleton-item-hint">Truck Load</div>
+                </div>
+                <p class="col-6 self-end pr2 pt3"><strong>3036 Parkway Street,</strong> Desert Hot Springs USA, CA,15229</p>
+                <div class="col-6 right-align self-end pl2 pt3">
+                  <strong>Dulce R. Morrow</strong>
+                  <div>Luria’s</div>
+                </div>
+              </div>
+            </div>
+            <div class="skeleton-item-footer"></div>
+          </div>
+
+          <div class="skeleton-item">
+            <div class="skeleton-bubble -right">
+              <div class="skeleton-bubble-header">
+                <strong>Drop Off</strong>
+              </div>
+              <ul class="skeleton-bubble-list">
+                <li>
+                  <span>5 pcs</span>
+                  <span>123 ft³</span>
+                  <span>481 lbs</span>
+                  <strong><a href="#">BOL 9078 123-543-876 0001</a></strong>
+                </li>
+              </ul>
+            </div>
+            <div class="skeleton-item-container">
+              <div class="flex flex-wrap content-stretch">
+                <p class="col-6 pr2"><strong>Mar 20</strong> Morning</p>
+                <div class="col-6 right-align pl2">
+                  <strong class="pl2">234 ft³</strong>
+                  <strong class="pl2">201 lbs</strong>
+                  <div class="skeleton-item-hint">Truck Load</div>
+                </div>
+                <p class="col-6 self-end pr2 pt3"><strong>734 University Drive,</strong> Burr Ridge USA, IL, 60527</p>
+                <div class="col-6 right-align self-end pl2 pt3">
+                  <strong>Fred P. Carr</strong>
+                  <div>Superior Interior Design</div>
+                </div>
+              </div>
+            </div>
+            <div class="skeleton-item-footer"></div>
+          </div>
+
+          <div class="skeleton-item">
+            <div class="skeleton-item-container">
+              <p>Stop</p>
+            </div>
+            <div class="skeleton-item-footer"></div>
+          </div>
+
+          <div class="skeleton-item">
+            <div class="skeleton-bubble -right">
+              <div class="skeleton-bubble-header">
+                <strong>Drop Off</strong>
+              </div>
+              <ul class="skeleton-bubble-list">
+                <li>
+                  <span>1 pcs</span>
+                  <span>57 ft³</span>
+                  <span>57 lbs</span>
+                  <strong><a href="#">BOL 907</a></strong>
+                </li>
+                <li>
+                  <span>1 pcs</span>
+                  <span>57 ft³</span>
+                  <span>32 lbs</span>
+                  <strong><a href="#">S/ID 754</a></strong>
+                </li>
+                <li>
+                  <span>1 pcs</span>
+                  <span>123 ft³</span>
+                  <span>481 lbs</span>
+                  <strong><a href="#">BOL 8346</a></strong>
+                </li>
+              </ul>
+            </div>
+            <div class="skeleton-item-container">
+              <div class="flex flex-wrap content-stretch">
+                <p class="col-6 pr2"><strong>Mar 23</strong> All Day</p>
+                <div class="col-6 right-align pl2">
+                  <strong class="pl2">0 ft³</strong>
+                  <strong class="pl2">0 lbs</strong>
+                  <div class="skeleton-item-hint">Truck Load</div>
+                </div>
+                <p class="col-6 self-end pr2 pt3"><strong>2442 Clousson Road</strong> Desert Hot Springs USA, IA, 51034</p>
+                <div class="col-6 right-align self-end pl2 pt3">
+                  <strong>Nathan V. Johnson</strong>
+                </div>
+              </div>
+            </div>
+            <div class="skeleton-item-footer"></div>
+          </div>
+
+        </div>
+
+      </tab>
+      <tab heading="Shipments">
+
+        <div class="form-group -x6">
+          <div class="form-group flex">
+            <div class="col-4 label-lg pr4">
+              Shipment 1
+              <small class="badge -green">Picked</small>
+            </div>
+            <div class="col-8 label-lg pl3">
+              BOL 2342 342-465-335 0043
+            </div>
+          </div>
+          <hr class="form-group -x15" />
+          <div class="form-group flex -x2">
+            <div class="col-4 pr4">
+              <div class="form-group">
+                <div class="form-label -text">Special Instructions</div>
+                <div>
+                  Accept/I can PU another load afterwards & T-CALL it at the Romeoville drop yard. I will have...
+                  <button class="button -link -sm -dotted" type="button">Read more</button>
+                </div>
+              </div>
+              <div class="form-group -x3">
+                <div class="form-label -text">Order / Purchase order</div>
+                <div>183ew23-212 / 0003888573999-5435</div>
+              </div>
+            </div>
+            <div class="col-8 pl3">
+              <div class="form-group flex">
+                <div class="col-4 pr4">
+                  <div class="form-label -text">Origin</div>
+                  <div class="form-group label-md medium">1800 NE Alberta St Portland, OR 97211 USA, CA,15229</div>
+                  <div class="form-group">Mar 20, 2016 &mdash; All Day</div>
+                </div>
+                <div class="col-4 self-center pl2 pr2">
+                  <div class="wayline -sm"></div>
+                </div>
+                <div class="col-4 right-align pl4">
+                  <div class="form-label -text">Destination</div>
+                  <div class="form-group label-md medium">8462 S Vaquero Dr Sandy, UT 84094 USA, CA,15229</div>
+                  <div class="form-group">Mar 20, 2016 &mdash; All Day</div>
+                </div>
+              </div>
+              <table class="table -compact -lined form-group -x3">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Qty</th>
+                    <th class="right-align">Weight</th>
+                    <th class="right-align">Volume</th>
+                    <th class="right-align">Height</th>
+                    <th class="right-align">Freight Class</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Palette</td>
+                    <td>2</td>
+                    <td class="right-align">481 lb</td>
+                    <td class="right-align">127 ft³</td>
+                    <td class="right-align">100 in</td>
+                    <td class="right-align">50</td>
+                  </tr>
+                  <tr>
+                    <td>Box</td>
+                    <td>2</td>
+                    <td class="right-align">160 lb</td>
+                    <td class="right-align">115 ft³</td>
+                    <td class="right-align">20 in</td>
+                    <td class="right-align">50</td>
+                  </tr>
+                  <tr>
+                    <td>Capsule</td>
+                    <td>2</td>
+                    <td class="right-align">481 lb</td>
+                    <td class="right-align">127 ft³</td>
+                    <td class="right-align">100 in</td>
+                    <td class="right-align">50</td>
+                  </tr>
+                  <tr>
+                    <td>Paper bag</td>
+                    <td>2</td>
+                    <td class="right-align">160 lb</td>
+                    <td class="right-align">115 ft³</td>
+                    <td class="right-align">20 in</td>
+                    <td class="right-align">50</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="form-group -x6">
+          <div class="form-group flex">
+            <div class="col-4 label-lg pr4">
+              Shipment 2
+              <small class="badge -green">Picked</small>
+            </div>
+            <div class="col-8 label-lg pl3">
+              S/ID 6778 120-0043-53
+            </div>
+          </div>
+          <hr class="form-group -x15" />
+          <div class="form-group flex -x2">
+            <div class="col-4 pr4">
+              <div class="form-group">
+                <div class="form-label -text">Order</div>
+                <div>183ew23-212</div>
+              </div>
+              <div class="form-group -x3">
+                <div class="form-label -text">Purchase order</div>
+                <div>0003888573999 - 5435</div>
+              </div>
+            </div>
+            <div class="col-8 pl3">
+              <div class="form-group flex">
+                <div class="col-4 pr4">
+                  <div class="form-label -text">Origin</div>
+                  <div class="form-group label-md medium">231 S Vaquero Dr Sandy, OR 98999</div>
+                  <div class="form-group">Mar 20, 2016 &mdash; All Day</div>
+                </div>
+                <div class="col-4 self-center pl2 pr2">
+                  <div class="wayline -sm"></div>
+                </div>
+                <div class="col-4 right-align pl4">
+                  <div class="form-label -text">Destination</div>
+                  <div class="form-group label-md medium">8462 Alberta St Portland, UT 40304</div>
+                  <div class="form-group">Mar 20, 2016 &mdash; All Day</div>
+                </div>
+              </div>
+              <table class="table -compact -lined form-group -x3">
+                <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Qty</th>
+                  <th class="right-align">Weight</th>
+                  <th class="right-align">Volume</th>
+                  <th class="right-align">Height</th>
+                  <th class="right-align">Freight Class</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td>Palette</td>
+                  <td>2</td>
+                  <td class="right-align">481 lb</td>
+                  <td class="right-align">127 ft³</td>
+                  <td class="right-align">100 in</td>
+                  <td class="right-align">50</td>
+                </tr>
+                <tr>
+                  <td>Box</td>
+                  <td>2</td>
+                  <td class="right-align">160 lb</td>
+                  <td class="right-align">115 ft³</td>
+                  <td class="right-align">20 in</td>
+                  <td class="right-align">50</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </tab>
+    </tabset>
+  </div>
+
+</div>
+
+
+<tabset class="xs-show">
+  <tab class="tab-pane" heading="Info">
+    <template tabHeading>
+      <strong><img src="images/mobile/icon-info.png" alt="Info" width="23" height="23" /></strong>
+      <em><img src="images/mobile/icon-info_a.png" alt="Info" width="23" height="23" /></em>
+    </template>
+
+    <div class="page-content">
+      <div class="form-group">
+        <h2 class="fs24 mb0">Load #8234593</h2>
+        <div class="label-md bold">BOL 9078 123-543-876 0001</div>
+      </div>
+      <div class="form-group">
+        <svg class="icon -danger"><use xlink:href="#svg_danger"/></svg>
+        <svg class="icon -ruby"><use xlink:href="#svg_ruby"/></svg>
+        <svg class="icon -fragile"><use xlink:href="#svg_fragile"/></svg>
+      </div>
+      <div class="form-group -x2 flex">
+        <div class="col-4 form-label -text fs12 uppercase">Status</div>
+        <div class="col-8 pl3">
+          <div class="label-green medium">In Transit</div>
+        </div>
+      </div>
+      <div class="form-group -x2 flex">
+        <div class="col-4 form-label -text fs12 uppercase">Division</div>
+        <div class="col-8 pl3">Div NY</div>
+      </div>
+      <div class="form-group -x2 flex">
+        <div class="col-4 form-label -text fs12 uppercase">Assigned to</div>
+        <div class="col-8 pl3">
+          <div>Sebastian P. Fletcher</div>
+          <div>Jorge A. Seachin</div>
+        </div>
+      </div>
+      <div class="form-group -x2 flex">
+        <div class="col-4 form-label -text fs12 uppercase">Origin</div>
+        <div class="col-8 pl3">
+          1800 NE Alberta St, Portland, OR 97211
+          <div class="label-gray">Mar 20, 2016 &mdash; All Day</div>
+        </div>
+      </div>
+      <div class="form-group -x2 flex">
+        <div class="col-4 form-label -text fs12 uppercase"></div>
+        <div class="col-8 pl3">
+          1445 14th St, Baker City, OR97211
+          <div class="label-gray">Mar 20, 2016 &mdash; All Day</div>
+        </div>
+      </div>
+      <div class="form-group -x2 flex">
+        <div class="col-4 form-label -text fs12 uppercase">Destination</div>
+        <div class="col-8 pl3">
+          8642 S Vaquero Dr, Sandy, UT 84094
+          <div class="label-gray">Mar 20, 2016 &mdash; All Day</div>
+        </div>
+      </div>
+      <div class="form-group -x2 flex">
+        <div class="col-4 form-label -text fs12 uppercase">Freight Terms</div>
+        <div class="col-8 pl3">50</div>
+      </div>
+      <div class="form-group -x2 flex">
+        <div class="col-4 form-label -text fs12 uppercase">Parameters</div>
+        <div class="col-8 pl3">127 ft³ &nbsp;&bull;&nbsp; 421 lbs &nbsp;&bull;&nbsp; 6 pcs</div>
+      </div>
+      <div class="form-group -x2 flex">
+        <div class="col-4 form-label -text fs12 uppercase">Ext Load Data</div>
+        <div class="col-8 pl3">
+          <button type="button" class="button -link -sm -dotted" (click)="extLoadDataModal.show()">Read Ext Load Data</button>
+        </div>
+      </div>
+      <div class="form-group -x2 flex">
+        <div class="col-4 form-label -text fs12 uppercase">Special Instructions</div>
+        <div class="col-8 pl3">
+          <button type="button" class="button -link -sm -dotted" (click)="specialInstructionsModal.show()">Read Instructions</button>
+        </div>
+      </div>
+    </div>
+
+  </tab>
+  <tab class="tab-pane" heading="Map">
+    <template tabHeading>
+      <strong><img src="images/mobile/icon-map.png" alt="Map" width="26" height="22" /></strong>
+      <em><img src="images/mobile/icon-map_a.png" alt="Map" width="26" height="22" /></em>
+    </template>
+
+    <div class="relative">
+      <iframe class="map-mobile" frameBorder="0" src="http://umap.openstreetmap.co/en/map/trip_703?scaleControl=false&miniMap=false&scrollWheelZoom=false&zoomControl=true&allowEdit=false&moreControl=false&datalayersControl=false&onLoadPanel=undefined"></iframe>
+      <button type="button" class="map-mobile-toggle" (click)="mapListModal.show()">
+        <img src="images/mobile/icon-list.png" alt="List" width="17" height="13" />
+      </button>
+    </div>
+
+  </tab>
+  <tab class="tab-pane" heading="Shipments">
+    <template tabHeading>
+      <strong><img src="images/mobile/icon-shipments.png" alt="Shipments" width="39" height="22" /></strong>
+      <em><img src="images/mobile/icon-shipments_a.png" alt="Shipments" width="39" height="22" /></em>
+    </template>
+
+    <div class="page-content">
+      <div class="form-group -x4">
+        <div class="form-group">
+          <div class="label-gray label-md">Shipment 1 <small class="badge -green">Picked</small></div>
+          <h3>BOL 2342 342-465-335 0043</h3>
+        </div>
+        <div class="form-group -x2 flex">
+          <div class="col-4 form-label -text fs12 uppercase">Origin</div>
+          <div class="col-8 pl3">
+            1800 NE Alberta St, Portland, OR 97211
+            <div class="label-gray">Mar 20, 2016 &mdash; All Day</div>
+          </div>
+        </div>
+        <div class="form-group -x2 flex">
+          <div class="col-4 form-label -text fs12 uppercase">Destination</div>
+          <div class="col-8 pl3">
+            8642 S Vaquero Dr, Sandy, UT 84094
+            <div class="label-gray">Mar 20, 2016 &mdash; All Day</div>
+          </div>
+        </div>
+        <div class="form-group -x2 flex">
+          <div class="col-4 form-label -text fs12 uppercase">Order</div>
+          <div class="col-8 pl3">
+            183ew23-212
+          </div>
+        </div>
+        <div class="form-group -x2 flex">
+          <div class="col-4 form-label -text fs12 uppercase">Purchase order</div>
+          <div class="col-8 pl3">
+            0003888573999-5435
+          </div>
+        </div>
+        <div class="form-group -x2 flex">
+          <div class="col-4 form-label -text fs12 uppercase">Special Instructions</div>
+          <div class="col-8 pl3">
+            Accept/I can PU another load afterwards & T-CALL it at the Romeoville drop yard. I will have...
+          </div>
+        </div>
+        <table class="table -compact -lined form-group -x2">
+          <thead>
+          <tr>
+            <th>Type</th>
+            <th>Qty</th>
+            <th class="right-align">Weight</th>
+            <th class="right-align">Volume</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>Palette</td>
+            <td>2</td>
+            <td class="right-align">481 lb</td>
+            <td class="right-align">127 ft³</td>
+          </tr>
+          <tr>
+            <td>Box</td>
+            <td>2</td>
+            <td class="right-align">160 lb</td>
+            <td class="right-align">115 ft³</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="form-group -x4">
+        <div class="form-group">
+          <div class="label-gray label-md">Shipment 2 <small class="badge -green">Picked</small></div>
+          <h3>S/ID 6778 120-0043-53</h3>
+        </div>
+        <div class="form-group -x2 flex">
+          <div class="col-4 form-label -text fs12 uppercase">Origin</div>
+          <div class="col-8 pl3">
+            1800 NE Alberta St, Portland, OR 97211
+            <div class="label-gray">Mar 20, 2016 &mdash; All Day</div>
+          </div>
+        </div>
+        <div class="form-group -x2 flex">
+          <div class="col-4 form-label -text fs12 uppercase">Destination</div>
+          <div class="col-8 pl3">
+            8642 S Vaquero Dr, Sandy, UT 84094
+            <div class="label-gray">Mar 20, 2016 &mdash; All Day</div>
+          </div>
+        </div>
+        <div class="form-group -x2 flex">
+          <div class="col-4 form-label -text fs12 uppercase">Order</div>
+          <div class="col-8 pl3">
+            183ew23-212
+          </div>
+        </div>
+        <div class="form-group -x2 flex">
+          <div class="col-4 form-label -text fs12 uppercase">Purchase order</div>
+          <div class="col-8 pl3">
+            0003888573999-5435
+          </div>
+        </div>
+        <div class="form-group -x2 flex">
+          <div class="col-4 form-label -text fs12 uppercase">Special Instructions</div>
+          <div class="col-8 pl3">
+            Accept/I can PU another load afterwards & T-CALL it at the Romeoville drop yard. I will have...
+          </div>
+        </div>
+        <table class="table -compact -lined form-group -x2">
+          <thead>
+          <tr>
+            <th>Type</th>
+            <th>Qty</th>
+            <th class="right-align">Weight</th>
+            <th class="right-align">Volume</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>Palette</td>
+            <td>2</td>
+            <td class="right-align">481 lb</td>
+            <td class="right-align">127 ft³</td>
+          </tr>
+          <tr>
+            <td>Box</td>
+            <td>2</td>
+            <td class="right-align">160 lb</td>
+            <td class="right-align">115 ft³</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </tab>
+</tabset>
+
+
+
+<!-- Mobile Special Instructions -->
+<div bsModal #extLoadDataModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="modal-close" aria-label="Close" (click)="extLoadDataModal.hide()" title="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>Ext Load Data</h3>
+        <table class="table -list">
+          <tbody>
+          <tr>
+            <td class="align-middle center">
+              <svg class="icon -danger m0"><use xlink:href="#svg_danger"/></svg>
+            </td>
+            <td>Hazardous</td>
+          </tr>
+          <tr>
+            <td class="align-middle center">
+              <svg class="icon -ruby m0"><use xlink:href="#svg_ruby"/></svg>
+            </td>
+            <td>High Value</td>
+          </tr>
+          <tr>
+            <td class="align-middle center">
+              &bull;
+            </td>
+            <td>Number of stop: 5</td>
+          </tr>
+          <tr>
+            <td class="align-middle center">
+              <svg class="icon -fragile m0"><use xlink:href="#svg_fragile"/></svg>
+            </td>
+            <td>Fragile</td>
+          </tr>
+          <tr>
+            <td class="align-middle center">
+              &bull;
+            </td>
+            <td>Phone number: (555) 555-1234</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Ext Load Data -->
+<div bsModal #specialInstructionsModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="modal-close" aria-label="Close" (click)="specialInstructionsModal.hide()" title="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>Special Instructions</h3>
+        Accept/I can PU another load afterwards & T-CALL it at the Romeoville drop yard. I will have to drop the TRLR there anyways. either that or help out with local runs for a couple days. meaning the rest of the 8th & 9th.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Map List -->
+<div bsModal #mapListModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="modal-close" aria-label="Close" (click)="mapListModal.hide()" title="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group -x2">
+          <div class="form-label -text">Mar 22 &bull; 17:31</div>
+          <div>One way</div>
+        </div>
+        <div class="form-group -x2">
+          <div class="form-label -text">Mar 22 &bull; 17:31</div>
+          <div>Shipped to Alabama</div>
+        </div>
+        <div class="form-group -x2">
+          <div class="form-label -text">Mar 22 &bull; 17:31</div>
+          <div>On the way shipped to Alabama</div>
+        </div>
+        <div class="form-group -x2">
+          <div class="form-label -text">Mar 22 &bull; 17:31</div>
+          <div>One way</div>
+        </div>
+        <div class="form-group -x2">
+          <div class="form-label -text">Mar 22 &bull; 17:31</div>
+          <div>Shipped to Alabama</div>
+        </div>
+        <div class="form-group -x2">
+          <div class="form-label -text">Mar 22 &bull; 17:31</div>
+          <div>One way</div>
+        </div>
+        <div class="form-group -x2">
+          <div class="form-label -text">Mar 22 &bull; 17:31</div>
+          <div>Shipped to Alabama</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

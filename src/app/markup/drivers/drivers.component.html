@@ -1,0 +1,89 @@
+<header class="page-header -fullscreen">
+  <h1>My Drivers</h1>
+</header>
+
+<div class="page-content -fullscreen">
+  <div class="page-fullscreen">
+    <div class="page-fullscreen-sidebar">
+      <div class="page-fullscreen-filter flex flex-column">
+        <div class="flex">
+          <input autocomplete="off" class="form-control flex-auto -addon" type="search" placeholder="Find Driver" />
+          <label class="form-addon flex items-center" title="Show only favorites"><input type="checkbox" hidden /><svg class="icon -favorite -filter"><use xlink:href="#svg_star"/></svg></label>
+        </div>
+        <div class="flex-auto"></div>
+        <div class="tab-container">
+          <ul class="nav -sm">
+            <li class="active"><a href="javascript:;" class="active">All</a></li>
+            <li><a href="javascript:;">Available</a></li>
+            <li><a href="javascript:;">In Transit</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="chat-list -offset">
+        <a href="javascript:;" class="card-link -offset -active">
+          <span class="card-title">
+            <span class="label-lg label-link regular block truncate">Boris Finerman</span>
+            <span class="label-gray block truncate">b.finerman@gmail.com</span>
+          </span>
+          <span class="pl3">
+            <span class="label-count -msg">31</span>
+          </span>
+        </a>
+        <a href="javascript:;" class="card-link -offset">
+          <span class="card-title">
+            <span class="label-lg label-link regular block truncate">
+              Silva Pancheto
+              <span class="card-icon -active"><svg class="icon -favorite"><use xlink:href="#svg_star"/></svg></span>
+            </span>
+            <span class="label-gray block truncate">pancheto@gmail.com</span>
+          </span>
+          <span class="pl3">
+            <span class="label-count -msg">1</span>
+          </span>
+        </a>
+        <a href="javascript:;" class="card-link -offset">
+          <span class="card-title">
+            <span class="label-lg label-link regular block truncate">Antonio Badrigez</span>
+            <span class="label-gray block truncate">badrigez@gmail.com</span>
+          </span>
+        </a>
+        <a href="javascript:;" class="card-link -offset">
+          <span class="card-title">
+            <span class="label-lg label-link regular block truncate">Barney Lock</span>
+            <span class="label-gray block truncate">kingpin@gmail.com</span>
+          </span>
+        </a>
+      </div>
+    </div>
+    <div class="flex-auto flex flex-column">
+      <div class="page-fullscreen-header flex items-center">
+        <div class="flex-auto">
+          <div class="form-group flex items-baseline">
+            <div class="form-label -text col-2">Driver</div>
+            <div class="pl3 truncate fs19 medium">Boris Finerman</div>
+          </div>
+          <div class="form-group flex items-baseline">
+            <div class="form-label -text col-2">Last location</div>
+            <div class="pl3">
+              1800 NE Alberta St
+              <br />
+              Portland, OR 97211, USA
+            </div>
+          </div>
+        </div>
+        <div class="pl3 flex">
+          <div class="pr2">
+            <label title="Mark as favorite"><input type="checkbox" hidden /><em class="form-favorite"><svg class="icon -favorite m0"><use xlink:href="#svg_star"/></svg></em></label>
+          </div>
+          <div class="pr2">
+            <a href="mailto:b.finerman@gmail.com" class="button -outline -icon"><svg class="icon -mail"><use xlink:href="#svg_mail"/></svg></a>
+          </div>
+          <div>
+            <a href="javascript:;" class="button -outline">Message <span class="label-count -msg">31</span></a>
+          </div>
+        </div>
+      </div>
+      <iframe width="100%" class="flex-auto" frameBorder="0" src="http://umap.openstreetmap.co/en/map/trip_703?scaleControl=false&miniMap=false&scrollWheelZoom=false&zoomControl=true&allowEdit=false&moreControl=false&datalayersControl=false&onLoadPanel=undefined"></iframe>
+    </div>
+  </div>
+</div>

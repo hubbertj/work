@@ -1,0 +1,151 @@
+﻿<div class="loading-page" [hidden]="!loading"><em></em><em></em><em></em></div>
+
+<div class="page-header">
+  <div class="page-header-back">
+    <a (click)="gotoLast()" class="button -outline -arrow-left" href="javascript:;">{{lastUrl.name}}</a>
+  </div>
+  <h1>Tendering Load #{{isCarrier ? load.carrierLoadNumber : load.brokerLoadNumber}}</h1>
+</div>
+
+
+<div class="page-info">
+  <div class="page-info-left">
+    <div class="form-group -x2">
+      <div class="form-label -text">BOL</div>
+      <div class="fs15 medium">{{load.bolNumber}}</div>
+    </div>
+    <div class="form-group -x2" *ngIf="isCarrier">
+      <div class="form-label -text">Broker</div>
+      <div>{{(load.brokerDivision && load.brokerDivision.code) || '-'}}</div>
+      <div>{{(load.brokerDivision && load.brokerDivision.name) || ''}}</div>
+    </div>
+  </div>
+  <div class="page-info-right">
+    <div class="page-info-content">
+      <div class="col-4 pr4">
+        <div class="form-label -text">Origin</div>
+        <div class="label-lg form-group">
+          {{stops[0] && stops[0].addressLines && stops[0].addressLines.join(', ')}}<br /> {{stops[0] && stops[0].city}}, {{stops[0] && stops[0].state}}, {{stops[0] && stops[0].postalCode}}
+        </div>
+        <div class="label-md form-group">{{stops[0] && stops[0].date}} &mdash; {{stops[0] && stops[0].time}}</div>
+      </div>
+      <div class="col-4 center align-middle pl3 pr2">
+        <div class="wayline">
+          <div class="wayline-content" [hidden]="stops.length < 3"><span class="label-count">{{stops.length - 2}}</span> Intermediate stop</div>
+        </div>
+      </div>
+      <div class="col-4 pl6 right-align">
+        <div class="form-label -text">Destination</div>
+        <div class="label-lg form-group">{{stops[stops.length - 1] && stops[stops.length - 1].addressLines && stops[stops.length - 1].addressLines.join(', ')}}<br /> {{stops[stops.length - 1] && stops[stops.length - 1].city}}, {{stops[stops.length - 1] && stops[stops.length - 1].state}}, {{stops[stops.length - 1] && stops[stops.length - 1].postalCode}}</div>
+        <div class="label-md form-group">{{stops[stops.length - 1] && stops[stops.length - 1].date}} &mdash; {{stops[stops.length - 1] && stops[stops.length - 1].time}}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-content">
+
+  <div class="flex relative" *ngIf="isCarrier">
+    <div class="modal-cols-separator"></div>
+    <div class="col-6 pr4">
+      <div class="flex items-baseline">
+        <h2 class="pr2">Drivers</h2>
+        <div class="flex flex-auto">
+          <input autocomplete="off" class="form-control flex-auto -addon" type="search" placeholder="Find Driver" [(ngModel)]="searchString" (ngModelChange)="filter()"/>
+          <label class="form-addon flex items-center" title="Show only favorites"><input type="checkbox" [(ngModel)]="onlyFavorites" (ngModelChange)="favoriteChecked()" hidden /><svg class="icon -favorite -filter"><use xlink:href="#svg_star"/></svg></label>
+        </div>
+      </div>
+      <div class="card" *ngFor="let driver of cleanDrivers">
+        <div class="card-bubble">
+          <a href="javascript:;" class="card-icon" messages [divisionId]="divisionId" [driverId]="driver.id" [ngClass]="{'-active': driver.isNewMessage}">
+            <svg class="icon -quote -md"><use xlink:href="#svg_quote"/></svg>
+          </a>
+        </div>
+        <div class="card-title">
+          <a href="javascript:;" class="label-lg regular" messages [divisionId]="divisionId" [driverId]="driver.id">{{driver.name}}</a>
+          <span class="card-icon" [ngClass]="{'-active': driver.isFavorite}">
+            <svg class="icon -favorite"><use xlink:href="#svg_star"/></svg>
+          </span>
+          <div class="label-gray">#{{driver.id}}</div>
+          <div class="label-gray">{{driver.email}}</div>
+        </div>
+        <div class="card-buttons">
+          <button type="button" class="button -outline-primary  card-button" [disabled]="cantAssign || load.status == 'Delivered'" (click)="changeStatus(driver, 'Assigned')">Assign</button>
+          <button type="button" class="button -outline card-button" [disabled]="cantAssign || load.status == 'Delivered'" (click)="changeStatus(driver, 'Offered')" *ngIf="!driver.assignmentStatus">Offer</button>
+          <span class="card-label" *ngIf="driver.assignmentStatus && driver.assignmentStatus == 'Offered'">
+            <button class="card-cancel" (click)="changeStatus(driver, null)">&times;</button>
+            <strong>Offered</strong>
+          </span>
+          <span class="card-label -disabled" *ngIf="driver.assignmentStatus && driver.assignmentStatus == 'Rejected'">
+            <strong>Rejected</strong>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 pl4">
+      <h2>Assigned to</h2>
+      <div class="card" *ngFor="let driver of acceptedDrivers">
+        <div class="card-bubble">
+          <a href="javascript:;" class="card-icon" messages [divisionId]="divisionId" [driverId]="driver.id" [ngClass]="{'-active': driver.isNewMessage}">
+            <svg class="icon -quote -md"><use xlink:href="#svg_quote"/></svg>
+          </a>
+        </div>
+        <div class="card-title">
+          <a href="javascript:;" class="label-lg regular" messages [divisionId]="divisionId" [driverId]="driver.id">{{driver.name}}</a>
+          <span class="card-icon" [ngClass]="{'-active': driver.isFavorite}">
+            <svg class="icon -favorite"><use xlink:href="#svg_star"/></svg>
+          </span>
+          <div class="label-gray">#{{driver.id}}</div>
+          <div class="label-gray">{{driver.email}}</div>
+        </div>
+        <div class="card-buttons -accepted">
+          <span class="card-label -primary">
+            <button class="card-cancel" [disabled]="load.status == 'Delivered'"  (click)="changeStatus(driver, null)">&times;</button>
+            <strong>Accepted</strong>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex relative" *ngIf="!isCarrier">
+    <div class="modal-cols-separator"></div>
+    <div class="col-6 pr4">
+      <div class="flex items-baseline">
+        <h2 class="pr2">Carriers</h2>
+        <div class="flex flex-auto">
+          <input autocomplete="off" class="form-control flex-auto -addon" type="search" placeholder="Find Carrier" [(ngModel)]="searchString" (ngModelChange)="filter()"/>
+          <label class="form-addon flex items-center" title="Show only favorites"><input type="checkbox" [(ngModel)]="onlyFavorites" (ngModelChange)="favoriteChecked()" hidden /><svg class="icon -favorite -filter"><use xlink:href="#svg_star"/></svg></label>
+        </div>
+      </div>
+      <div class="card" *ngFor="let carrier of cleanCarriers">
+        <div class="card-title pl3">
+          <span class="label-lg regular">{{carrier.name}}</span>
+          <span class="card-icon" [ngClass]="{'-active': carrier.isFavorite}">
+            <svg class="icon -favorite"><use xlink:href="#svg_star"/></svg>
+          </span>
+          <div class="label-gray">{{carrier.code}}</div>
+        </div>
+        <div class="card-buttons -accepted">
+          <button type="button" class="button -outline-primary card-button" [ngClass]="{'disabled': acceptedCarriers.length >= 1}" (click)="changeStatus(carrier, 'Assigned')">Assign</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 pl4">
+      <h2>Assigned to</h2>
+      <div class="card" *ngFor="let carrier of acceptedCarriers">
+        <div class="card-title pl3">
+          <div class="label-lg regular">{{carrier.name}}</div>
+          <div class="label-gray">{{carrier.code}}</div>
+        </div>
+        <div class="card-buttons -accepted">
+          <span class="card-label -primary">
+            <button class="card-cancel"  (click)="changeStatus(carrier, null)">&times;</button>
+            <strong>Accepted</strong>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

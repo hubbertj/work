@@ -1,0 +1,318 @@
+﻿<div class="loading-page" [hidden]="!loading"><em></em><em></em><em></em></div>
+<header class="page-header">
+  <div class="flex items-center">
+    <div class="flex-auto flex items-baseline">
+      <h1>Load #{{isCarrier ? load.carrierLoadNumber : load.brokerLoadNumber}}</h1>
+      <div [ngClass]="{'label-red': load.status === 'Declined', 'label-green': load.status !== 'Declined'}" class="label-lg pl2">{{load.status}}</div>
+    </div>
+    <div>
+      <transflo-share [loadId]="loadId" class="button-group" (onToggle)="closeNotifications($event)"></transflo-share>
+      <!-- Document scans, remove comments below in further releases -->
+      <div class="button -link -sm" dropdown keyboardNav="true" autoClose="outsideClick"  (onToggle)="closeNotifications($event)">
+        <button title="scans" class="button -link -sm" type="button" dropdownToggle>Document scans</button>
+        <div class="dropdown-menu -right" dropdownMenu  role="menu">
+          <ul class="menu -overflow">
+            <li *ngFor="let scan of load.documentScans" role="menuitem"><a class="dropdown-item" target="_blank" href="{{scan.url}}">{{scan.label}}</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="dropdown -inline -notification-dropdown"  [ngClass]="{'open': notificationsDropdown}">
+        <button type="button" [hidden]="isCommonCarrier" class="button -link -sm" (click)="openNotifications($event)">Notifications</button>
+        <div class="dropdown-menu -xlg2 -right" style="min-width: 500px; width: auto !important" role="menu">
+          <button class="dropdown-close" type="button" (click)="closeNotifications($event)">&times;</button>
+          <h2>Notifications</h2>
+          <div class="table-container -xlg2">
+            <table class="table -compact -matrix" >
+              <tbody *ngFor="let eventGroup of eventGroups; let idx = index">
+              <tr>
+                <th class="nowrap">
+                  <h3 class="m0 label-text">{{eventGroup.eventName}}</h3>
+                </th>
+                <th class="center nowrap"  [hidden]="idx != 0" *ngFor="let subscriber of subscribers; let subIdx = index">
+                  <div class="label-text" dropdown keyboardNav="true" autoClose="outsideClick">
+                    <span (click)="editSubscriber(subscriber);" dropdownToggle>{{subscriber.label}}</span>
+                    <div class="dropdown-menu -lg -text -right"  role="menu" dropdownMenu>
+                      <div class="flex items-end">
+                        <div class="flex-auto">
+                          <div class="form-group">
+                            <label class="form-label">Name</label>
+                            <input autocomplete="off" class="form-control" [(ngModel)]="currentSubscriber.label" type="text" />
+                          </div>
+                          <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input autocomplete="off" class="form-control"  (ngModelChange)="emailValidator(currentSubscriber, $event)" (blur)="blurEmail(currentSubscriber)" 
+								   [(ngModel)]="currentSubscriber.email" type="email" />
+						    <div [hidden]="currentSubscriber.hideEmailinValid" class="label-validation-error">Email Address is invalid</div>
+                          </div>
+                        </div>
+                        <div class="pl2">
+                          <button class="button -outline" type="button" [disabled]="inputinValid(currentSubscriber)"  (click)="updateSubscriber(subIdx);">Update</button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                  <button class="button -link label-danger bold" (click)="removeSubscriber(subIdx)">&times;</button>
+                </th>
+                <th class="center" *ngIf="idx == 0">
+                  <div class="dropdown -inline" dropdown keyboardNav="true" autoClose="outsideClick">
+                    <button class="button -link -sm medium" dropdownToggle><span class="plus">+</span> Add Email</button>
+                    <div class="dropdown-menu -lg -text -right" role="menu" dropdownMenu>
+                      <div class="flex items-end">
+                        <div class="flex-auto">
+                          <div class="form-group">
+                            <label class="form-label">Name</label>
+                            <input autocomplete="off" class="form-control" [(ngModel)]="newSubscriber.label" type="text" />
+                          </div>
+                          <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input autocomplete="off" class="form-control" (ngModelChange)="emailValidator(newSubscriber, $event)" (blur)="blurEmail(newSubscriber)" 
+								   [(ngModel)]="newSubscriber.email" type="email" />
+						    <div [hidden]="newSubscriber.hideEmailinValid" class="label-validation-error">Email Address is invalid</div>
+                          </div>
+                        </div>
+                        <div class="pl2">
+                          <button class="button -outline" type="button" [disabled]="inputinValid(newSubscriber)" (click)="addSubscriber()">Save</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </th>
+              </tr>
+              <tr *ngFor="let event of eventGroup.events">
+                <td class="align-middle">{{event.name}}</td>
+                <td class="center" *ngFor="let subscriber of subscribers">
+                  <label>
+                    <input type="checkbox" hidden [ngModel]="getSubscriberEvent(subscriber, event)" (ngModelChange)="setSubscriberEvent(subscriber, event, $event)"/>
+                    <em class="form-switcher"></em>
+                  </label>
+                </td>
+                <td class="center">
+                  <div class="form-switcher-placeholder"></div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- Document scans, remove comments below in further releases -->
+
+      <div class="button -link -sm" dropdown keyboardNav="true" autoClose="outsideClick"  (onToggle)="closeNotifications($event)">
+        <button title="links" class="button -link -sm" type="button" dropdownToggle>Links</button>
+        <div class="dropdown-menu -right" dropdownMenu  role="menu">
+          <ul class="menu">
+            <li *ngFor="let link of load.menu" role="menuitem">
+              <a class="dropdown-item" target="_blank" href="{{link.url}}">
+              {{link.name}}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <span class="buttons-separator"></span>
+
+      <!-- Remove this span after implementation of links and document scans -->
+      <span class="separator"></span>
+      <button type="button" class="button -primary" (click)="editLoad()">Edit Load</button>
+    </div>
+  </div>
+</header>
+
+<div class="page-content">
+  <div class="form-group">
+    <div class="flex form-group">
+      <div class="col-3 pr4">
+        <div class="form-group -x2">
+          <div class="form-label -text">BOL</div>
+          <div class="fs15 medium">{{load.bolNumber}}</div>
+        </div>
+        <div class="form-group -x2">
+          <div [hidden]="isCarrier">
+            <div class="form-label -text">
+              Carrier
+              <button class="button -outline -xs -icon" type="button" title="Edit" [hidden]="!load.carrierFleetId" (click)="goTendering()">
+                <svg class="icon -pen"><use xlink:href="#svg_pen"/></svg>
+              </button>
+            </div>
+            
+            <div class="form-group" [hidden]="load.carrierFleetId">
+              <button class="button -outline -xs" type="button" (click)="goTendering()">+ Assign</button>
+			  <transflo-drivers [drivers]="load.carrierTenderingInfo" [isCarrier]="isCarrier" [loadId]="load.id" [divisionId]="divisionId" [loadStatus]="load.status"></transflo-drivers>
+            </div>
+            <div class="form-group -x05">
+              <div>{{load.brokerTenderingInfo && load.brokerTenderingInfo.length > 0 ? load.brokerTenderingInfo[0].name : '' }}</div>
+            </div>
+          </div>
+          <div [hidden]="!isCarrier">
+              <div class="form-label -text">Broker</div>
+              <div>{{load.brokerTenderingInfo && load.brokerTenderingInfo.length > 0 ? load.brokerTenderingInfo[0].name : '-'}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-3 pl3 pr4">
+        <div class="form-label -text">Origin</div> 
+        <div class="label-lg form-group">{{stops[0] && stops[0].addressLines && stops[0].addressLines.join(', ')}}<br /> {{stops[0] && stops[0].city}}, {{stops[0] && stops[0].state}}, {{stops[0] && stops[0].postalCode}}</div>
+        <div class="label-md form-group">{{stops[0] && stops[0].date}} &mdash; {{stops[0] && stops[0].time}}</div>
+      </div>
+      <div class="col-3 center self-center pl3 pr2">
+        <div class="wayline">
+          <div class="wayline-content" [hidden]="stops.length < 3"><span class="label-count">{{stops.length - 2}}</span> Intermediate stop</div>
+        </div>
+      </div>
+      <div class="col-3 pl6 right-align">
+        <div class="form-label -text">Destination</div>
+        <div class="label-lg form-group">{{stops[stops.length - 1] && stops[stops.length - 1].addressLines && stops[stops.length - 1].addressLines.join(', ')}}<br /> {{stops[stops.length - 1] && stops[stops.length - 1].city}}, {{stops[stops.length - 1] && stops[stops.length - 1].state}}, {{stops[stops.length - 1] && stops[stops.length - 1].postalCode}}</div>
+        <div class="label-md form-group">{{stops[stops.length - 1] && stops[stops.length - 1].date}} &mdash; {{stops[stops.length - 1] && stops[stops.length - 1].time}}</div>
+      </div>
+    </div>
+    <div class="flex items-end form-group -x2">
+	  <div class="col-3 pr4">
+	  <div *ngIf="isCarrier">
+	    <div class="form-label -text">Drivers</div>
+	    <div [hidden]="load.carrierTenderingInfo && load.carrierTenderingInfo.length"></div>
+	    <transflo-drivers [drivers]="load.carrierTenderingInfo" [isCarrier]="isCarrier" [loadId]="load.id" [divisionId]="divisionId" [loadStatus]="load.status"></transflo-drivers>
+	  </div>
+		  <!--<div class="form-group -x05">
+		    <div class="label-title">{{load.carrierDivision && load.carrierDivision.code}}</div>
+		    <div>{{load.carrierDivision && load.carrierDivision.name}}</div>
+		  </div>
+		 
+		  <div [hidden]="!isCarrier">
+		    <div class="label-title">{{load.brokerDivision && load.brokerDivision.code}}</div>
+		    <div>{{load.brokerDivision && load.brokerDivision.name}}</div>
+		  </div>-->
+	 
+	
+	  </div>
+        <!--<div class="form-label -text">Drivers</div>
+        <div [hidden]="load.carrierTenderingInfo && load.carrierTenderingInfo.length"> - </div>
+        <transflo-drivers [drivers]="load.carrierTenderingInfo" [isCarrier]="isCarrier" [loadId]="load.id" [divisionId]="divisionId" [loadStatus]="load.status"></transflo-drivers>-->
+    
+      <div class="pr4 pl3">
+        <div class="form-label -text">Freight Terms</div>
+        <div class="fs15 medium">{{load.freightTerms}}</div>
+      </div>
+      <div class="pr4 pl3">
+        <div class="form-label -text form-group">Attributes</div>
+        <transflo-attributes class="flex items-center form-group -x05" [attrs]="load.loadAttributes"></transflo-attributes>
+      </div>
+      <div class="pr4 pl3">
+        <div class="form-label -text">Special Instructions</div>
+        <div dropdown keyboardNav="true">
+          <button type="button" class="button -link -sm -dotted" dropdownToggle>Read Instructions</button>
+          <div class="dropdown-menu -lg -text -center" role="menu" dropdownMenu>
+            <h3>Special Instructions</h3>
+            {{load.carrierSpecialInstructions}}
+          </div>
+        </div>
+      </div>
+	  <div class="flex-auto right-align pl3">
+	    <div class="form-label -text">Load Tracking</div>
+	    <div class="fs15 medium">{{load.loadTracking ? 'On' : 'Off'}}</div>
+	  </div>
+      <div class="flex-auto right-align pl3">
+        <div class="form-label -text">Rate</div>
+        <div class="fs15 medium">${{load.rate || 0}}</div>
+      </div>
+	  </div>
+    </div>
+  
+</div>
+
+<div class="map" *ngIf="load.showMap">
+  <div class="map-wrapper">
+    <div class="map-container" map [breadcrumbs]="breadcrumbs" [truck]="load.truckLocation" [stops]="stops" [nextStop]="load.nextStop" [show]="load.showMap" style="height: 430px;"></div>
+    <div class="map-sidebar" [ngClass]="{'-hidden': mapSidebarOpened == false}">
+      <button type="button" class="map-sidebar-toggle" (click)="mapSidebarOpened = !mapSidebarOpened" [ngClass]="{'-hidden': mapSidebarOpened == false}"></button>      
+      <div class="map-sidebar-list">
+        <div class="form-group -x2" *ngFor="let message of messages">
+          <div class="medium">{{message.title}}</div>
+          <div class="form-label -text fs12"><transflo-date [date]="message.timestamp" dontShowTime="true"></transflo-date> &bull; {{getTime(message.timestamp)}}</div>
+          <div>{{message.message}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-content">
+  <div class="form-group -x3">
+    <tabset [justified]="true">
+      <tab class="tab-pane" heading="Trip">
+      	<transflo-skeleton [load]="load"></transflo-skeleton>
+      </tab>
+      <tab heading="Shipments">
+
+        <div class="form-group -x6" *ngFor="let shipment of shipments; let idx = index">
+          <div class="form-group flex">
+            <div class="col-4 label-lg pr4">
+              Shipment {{idx + 1}}
+            </div>
+            <div class="col-8 label-lg pl3">
+              BOL {{shipment.shipmentBOL}}
+            </div>
+          </div>
+          <hr class="form-group -x15" />
+          <div class="form-group flex -x2">
+            <div class="col-4 pr4">
+              <div class="form-group" [hidden]="!shipment.shipmentCarrierSpecInstructions">
+                <div class="form-label -text">Special Instructions</div>
+                <div>
+                  {{shipment.shipmentCarrierSpecInstructions}}
+                  <!--button class="button -link -sm -dotted" type="button">Read more</button-->
+                </div>
+              </div>
+              <div class="form-group -x3" [hidden]="!shipment.orders || (shipment.orders && !shipment.orders.length)">
+                <div class="form-label -text">Order / Purchase order</div>
+                <div *ngFor="let order of shipment.orders">{{order.orderNUmber}} / {{order.purchaseOrderNumber}}</div>
+              </div>
+            </div>
+            <div class="col-8 pl3">
+              <div class="form-group flex">
+                <div class="col-4 pr4">
+                  <div class="form-label -text">Origin</div>
+                  <div class="form-group label-md medium">
+                    {{stopsHash[shipment.pickup] && stopsHash[shipment.pickup].addressLines && stopsHash[shipment.pickup].addressLines.join(', ')}}, {{stopsHash[shipment.pickup] && stopsHash[shipment.pickup].city}}, {{stopsHash[shipment.pickup] && stopsHash[shipment.pickup].state}}, {{stopsHash[shipment.pickup] && stopsHash[shipment.pickup].postalCode}}
+                  </div>
+                  <div class="form-group">{{stopsHash[shipment.pickup] && stopsHash[shipment.pickup].date}} &mdash; {{stopsHash[shipment.pickup] && stopsHash[shipment.pickup].time}}</div>
+                </div>
+                <div class="col-4 self-center pl2 pr2">
+                  <div class="wayline -sm"></div>
+                </div>
+                <div class="col-4 right-align pl4">
+                  <div class="form-label -text">Destination</div>
+                  <div class="form-group label-md medium">{{stopsHash[shipment.dropoff] && stopsHash[shipment.dropoff].addressLines && stopsHash[shipment.dropoff].addressLines.join(', ')}}, {{stopsHash[shipment.dropoff] && stopsHash[shipment.dropoff].city}}, {{stopsHash[shipment.dropoff] && stopsHash[shipment.dropoff].state}}, {{stopsHash[shipment.dropoff] && stopsHash[shipment.dropoff].postalCode}}</div>
+                  <div class="form-group">{{stopsHash[shipment.dropoff] && stopsHash[shipment.dropoff].date}} &mdash; {{stopsHash[shipment.dropoff] && stopsHash[shipment.dropoff].time}}</div>
+                </div>
+              </div>
+              <table class="table -compact -lined form-group -x3">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Qty</th>
+                    <th class="right-align">Weight</th>
+                    <th class="right-align">Volume</th>
+                    <th class="right-align">Height</th>
+                    <th class="right-align">Freight Class</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let package of shipment.packages">
+                    <td>{{package.type}}</td>
+                    <td>{{package.quantity || 0}}</td>
+                    <td class="right-align">{{package.weight || 0}} {{package.weightUnit}}</td>
+                    <td class="right-align">{{package.volume || 0}} {{package.sizeUnit}}³</td>
+                    <td class="right-align">{{package.height || 0}} {{package.sizeUnit}}</td>
+                    <td class="right-align">{{package.freightClass}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </tab>
+    </tabset>
+  </div>
+</div>

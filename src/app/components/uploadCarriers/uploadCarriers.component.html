@@ -1,0 +1,26 @@
+﻿  <div dropdown keyboardNav="true" autoClose="outsideClick">
+    <button type="button" class="button -link -sm" dropdownToggle (click)="uploadCarriersInit()">Upload Carriers List</button>
+    <div class="dropdown-menu -xlg2 -center" role="menu" dropdownMenu>
+	  <div class="flex-auto">
+		<div class="form-group">
+			<a  [href]="carriersUpoadSampleUrl">Download Carriers List Sample - TXT</a>
+		</div>
+		<br />
+		<div >
+		 <label class="form-label">Division</label>
+		  <select class="form-control" [(ngModel)]="brokerCode">
+			<option *ngFor="let broker of brokers" value={{broker.code}}>
+			  {{broker.name}}&bull;{{broker.code}}
+			</option>
+		  </select>
+		</div>
+		<br/>
+		<div class="form-group">
+		  <input #uploadFilesInput  type="file" [disabled]="!brokerCode" (click)="cleanFile()" (change)="fileChange($event)" placeholder="Upload file" accept=".txt">
+		</div>
+		<div class="form-group " [class.upload-error]="!uploadSucceeded" [class.upload-succeeded]="uploadSucceeded" [hidden]="hideUploadStatus">{{uploadStatusMessage}}</div>
+		<div class="loading-page" style="position:static!important;padding-left:50%;" [ngClass]="{'showLoader':fileUploading,'hideLoader':!fileUploading}"><em></em><em></em><em></em></div>
+		<button type="button" class="button -primary" style="float:right !important;" (click)="uploadFile()" [disabled]="!brokerCode || !fileToUpload || fileUploading">Upload</button>
+	  </div>
+	</div>
+  </div>

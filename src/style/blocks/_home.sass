@@ -1,0 +1,114 @@
+.home-container-placeholder
+  height: 400px
+
+.home-container
+  position: absolute
+  left: 0
+  right: 0
+  top: 50px
+  bottom: 0
+  z-index: 3
+  background-color: $color-body
+  display: flex
+
+.home-leftbar
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  overflow-x: hidden
+  padding: 30px 30px 100px
+  display: flex
+  flex-direction: column
+  position: relative
+  z-index: 2
+
+.home-leftbar-body
+  flex: 1 1 auto
+  width: 190px
+  position: relative
+
+.home-leftbar-footer
+  font-size: 15px
+  text-align: center
+  width: 190px
+  position: absolute
+  left: 0
+  bottom: -70px
+
+.home-center
+  background-color: #f4f4f4
+  flex: 1 1 auto
+  overflow: hidden
+  height: 100%
+  min-height: 100%
+  z-index: 1
+
+.home-rightbar
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  overflow-x: hidden
+  position: relative
+  z-index: 2
+  &.-no-scroll
+    overflow: visible
+
+.home-rightbar-content
+  width: 250px
+  height: 600px
+
+.home-stats
+  margin: 0
+  padding: 0
+  display: flex
+  flex-wrap: wrap
+  li
+    list-style: none
+    border-bottom: 1px solid #ebebeb
+    padding: 25px 10px 25px 30px
+    width: 50%
+    line-height: 1.4
+    position: relative
+    &:nth-child(2n)
+      padding-left: 15px
+      padding-right: 25px
+      &.-with-marker:before
+        left: 0
+    span
+      font-size: 22px
+      display: block
+      line-height: 1
+      margin-bottom: 10px
+    &.-with-marker
+      &:before
+        content: ""
+        position: absolute
+        left: 15px
+        top: 62px
+        width: 8px
+        height: 8px
+        border-radius: 100%
+        background-color: #FAE674
+      &.-marker-available:before
+        background-color: #FAE674
+      &.-marker-transit:before
+        background-color: #F1A0D3
+      &.-marker-assigned:before
+        background-color: #BAEE8C
+      &.-marker-offered:before
+        background-color: #FD9455
+      &.-marker-declined:before
+        background-color: #FF4A4E
+      &.-marker-delivered:before
+        background-color: #62CCFD
+      &.-marker-accepted:before
+        background-color: #30A46F
+  &.-inline
+    margin-left: -25px
+    margin-right: -25px
+    li
+      border-bottom: none
+
+.home-load
+  padding: 25px 25px 25px 48px
+
+.home-info
+  padding: 25px

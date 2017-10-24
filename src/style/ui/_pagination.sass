@@ -1,0 +1,45 @@
+.pagination
+  margin-top: 10px
+  display: flex
+  flex-direction: row
+  justify-content: flex-end
+  align-items: baseline
+  font-size: 13px
+  a
+    display: inline-block
+    padding: 0 6px
+    line-height: 20px
+    min-width: 20px
+    text-align: center
+    cursor: pointer
+    margin-left: 3px
+    &.-active
+      color: $color-body
+      background-color: $color-main
+      border-radius: 10px
+      cursor: default
+      font-weight: 500
+    &.-prev, &.-next
+      &:before
+        content: ''
+        display: inline-block
+        border-top: 2px solid $color-main
+        border-left: 2px solid $color-main
+        width: 6px
+        height: 6px
+        margin-top: -6px
+        margin-bottom: -3px
+        vertical-align: middle
+    &.-prev:before
+      transform: rotate(-45deg)
+    &.-next:before
+      transform: rotate(135deg)
+    &.-disabled
+      color: #cdcdcd
+      cursor: default
+      &:before
+        border-color: #cdcdcd
+
+.pagination-alert
+  flex: 1
+  color: #aaaaaa

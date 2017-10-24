@@ -1,0 +1,210 @@
+.icon
+  display: inline-block
+  transform: scale(0.99999)
+
+  &.-logo
+    width: 83px
+    height: 24px
+    fill: currentColor
+    vertical-align: middle
+    margin: -4px 0 -2px
+
+  &.-logo-lg
+    width: 183px
+    height: 53px
+    fill: currentColor
+
+  &.-pen
+    width: 9px
+    height: 9px
+    fill: currentColor
+    margin: -6px 0 -2px 1px
+    vertical-align: middle
+
+  &.-pen-lg
+    width: 14px
+    height: 14px
+    fill: currentColor
+    margin: -1px 0 1px 1px
+
+  &.-quote
+    width: 12px
+    height: 11px
+    fill: currentColor
+    &.-md
+      width: 16px
+      height: 16px
+
+  &.-danger
+    width: 14px
+    height: 12px
+    stroke: currentColor
+    vertical-align: middle
+    margin: -1px 8px 1px 0
+    &.-md
+      width: 19px
+      height: 17px
+
+  &.-ruby
+    width: 13px
+    height: 11px
+    fill: currentColor
+    vertical-align: middle
+    margin: -1px 8px 1px 0
+    &.-md
+      width: 17px
+      height: 14px
+
+  &.-fragile
+    width: 13px
+    height: 11px
+    fill: currentColor
+    vertical-align: middle
+    margin: -1px 8px 1px 0
+    &.-md
+      width: 17px
+      height: 14px
+
+  &.-checkbox
+    width: 16px
+    height: 16px
+    position: relative
+    z-index: 2
+    float: left
+    fill: $color-active
+    margin: -2px -26px 0
+
+  &.-add
+    transform: none
+    width: 23px
+    height: 23px
+    border: 1px solid currentColor
+    border-radius: 50%
+    margin: -4px 5px -2px 0
+    text-align: left
+    text-indent: -999em
+    overflow: hidden
+    vertical-align: middle
+    position: relative
+    &:before, &:after
+      background-color: currentColor
+      position: absolute
+      content: ''
+      display: block
+    &:before
+      height: 1px
+      width: 7px
+      left: 7px
+      top: 10px
+    &:after
+      width: 1px
+      height: 7px
+      left: 10px
+      top: 7px
+
+  &.-up, &.-down
+    width: 17px
+    height: 14px
+    fill: currentColor
+
+  &.-trash
+    width: 12px
+    height: 14px
+    fill: currentColor
+    vertical-align: middle
+    margin: -3px 0 -1px
+
+  &.-star
+    width: 12px
+    height: 12px
+    margin: 2px -22px
+    float: left
+    color: $color-active
+    fill: currentColor
+
+  &.-favorite
+    width: 12px
+    height: 12px
+    margin-left: 3px
+    fill: currentColor
+    &.-filter
+      margin: -1px 0 1px
+
+  &.-alert
+    width: 18px
+    height: 18px
+    border-radius: 50%
+    border: 2px solid currentColor
+    vertical-align: middle
+    margin: -5px 2px -2px -4px
+    position: relative
+    &:before, &:after
+      background-color: currentColor
+      width: 2px
+      left: 6px
+      content: ''
+      display: block
+      position: absolute
+    &:before
+      top: 2px
+      height: 7px
+    &:after
+      top: 10px
+      height: 2px
+    &.-lg
+      display: block
+      margin: 0 auto 20px
+      border-width: 4px
+      width: 55px
+      height: 55px
+      &:before
+        width: 4px
+        top: 8px
+        height: 19px
+        left: 22px
+      &:after
+        width: 4px
+        top: 33px
+        height: 6px
+        left: 22px
+
+  &.-fields
+    width: 14px
+    height: 10px
+    background-color: $color-main
+    margin: 0.4em -24px
+    float: left
+    position: relative
+    &:before, &:after
+      content: ''
+      display: block
+      position: absolute
+    &:before
+      left: 2px
+      top: 0
+      width: 2px
+      height: 10px
+      background-color: $color-body
+    &:after
+      top: 2px
+      left: 0
+      width: 14px
+      height: 6px
+      border-top: 2px solid $color-body
+      border-bottom: 2px solid $color-body
+
+  &.-mail
+    width: 12px
+    height: 11px
+    fill: currentColor
+
+  &.-datepicker
+    width: 28px
+    height: 28px
+    fill: $color-main
+
+  &.-chat-group
+    vertical-align: bottom
+    width: 37px
+    height: 40px
+    fill: currentColor

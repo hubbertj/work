@@ -1,0 +1,705 @@
+﻿<header class="page-header flex items-center" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+  <h1 class="pr3">Loads</h1>
+  <a class="button -primary" href="#/markup/loads/create">+ Create new load</a>
+</header>
+<header class="page-header">
+  <form action="" class="filters-form" role="form" novalidate>
+    <div class="form-group flex">
+      <div class="col-4 pr4">
+        <label class="form-label">Status</label>
+        <ng-select [data]="value" [multiple]="true" [items]="filter_status" placeholder="Select statuses"></ng-select>
+      </div>
+      <div class="col-4 pr4">
+        <label class="form-label" for="filter_identifiers">Parameters</label>
+        <input autocomplete="off" class="form-control" type="text" placeholder="Load #, BOL #, attributes" id="filter_identifiers" />
+      </div>
+      <div class="col-4 pr3">
+        <label class="form-label">Broker</label>
+        <ng-select [data]="value" [multiple]="true" [items]="filter_division" placeholder="Select brokers"></ng-select>
+      </div>
+      <div>
+        <label class="form-label">&nbsp;</label>
+        <button class="button" type="button">Apply</button>
+      </div>
+    </div>
+    <div class="form-group -x3 filter-container" [hidden]="!filtersOpened">
+      <div class="flex">
+        <div class="col-4 pr4">
+          <div class="form-label">Origin</div>
+          <div class="form-group flex">
+            <div class="col-4">
+              <select class="form-control">
+                <option>CA</option>
+              </select>
+            </div>
+            <div class="col-8 pl2">
+              <input autocomplete="off" class="form-control" placeholder="City" />
+            </div>
+          </div>
+          <div class="form-group col-6">
+            <div class="form-label">Shipping</div>
+            <input autocomplete="off" class="form-control -select" placeholder="Select dates" readonly />
+          </div>
+        </div>
+        <div class="col-4 pr4">
+          <div class="form-label">Destination</div>
+          <div class="form-group flex">
+            <div class="col-4">
+              <div class="filters-direction"></div>
+              <select class="form-control">
+                <option>CA</option>
+              </select>
+            </div>
+            <div class="col-8 pl2">
+              <input autocomplete="off" class="form-control" placeholder="City" />
+            </div>
+          </div>
+          <div class="form-group col-6">
+            <div class="form-label">Delivery</div>
+            <input autocomplete="off" class="form-control -select" placeholder="Select dates" readonly />
+          </div>
+        </div>
+        <div>
+          <button class="button visually-hidden" type="button">Apply</button>
+        </div>
+        <div class="col-4">
+          <div class="form-group -x3">
+            <label class="form-label">Offered to Driver</label>
+            <input autocomplete="off" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assigned to Driver</label>
+            <input autocomplete="off" class="form-control" />
+          </div>
+        </div>
+      </div>
+      <button class="filters-clear" type="reset">Clear Filters</button>
+    </div>
+    <button type="button" class="filters-button -active" (click)="filtersOpened = true" [hidden]="filtersOpened">More Filters</button>
+    <button type="button" class="filters-button -opened" (click)="filtersOpened = false" [hidden]="!filtersOpened">Less Filters</button>
+  </form>
+</header>
+
+<div class="page-content">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th><a href="#" class="table-head-sort -asc">Shipping</a></th>
+        <th><a href="#">Delivery</a></th>
+        <th>Origin</th>
+        <th class="-half"><span class="table-head-short">Stops</span></th>
+        <th class="-half">Destination</th>
+        <th>Identifiers</th>
+        <th>Division</th>
+        <th>Driver</th>
+        <th>Status</th>
+        <th width="1%">Attrs</th>
+        <th width="1%" class="-half"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--Line-->
+      <tr>
+        <td>
+          Mar 20
+          <span class="label-small">All Day</span>
+        </td>
+        <td>
+          Mar 22
+          <span class="label-small">All Day</span>
+        </td>
+        <td>86559 6th Avenue Wasilla, AK 99654</td>
+        <td class="-half">
+          <span class="label-count -red pointer" (click)="loadModal.show()">3</span>
+        </td>
+        <td>9987 10th Street Buffalo Groove, IL 60089</td>
+        <td class="-half">
+          <div class="form-group">
+            <span class="label-title">Load#</span>
+            <span class="nowrap">45678</span>
+          </div>
+          <div class="form-group">
+            <span class="label-title">BOL</span>
+            <span class="nowrap">9078 123-543-876 0001</span>
+          </div>
+        </td>
+        <td>
+          <span class="label-title">1234538345</span>
+          Div CA
+        </td>
+        <td>
+          <button class="button -outline -xs" type="button">+ Assign</button>
+        </td>
+        <td>
+          <span class="nowrap label-green">Available</span>
+        </td>
+        <td>
+          <span class="label-empty">&mdash;</span>
+        </td>
+        <td class="-half">
+          <div class="dropdown" dropdown keyboardNav="true">
+            <button class="table-actions" title="Actions" type="button" dropdownToggle>&bull;</button>
+            <ul class="dropdown-menu -right" role="menu" dropdownMenu>
+              <li role="menuitem"><a class="dropdown-item" href="#">Share</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Scans</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Edit</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Move to Division</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Clone</a></li>
+              <li role="menuitem"><a class="dropdown-item label-red" href="#">Delete</a></li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      <!--Line-->
+      <tr class="-new">
+        <td>
+          Mar 12
+          <span class="label-small">All Day</span>
+        </td>
+        <td>
+          Mar 18
+          <span class="label-small">All Day</span>
+        </td>
+        <td>373 Broad Street Franklin, MA 02038</td>
+        <td class="-half"></td>
+        <td class="-half">8619 Briarwood Court Norwood, MA 02062</td>
+        <td>
+          <div class="form-group">
+            <span class="label-title">Load#</span>
+            <span class="nowrap">8234593</span>
+          </div>
+          <div class="form-group">
+            <span class="label-title">BOL</span>
+            <span class="nowrap">1004 658-234-1</span>
+          </div>
+        </td>
+        <td>
+          <span class="label-title">34981345-445</span>
+          Div NY
+        </td>
+        <td>
+          <span class="label-title nowrap">
+            Assigned to&nbsp;
+            <button class="button -outline -xs -icon" type="button" title="Edit">
+              <svg class="icon -pen"><use xlink:href="#svg_pen"/></svg>
+            </button>
+          </span>
+          <ul class="user-selected-list">
+            <li>
+              <a href="#" class="user-selected-list_bubble">
+                <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+              </a>
+              <a href="#">Sebastian P. Fleteefwewrgf</a>
+            </li>
+            <li>
+              <a href="#" class="user-selected-list_bubble -active">
+                <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+              </a>
+              <a href="#">Jorge A. Seachin</a>
+            </li>
+          </ul>
+        </td>
+        <td>
+          <span class="nowrap">In Transit</span>
+        </td>
+        <td>
+          <div class="form-group -x05"><svg class="icon -ruby"><use xlink:href="#svg_ruby"/></svg></div>
+        </td>
+        <td class="-half">
+          <div class="dropdown" dropdown keyboardNav="true">
+            <button class="table-actions" title="Actions" type="button" dropdownToggle>&bull;</button>
+            <ul class="dropdown-menu -right" role="menu" dropdownMenu>
+              <li role="menuitem"><a class="dropdown-item" href="#">Share</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Scans</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Edit</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Move to Division</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Clone</a></li>
+              <li role="menuitem"><a class="dropdown-item label-red" href="#">Delete</a></li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      <!--Line-->
+      <tr>
+        <td>
+          Mar 20
+          <span class="label-small">All Day</span>
+        </td>
+        <td>
+          Mar 23
+          <span class="label-small">10:15 AM</span>
+        </td>
+        <td>8697 Warren Avenue Salem, MA 01970</td>
+        <td class="-half"></td>
+        <td class="-half">7323 Railroad Street Millington, TN 38053</td>
+        <td>
+          <div class="form-group">
+            <span class="label-title">Load#</span>
+            <span class="nowrap">04dfew31</span>
+          </div>
+          <div class="form-group">
+            <span class="label-title">BOL</span>
+            <span class="nowrap">4289 452-453-452</span>
+          </div>
+        </td>
+        <td>
+          <span class="label-title">1239</span>
+          Div CA
+        </td>
+        <td>
+          <span class="label-title nowrap">
+            Offered to&nbsp;
+            <button class="button -outline -xs -icon" type="button" title="Edit">
+              <svg class="icon -pen"><use xlink:href="#svg_pen"/></svg>
+            </button>
+          </span>
+          <ul class="user-selected-list">
+            <li>
+              <a href="#" class="user-selected-list_bubble">
+                <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+              </a>
+              <a href="#">Ernesto Bodrigeigwefe</a>
+            </li>
+            <li class="dropdown" dropdown keyboardNav="true">
+              <a href="javascript:;" dropdownToggle>
+                and 5 others
+              </a>
+              <div class="dropdown-menu" role="menu" dropdownMenu>
+                <ul class="user-selected-list -dropdown">
+                  <li>
+                    <a href="#" class="user-selected-list_bubble">
+                      <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+                    </a>
+                    <a href="#">John Black</a>
+                  </li>
+                  <li>
+                    <a href="#" class="user-selected-list_bubble -active">
+                      <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+                    </a>
+                    <a href="#">Sebastian Forks</a>
+                  </li>
+                  <li>
+                    <a href="#" class="user-selected-list_bubble -active">
+                      <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+                    </a>
+                    <a href="#">Antonio Radrigez</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </td>
+        <td>
+          <span class="nowrap label-green">Available</span>
+        </td>
+        <td>
+          <div class="form-group -x05"><svg class="icon -danger"><use xlink:href="#svg_danger"/></svg></div>
+          <div class="form-group -x05"><svg class="icon -ruby"><use xlink:href="#svg_ruby"/></svg></div>
+          <div class="form-group -x05"><svg class="icon -fragile"><use xlink:href="#svg_fragile"/></svg></div>
+          <div class="form-group -x05 dropdown" dropdown keyboardNav="true">
+            <button type="button" class="button -outline -xs -arrow" dropdownToggle>5</button>
+            <div class="dropdown-menu -sm -text -center" role="menu" dropdownMenu>
+              <table class="table -list">
+                <tbody>
+                  <tr>
+                    <td class="align-middle center">
+                      <svg class="icon -danger m0"><use xlink:href="#svg_danger"/></svg>
+                    </td>
+                    <td>Hazardous</td>
+                  </tr>
+                  <tr>
+                    <td class="align-middle center">
+                      <svg class="icon -ruby m0"><use xlink:href="#svg_ruby"/></svg>
+                    </td>
+                    <td>High Value</td>
+                  </tr>
+                  <tr>
+                    <td class="align-middle center">
+                      &bull;
+                    </td>
+                    <td>Number of stop: 5</td>
+                  </tr>
+                  <tr>
+                    <td class="align-middle center">
+                      <svg class="icon -fragile m0"><use xlink:href="#svg_fragile"/></svg>
+                    </td>
+                    <td>Fragile</td>
+                  </tr>
+                  <tr>
+                    <td class="align-middle center">
+                      &bull;
+                    </td>
+                    <td>Phone number: (555) 555-1234</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </td>
+        <td class="-half">
+          <div class="dropdown" dropdown keyboardNav="true">
+            <button class="table-actions" title="Actions" type="button" dropdownToggle>&bull;</button>
+            <ul class="dropdown-menu -right" role="menu" dropdownMenu>
+              <li role="menuitem"><a class="dropdown-item" href="#">Share</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Scans</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Edit</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Move to Division</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Clone</a></li>
+              <li role="menuitem"><a class="dropdown-item label-red" href="#">Delete</a></li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      <!--Line-->
+      <tr>
+        <td>
+          Mar 12
+          <span class="label-small">All Day</span>
+        </td>
+        <td>
+          Mar 18
+          <span class="label-small">All Day</span>
+        </td>
+        <td>373 Broad Street Franklin, MA 02038</td>
+        <td class="-half">
+          <span class="label-count -red pointer" (click)="loadModal.show()">5</span>
+        </td>
+        <td class="-half">8619 Briarwood Court Norwood, MA 02062</td>
+        <td>
+          <div class="form-group">
+            <span class="label-title">Load#</span>
+            <span class="nowrap">8234593</span>
+          </div>
+          <div class="form-group">
+            <span class="label-title">BOL</span>
+            <span class="nowrap">1004 658-234-1</span>
+          </div>
+        </td>
+        <td>
+          <span class="label-title">34981345-445</span>
+          Div NY
+        </td>
+        <td>
+          <span class="label-title nowrap">
+            Assigned to&nbsp;
+            <button class="button -outline -xs -icon" type="button" title="Edit">
+              <svg class="icon -pen"><use xlink:href="#svg_pen"/></svg>
+            </button>
+          </span>
+          <ul class="user-selected-list">
+            <li>
+              <a href="#" class="user-selected-list_bubble -active">
+                <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+              </a>
+              <a href="#">Sebastian P. Fleteefwewrgf</a>
+            </li>
+            <li>
+              <a href="#" class="user-selected-list_bubble -active">
+                <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+              </a>
+              <a href="#">Jorge A. Seachin</a>
+            </li>
+          </ul>
+        </td>
+        <td>
+          <span class="nowrap label-green">Available</span>
+        </td>
+        <td>
+          <span class="label-empty">&mdash;</span>
+        </td>
+        <td class="-half">
+          <div class="dropdown" dropdown keyboardNav="true">
+            <button class="table-actions" title="Actions" type="button" dropdownToggle>&bull;</button>
+            <ul class="dropdown-menu -right" role="menu" dropdownMenu>
+              <li role="menuitem"><a class="dropdown-item" href="#">Share</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Scans</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Edit</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Move to Division</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Clone</a></li>
+              <li role="menuitem"><a class="dropdown-item label-red" href="#">Delete</a></li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      <!--Line-->
+      <tr>
+        <td>
+          Mar 20
+          <span class="label-small">All Day</span>
+        </td>
+        <td>
+          Mar 23
+          <span class="label-small">All Day</span>
+        </td>
+        <td>8697 Warren Avenue Salem, MA 01970</td>
+        <td class="-half">
+          <span class="label-count -red pointer" (click)="loadModal.show()">1</span>
+        </td>
+        <td class="-half">7323 Railroad Street Millington, TN 38053</td>
+        <td>
+          <div class="form-group">
+            <span class="label-title">Load#</span>
+            <span class="nowrap">8234593</span>
+          </div>
+          <div class="form-group">
+            <span class="label-title">BOL</span>
+            <span class="nowrap">1004 658-234-1</span>
+          </div>
+        </td>
+        <td>
+          <span class="label-title">34981345-445</span>
+          Div CA
+        </td>
+        <td>
+          <span class="label-title nowrap">
+            Offered to&nbsp;
+            <button class="button -outline -xs -icon" type="button" title="Edit">
+              <svg class="icon -pen"><use xlink:href="#svg_pen"/></svg>
+            </button>
+          </span>
+          <ul class="user-selected-list">
+            <li>
+              <a href="#" class="user-selected-list_bubble">
+                <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+              </a>
+              <a href="#">Ernesto Bodrigeigwefe</a>
+            </li>
+            <li class="dropdown" dropdown keyboardNav="true">
+              <a href="javascript:;" dropdownToggle>
+                and 5 others
+              </a>
+              <div class="dropdown-menu" role="menu" dropdownMenu>
+                <ul class="user-selected-list -dropdown">
+                  <li>
+                    <a href="#" class="user-selected-list_bubble">
+                      <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+                    </a>
+                    <a href="#">John Black</a>
+                  </li>
+                  <li>
+                    <a href="#" class="user-selected-list_bubble -active">
+                      <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+                    </a>
+                    <a href="#">Sebastian Forks</a>
+                  </li>
+                  <li>
+                    <a href="#" class="user-selected-list_bubble -active">
+                      <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+                    </a>
+                    <a href="#">Antonio Radrigez</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </td>
+        <td>
+          <span class="nowrap label-green">Available</span>
+        </td>
+        <td>
+          <div class="form-group"><svg class="icon -fragile"><use xlink:href="#svg_fragile"/></svg></div>
+        </td>
+        <td class="-half">
+          <div class="dropdown" dropdown keyboardNav="true" autoClose="disabled" (onToggle)="moveDivision = false;">
+            <button class="table-actions" title="Actions" type="button" dropdownToggle>&bull;</button>
+            <ul class="dropdown-menu -right" role="menu" dropdownMenu [hidden]="moveDivision">
+              <li role="menuitem"><a class="dropdown-item" href="#">Share</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Scans</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Edit</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="javascript:;" (click)="moveDivision = true;">Move to Division</a></li>
+              <li role="menuitem"><a class="dropdown-item" href="#">Clone</a></li>
+              <li role="menuitem"><a class="dropdown-item label-red" href="#">Delete</a></li>
+            </ul>
+            <div class="dropdown-menu -right -lg2" role="menu" dropdownMenu [hidden]="!moveDivision">
+              <h2>Move load to other division</h2>
+              <div class="form-group flex">
+                <div class="col-8 pr2">
+                  <input class="form-control" />
+                </div>
+                <div class="col-4">
+                  <button class="button -outline -block" type="button">Move Load</button>
+                </div>
+              </div>
+              <hr />
+              <div class="form-group">
+                <strong class="label-danger">Driver</strong> assignation <strong class="label-danger">will be dropped</strong>
+                because Sebastian P. Fletcher isn’t related to Div NY.
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="pagination">
+    <div class="pagination-alert">
+      <strong class="medium label-danger">Limit of 200 loads reached.</strong>
+      Please, refine the filter settings. There are more loads but we can’t show them.
+    </div>
+    <a href="#" class="-prev -disabled" title="Previous"></a>
+    <a href="#" class="-active">1</a>
+    <a href="#">2</a>
+    <a href="#">3</a>
+    <a href="#">4</a>
+    <a href="#">5</a>
+    <a href="#">6</a>
+    <a href="#">7</a>
+    <a href="#">8</a>
+    <a href="#" class="-next" title="Next"></a>
+  </div>
+</div>
+
+
+
+
+<!-- Load modal -->
+<div bsModal #loadModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLoadModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="modal-close" aria-label="Close" (click)="loadModal.hide()" title="Close">&times;</button>
+        <h1 class="modal-title">Load #14323 Trip</h1>
+      </div>
+      <div class="modal-body">
+
+        <div class="skeleton">
+
+          <div class="skeleton-item">
+            <div class="skeleton-bubble -left">
+              <div class="skeleton-bubble-header flex items-baseline">
+                <strong class="flex-auto">Pick Up</strong>
+                <small>480 ft³</small>
+                <small>1,009 lbs</small>
+              </div>
+              <ul class="skeleton-bubble-list">
+                <li>
+                  <span>1 pcs</span>
+                  <span>57 ft³</span>
+                  <span>57 lbs</span>
+                  <strong><a href="#">BOL 907</a></strong>
+                </li>
+                <li>
+                  <span>1 pcs</span>
+                  <span>57 ft³</span>
+                  <span>32 lbs</span>
+                  <strong><a href="#">S/ID 754</a></strong>
+                </li>
+                <li>
+                  <span>1 pcs</span>
+                  <span>68 ft³</span>
+                  <span>68 lbs</span>
+                  <strong><a href="#">S/ID 754</a></strong>
+                </li>
+                <li>
+                  <span>1 pcs</span>
+                  <span>123 ft³</span>
+                  <span>481 lbs</span>
+                  <strong><a href="#">BOL 8346</a></strong>
+                </li>
+              </ul>
+            </div>
+            <div class="skeleton-item-container">
+              <div class="flex flex-wrap content-stretch">
+                <p class="col-6 pr2"><strong>Mar 21</strong> All Day</p>
+                <div class="col-6 right-align pl2">
+                  <strong class="pl2">127 ft³</strong>
+                  <strong class="pl2">481 lbs</strong>
+                  <div class="skeleton-item-hint">Truck Load</div>
+                </div>
+                <p class="col-6 self-end pr2 pt3"><strong>3036 Parkway Street,</strong> Desert Hot Springs USA, CA,15229</p>
+                <div class="col-6 right-align self-end pl2 pt3">
+                  <strong>Dulce R. Morrow</strong>
+                  <div>Luria’s</div>
+                </div>
+              </div>
+            </div>
+            <div class="skeleton-item-footer"></div>
+          </div>
+
+          <div class="skeleton-item">
+            <div class="skeleton-bubble -right">
+              <div class="skeleton-bubble-header">
+                <strong>Drop Off</strong>
+              </div>
+              <ul class="skeleton-bubble-list">
+                <li>
+                  <span>5 pcs</span>
+                  <span>123 ft³</span>
+                  <span>481 lbs</span>
+                  <strong><a href="#">BOL 9078 123-543-876 0001</a></strong>
+                </li>
+              </ul>
+            </div>
+            <div class="skeleton-item-container">
+              <div class="flex flex-wrap content-stretch">
+                <p class="col-6 pr2"><strong>Mar 20</strong> Morning</p>
+                <div class="col-6 right-align pl2">
+                  <strong class="pl2">234 ft³</strong>
+                  <strong class="pl2">201 lbs</strong>
+                  <div class="skeleton-item-hint">Truck Load</div>
+                </div>
+                <p class="col-6 self-end pr2 pt3"><strong>734 University Drive,</strong> Burr Ridge USA, IL, 60527</p>
+                <div class="col-6 right-align self-end pl2 pt3">
+                  <strong>Fred P. Carr</strong>
+                  <div>Superior Interior Design</div>
+                </div>
+              </div>
+            </div>
+            <div class="skeleton-item-footer"></div>
+          </div>
+
+          <div class="skeleton-item">
+            <div class="skeleton-item-container">
+              <p>Stop</p>
+            </div>
+            <div class="skeleton-item-footer"></div>
+          </div>
+
+          <div class="skeleton-item">
+            <div class="skeleton-bubble -right">
+              <div class="skeleton-bubble-header">
+                <strong>Drop Off</strong>
+              </div>
+              <ul class="skeleton-bubble-list">
+                <li>
+                  <span>1 pcs</span>
+                  <span>57 ft³</span>
+                  <span>57 lbs</span>
+                  <strong><a href="#">BOL 907</a></strong>
+                </li>
+                <li>
+                  <span>1 pcs</span>
+                  <span>57 ft³</span>
+                  <span>32 lbs</span>
+                  <strong><a href="#">S/ID 754</a></strong>
+                </li>
+                <li>
+                  <span>1 pcs</span>
+                  <span>123 ft³</span>
+                  <span>481 lbs</span>
+                  <strong><a href="#">BOL 8346</a></strong>
+                </li>
+              </ul>
+            </div>
+            <div class="skeleton-item-container">
+              <div class="flex flex-wrap content-stretch">
+                <p class="col-6 pr2"><strong>Mar 23</strong> All Day</p>
+                <div class="col-6 right-align pl2">
+                  <strong class="pl2">0 ft³</strong>
+                  <strong class="pl2">0 lbs</strong>
+                  <div class="skeleton-item-hint">Truck Load</div>
+                </div>
+                <p class="col-6 self-end pr2 pt3"><strong>2442 Clousson Road</strong> Desert Hot Springs USA, IA, 51034</p>
+                <div class="col-6 right-align self-end pl2 pt3">
+                  <strong>Nathan V. Johnson</strong>
+                </div>
+              </div>
+            </div>
+            <div class="skeleton-item-footer"></div>
+          </div>
+
+        </div>
+
+      </div>
+  </div>
+</div>

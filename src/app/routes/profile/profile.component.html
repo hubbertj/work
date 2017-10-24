@@ -1,0 +1,91 @@
+﻿<div class="loading-page" [hidden]="!loading"><em></em><em></em><em></em></div>
+
+<header class="page-header">
+  <div class="flex items-center">
+    <div class="flex-auto flex items-baseline">
+      <h1>My Profile</h1>
+    </div>
+    <div class="center pt4 pb4">
+      <transflo-upload-Carriers  [brokers]="brokers" [hidden]="hideCarriersUpoad" class="button-group" (onToggle)="closeNotifications($event)"></transflo-upload-Carriers>
+    </div>
+  </div>
+</header>
+
+<div class="page-content">
+
+  <div class="flex form-group">
+    <div class="col-4">
+      <img src="./images/profile.png" alt="" width="177" height="135" class="profile-img" />
+    </div>
+    <div class="col-8">
+      <div class="form-group">
+        <div class="form-label -text">First Name</div>
+        <div class="profile-name">{{user.firstname}}</div>
+      </div>
+      <div class="form-group -x2">
+        <div class="form-label -text">Last Name</div>
+        <div class="profile-name">{{user.lastname}}</div>
+      </div>
+      <div class="form-group -x5">
+        <div class="form-label -text">Email</div>
+        <div class="fs30 medium">{{user.email}}</div>
+      </div>
+    </div>
+  </div>
+  <div class="hr form-group -x6"></div>
+  
+  <div class="flex form-group -x6">
+    <div class="col-4">
+      <h3 class="fs22">Associated Divisions</h3>
+    </div>
+    <div class="col-8 flex flex-wrap">
+      <div class="col-6 pr4 pb4" *ngFor="let division of user.divisions">
+        <div class="form-label -text">{{division.code}} &nbsp;&bull;&nbsp; {{division.type}}</div>
+        <h5>{{division.name}}</h5>
+      </div>
+    </div>
+  </div>  
+  <div *ngIf="user.brokerSettings.length">
+    <div class="hr form-group -x6"></div>  
+    <div class="flex form-group -x6">
+      <div class="col-4">
+        <h3 class="fs22">Associated Brokers</h3>
+      </div>
+      <div>
+        <div class="profile-broker-list">
+          <div class="profile-broker-list-table">
+            <div class="profile-broker-list-table-row">
+              <div class="profile-broker-list-table-cell form-label -text">
+                Broker Name/ID
+              </div>
+              <div class="profile-broker-list-table-cell form-label -text">
+                Allow Direct Submission of Documents by Driver?
+              </div>
+              <div class="profile-broker-list-table-cell form-label -text">
+                Automatically Create Invoice?
+              </div>
+            </div>
+            <div class="profile-broker-list-table-row" *ngFor="let broker of user.brokerSettings">
+              <div class="profile-broker-list-table-cell">
+                <h5>{{broker.name}} &nbsp;-&nbsp; {{broker.id}}</h5>
+                <span class="label-danger" [hidden]="!broker.isHover || broker.allowScanningToggle">Toggle disabled in Server Admin</span>
+              </div>
+              <div class="profile-broker-list-table-cell center-text" (mouseenter)="broker.isHover=true" (mouseleave)="broker.isHover=false" >            
+                <label>
+                  <input type="checkbox" hidden [disabled]="!broker.allowScanningToggle" [(ngModel)]="broker.scanningEnabled" (ngModelChange)="updateCarrierBrokerSettings($event, broker)"/>
+                  <em [ngClass]="{'form-switcher':broker.allowScanningToggle, 'form-switcher-placeholder':!broker.allowScanningToggle}"></em>
+                </label>
+              </div>
+              <div class="profile-broker-list-table-cell center-text" (mouseenter)="broker.isHover=true" (mouseleave)="broker.isHover=false" >            
+                <label>
+                  <input type="checkbox" hidden [disabled]="!broker.allowScanningToggle" [(ngModel)]="broker.autoInvoicingEnabled" (ngModelChange)="updateCarrierBrokerSettings($event, broker)"/>
+                  <em [ngClass]="{'form-switcher':broker.allowScanningToggle, 'form-switcher-placeholder':!broker.allowScanningToggle}"></em>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
+</div>

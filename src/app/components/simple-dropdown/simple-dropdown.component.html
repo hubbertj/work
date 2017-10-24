@@ -1,0 +1,8 @@
+<div class="id{{id}}" class="dropdown">
+	<input type="text" class="form-control" autocomplete="off" [(ngModel)]="searchString" (ngModelChange)="filter($event)" (focus)="onFocus($event)" (blur)="onBlur($event)"/>
+	<ul class="dropdown-menu -shown" [hidden]="!shown || !filteredScope.length">
+		<li *ngFor="let el of filteredScope" (mousedown)="setSelected(el, $event)">
+			<a>{{el.name || el.text}}</a>
+		</li>
+	</ul>
+</div>

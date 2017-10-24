@@ -1,0 +1,55 @@
+.loading-text
+  padding: 30px
+  text-align: center
+  font-weight: 500
+  font-size: 15px
+  color: #b7b7b7
+
+
+
+.loading-page
+  position: fixed
+  left: 0
+  top: 50px
+  right: 0
+  bottom: 0
+  z-index: 9999
+  display: flex
+  align-items: center
+  justify-content: center
+  &:before
+    content: ''
+    display: block
+    position: absolute
+    left: 0
+    top: 0
+    right: 0
+    bottom: 0
+    background-color: $color-body
+    z-index: 0
+  em
+    display: inline-block
+    width: 6px
+    height: 6px
+    border-radius: 3px
+    background-color: $color-green
+    position: relative
+    z-index: 1
+    animation: jump 1s infinite
+    animation-delay: 0.1s
+    &:first-child
+      animation-delay: 0s
+    &:last-child
+      animation-delay: 0.2s
+    & + em
+      margin-left: 10px
+      
+@keyframes jump 
+  0% 
+    top: 0
+  80%
+    top: 0
+  90%
+    top: -6px
+  100% 
+    top: 0

@@ -1,0 +1,145 @@
+.daterangepicker
+  position: absolute
+  color: inherit
+  width: auto
+  padding: 20px 50px
+  margin-top: 16px
+  top: 100px
+  left: 20px
+  box-shadow: 0 0 27px rgba(0,0,0,0.11)
+
+  &.show-calendar .calendar
+    display: block
+
+  .calendar 
+    display: none
+    max-width: 182px
+    & + .calendar
+      margin-left: 30px
+
+  table
+    width: 100%
+    margin: 0
+    border-collapse: separate
+    border-spacing: 0
+    th
+      text-transform: lowercase
+      font-weight: normal
+      font-size: 10px
+      text-align: center
+      white-space: nowrap
+      color: #bbb
+      padding-bottom: 4px
+      &.prev.available, &.next.available
+        display: block
+        width: 30px
+        height: 30px
+        position: absolute
+        top: 50%
+        cursor: pointer
+        margin-top: -15px
+        border-radius: 50%
+        i
+          display: block
+          width: 9px
+          height: 9px
+          border-left: 2px solid #ffd200
+          border-top: 2px solid #ffd200
+          position: absolute
+          left: 50%
+          top: 50%
+        &:hover
+          background-color: $color-main
+          i
+            border-color: #FFFFFF
+      &.prev.available
+        left: 10px
+        i
+          margin: -4px 0 0 -3px
+          transform: rotate(-45deg)
+      &.next.available
+        right: 10px
+        i
+          margin: -4px 0 0 -6px
+          transform: rotate(135deg)
+
+    tr:first-child th
+      font-size: 12px
+      color: #000000
+      padding-bottom: 0
+    td
+      text-align: center
+      width: 26px
+      height: 26px
+      white-space: nowrap
+      cursor: pointer
+      font-size: 11px
+      vertical-align: middle
+      color: #000000
+      position: relative
+      border-top: 4px solid #FFFFFF
+      border-bottom: 4px solid #FFFFFF
+
+
+
+    td.off, td.off.in-range, td.off.start-date, td.off.end-date
+      background-color: #fff !important
+      color: #bbb !important
+      border-radius: 0 !important
+
+    td.in-range:not(.off)
+      background-color: #ffed98
+      &:before
+        content: ''
+        display: block
+        position: absolute
+        left: -4px
+        right: -4px
+        top: 0
+        bottom: 0
+        border-left: 4px solid #ffed98
+        border-right: 4px solid #ffed98
+
+    tr td.in-range:first-child:not(.off), td.off.in-range.available + td.in-range.available:not(.off)
+      &:before
+        left: 0
+        border-left: none
+
+    tr td.in-range:last-child:not(.off)
+      &:before
+        right: 0
+        border-right: none
+
+    td.available:hover
+      background-color: $color-main !important
+      color: #FFFFFF !important
+      border-radius: 13px !important
+      border: none
+      box-shadow: none !important
+      position: relative
+      z-index: 2
+      &:before, &:after
+        display: none !important
+
+    td.active, td.active:hover
+      background-color: #ffd200 !important
+      border-color: transparent
+      color: #000000 !important
+      border-radius: 13px !important
+      position: relative
+      z-index: 2
+      box-shadow: none !important
+      &:before, &:after
+        display: none !important
+
+    th.month
+      width: auto
+
+    td.disabled, option.disabled
+      color: #bbb !important
+      cursor: not-allowed
+      text-decoration: line-through
+      background-color: transparent !important
+
+  .daterangepicker_input 
+    display: none

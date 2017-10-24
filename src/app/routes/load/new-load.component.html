@@ -1,0 +1,869 @@
+﻿<div class="loading-page" [hidden]="!loading"><em></em><em></em><em></em></div>
+
+<header class="page-header" xmlns="http://www.w3.org/1999/html">
+  <div class="flex items-center">
+    <div class="flex-auto flex items-center" [hidden]="loadId">
+      <h1 class="self-baseline">Creating Load</h1>
+    </div>
+     <div class="flex-auto flex items-center" [hidden]="!loadId">
+      <h1 class="self-baseline">Load #{{isCarrier ? carrierLoadNumber : brokerLoadNumber}}</h1>
+    </div>
+    <div class="dropdown" dropdown keyboardNav="true" autoClose="outsideClick">
+      <button type="button" class="button -icon -outline-danger" [hidden]="!loadId || readOnly" (click)="deleteLoad()" title="Delete"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button>
+      <button type="button" [hidden]="(shipments && shipments.length == 0) || readOnly" class="button -outline" (click)="createShipment(); shipmentModal.show();">+ New Shipment</button>
+      <div class="buttons-separator"></div>
+      <div class="dropdown inline-block button-group" dropdown keyboardNav="true" autoClose="outsideClick" [isOpen]="errors.length || validationError" [hidden]="errors.length == 0 && (shipments && !shipments.length || !validationError)">
+        <button type="button" class="button -icon -outline-danger -active fs17" dropdownToggle>!</button>
+        <div class="dropdown-menu -md -center" role="menu" dropdownMenu>
+          <h3 class="label-danger" [hidden]="!validationError">{{validationError}}</h3>
+          <p [hidden]="!validationError">Please change the order or dates of the stops.</p>
+          <br [hidden]="errors.length == 0 || !validationError">
+          <h3 [hidden]="errors.length == 0" class="label-danger">{{errorMessage}}</h3>
+          <table class="table -list" [hidden]="errors.length == 0">
+            <tr *ngFor="let error of errors">
+              <td>&bull;</td>
+              <td>
+                <span *ngIf="error.entityType == 'load'">{{error.error}}</span>
+                <a *ngIf="error.entityType != 'load'" (click)="openPopupWithEntityId(error.objectId, error.entityType)">{{error.error}}</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <button type="button" class="button -primary" (click)="saveLoad()" [disabled]="isInvalid()">Save Load</button>
+    </div>
+  </div>
+  <form action="" class="filters-form" role="form" novalidate>
+    <div [hidden]="!detailsOpened">
+      <hr />
+      <div class="flex">
+        <div class="col-4 pr3">
+           <div class="form-group" *ngIf="isCarrier">
+            <label class="form-label">Carrier Load #</label> <span [hidden]="!isCommonCarrier">*</span>
+            <input autocomplete="off" class="form-control" [ngClass]="{'error': loadValidationErrors.carrierLoadNumber}" type="text"  name="carrierLoadNumber" [(ngModel)]="carrierLoadNumber"/>
+          </div>
+          <div class="form-group" *ngIf="!isCarrier">
+            <label class="form-label">Broker Load #</label>       <span [hidden]="isCommonCarrier">  *</span>
+            <input autocomplete="off" class="form-control" [disabled]="readOnly" [ngClass]="{'error': loadValidationErrors.brokerLoadNumber}" type="text" name="brokerLoadNumber" [(ngModel)]="brokerLoadNumber"/>
+          </div>
+
+          <div class="form-group -x3">
+            <label class="form-label">Freight Terms</label>
+            <input autocomplete="off" [disabled]="readOnly" class="form-control" type="text"  [(ngModel)]="freightTerms" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">BOL</label>
+            <input autocomplete="off" [disabled]="readOnly" class="form-control" type="text" [(ngModel)]="bolNumber" />
+          </div>	
+		  <div class="form-group">
+		    <div class="checkbox">
+			  <label class="form-label">
+			    Load Tracking
+            <input hidden type="checkbox" [disabled]="readOnly" name="tracking" [(ngModel)]="tracking" /><em class="form-switcher"></em>
+			  </label>			  
+		    </div>
+		  </div>
+      <div class="form-group">
+        <div class="checkbox">
+          <label class="form-label">
+            Notifications
+          </label>
+          <transflo-email-input [emails]="emailsList" [disabled]="readOnly" (onEmailChanged)="emailsChanged($event)"></transflo-email-input>
+        </div>
+      </div>
+		  </div>
+        <div class="col-4 pr3 pl3">
+          <div class="form-group" *ngIf="isCarrier">
+            <label class="form-label">Broker Load # </label>
+            <input autocomplete="off" [readonly]="readOnly" class="form-control" type="text" [(ngModel)]="brokerLoadNumber"/>
+          </div>
+          <div class="form-group" *ngIf="!isCarrier">
+            <label class="form-label">Carrier Load # </label>
+            <input autocomplete="off" [readonly]="readOnly"  class="form-control" type="text" [(ngModel)]="carrierLoadNumber"/>
+          </div>
+          <div class="form-group -x3">
+            <label class="form-label">Rate Amount</label> <span [hidden]="isCommonCarrier">*</span>
+            <input autocomplete="off" [readonly]="readOnly" class="form-control" [ngClass]="{'error': loadValidationErrors.rate}" name="rate"type="text" [(ngModel)]="rate"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Special Instructions</label>
+            <textarea class="form-control" rows="4" [(ngModel)]="carrierSpecialInstructions"></textarea>
+          </div>
+        </div>
+        <div class="col-4 pl3">
+          <div class="form-label -text form-group">Attributes</div>
+          <div class="form-group" [hidden]="loadAttributes.length == 0">
+            <table class="table -list">
+              <tbody>
+
+              <tr *ngFor="let attribute of loadAttributes; let idx = index">
+                <td class="align-middle center" [hidden]="!attribute.hasIcon" width="10%">
+                  <div *ngIf="attribute.name == 'Hazardous'">
+                    <svg class="icon -danger -md m0"><use xlink:href="#svg_danger"/></svg>
+                  </div>
+                  <div  *ngIf="attribute.name == 'High Value'">
+                    <svg class="icon -ruby -md m0"><use xlink:href="#svg_ruby"/></svg>
+                  </div>
+                  <div  *ngIf="attribute.name == 'Fragile'">
+                    <svg class="icon -fragile -md m0"><use xlink:href="#svg_fragile"/></svg>
+                  </div>
+                </td>
+                <td class="align-middle center" width="10%" [hidden]="attribute.hasIcon">
+                  &bull;
+                </td>
+                <td class="dropdown-important" dropdown keyboardNav="true" (onToggle)="onAttributesToggled($event, attribute)" autoClose="disabled">
+                  <span dropdownToggle>{{attribute.name}}</span><span dropdownToggle [hidden]="attribute.hasIcon">: {{attribute.value}}</span>
+                  <div class="dropdown-menu -center -lg2" dropdownMenu>
+                    <div class="form-group flex">
+                      <div class="col-6" [ngClass]="{'col-12': loadAttrType == 'boolean'}">
+                        <label class="form-label">Field</label>
+                        <transflo-simple-dropdown [values]="allAttributes" [stringValue]="stringValue" (attributeChanged)="loadAttributeSelected($event)"></transflo-simple-dropdown>
+                      </div>
+                      <div class="col-6 pl2" [hidden]="loadAttrType == 'boolean'">
+                        <label class="form-label">Value</label>
+                        <input autocomplete="off" class="form-control" *ngIf="loadAttrType == 'string'" type="text" [(ngModel)]="loadValue" (ngModelChange)="attributeValueChanged()"/>
+                        <input autocomplete="off" class="form-control" *ngIf="loadAttrType == 'number'" type="number" [(ngModel)]="loadValue" (ngModelChange)="attributeValueChanged()"/>
+                      </div>
+                    </div>
+                    <hr />
+                    <div class="form-group flex">
+                      <div class="flex-auto">
+                        <button type="button" class="button -icon -outline-danger" (click)="removeAttribute(idx)" title="Delete"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button>
+                      </div>
+                      <div>
+                        <button type="reset" class="button -outline" dropdownToggle>Cancel</button>
+                        <button type="button" class="button -wider" (click)="updateAttribute(idx)" [disabled]="attributeButtonDisabled">Update</button>
+                      </div>
+                    </div>
+                  </div>
+                  <button class="button -link label-danger bold" (click)="removeAttribute(idx)" tabindex="-1">&times;</button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <hr />
+          <div class="dropdown -inline" dropdown keyboardNav="true" autoClose="disabled">
+            <button type="button" [hidden]="readOnly" class="button -outline" dropdownToggle><span class="plus">+</span> Attribute</button>
+            <div class="dropdown-menu -center -lg2" dropdownMenu>
+              <div class="form-group flex">
+                <div class="col-6" [ngClass]="{'col-12': loadAttrType == 'boolean'}">
+                  <label class="form-label">Field</label>
+                  <transflo-simple-dropdown [values]="allAttributes" [stringValue]="stringValue" (attributeChanged)="loadAttributeSelected($event)"></transflo-simple-dropdown>
+                </div>
+                <div class="col-6 pl2" [hidden]="loadAttrType == 'boolean'">
+                  <label class="form-label">Value</label>
+                  <input autocomplete="off" class="form-control" *ngIf="loadAttrType == 'string'" type="text" [(ngModel)]="loadValue" (ngModelChange)="attributeValueChanged()"/>
+                  <input autocomplete="off" class="form-control" *ngIf="loadAttrType == 'number'" type="number" [(ngModel)]="loadValue" (ngModelChange)="attributeValueChanged()"/>
+                </div>
+              </div>
+              <hr />
+              <div class="form-group flex">
+                <div class="flex-auto">
+                </div>
+                <div>
+                  <button type="reset" class="button -outline" dropdownToggle>Cancel</button>
+                  <button type="button" class="button -wider" (click)="addAttribute()" [disabled]="attributeButtonDisabled">Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+     <div class="filters-button" (click)="detailsOpened = true" [hidden]="detailsOpened">
+      Show Details
+    </div>
+    <div class="filters-button -opened" (click)="detailsOpened = false" [hidden]="!detailsOpened || (shipments && !shipments.length)">
+      Hide Details
+    </div>
+  </form>
+</header>
+
+<div class="page-content">
+  <div class="skeleton" [hidden]="!shipments.length">
+
+    <div class="skeleton-item" *ngFor="let stop of stops; let idx = index;">
+      <div class="skeleton-bubble -left" *ngIf="stop.pickupShipments && stop.pickupShipments.length" [hidden]="stop.isService">
+        <div class="skeleton-bubble-header flex items-baseline">
+          <strong class="flex-auto">Pick Up </strong>
+          <div *ngIf="getValue(stop.pickupShipments, 'volume', true) > 0 || getValue(stop.pickupShipments, 'weight', true) > 0">
+            <small><transflo-number [number]="getValue(stop.pickupShipments, 'volume', true)"></transflo-number>
+              ft³
+            </small>
+            <small><transflo-number [number]="getValue(stop.pickupShipments, 'weight', true)"></transflo-number>
+              lbs
+            </small>
+          </div>
+          <div *ngIf="getValue(stop.pickupShipments, 'volume', false) > 0 || getValue(stop.pickupShipments, 'weight', false) > 0">
+            <small><transflo-number [number]="getValue(stop.pickupShipments, 'volume', false)"></transflo-number>
+              cm³
+            </small>
+            <small><transflo-number [number]="getValue(stop.pickupShipments, 'weight', false)"></transflo-number>
+              kg
+            </small>
+          </div>
+        </div>
+        <ul class="skeleton-bubble-list">
+          <li *ngFor="let shipment of stop.pickupShipments">
+            <span>{{getValue([shipment], 'quantity')}} pcs</span>
+            <div *ngIf="getValue([shipment], 'volume', true) > 0 || getValue([shipment], 'weight', true) > 0">
+              <span><transflo-number [number]="getValue([shipment], 'volume', true)"></transflo-number>
+                &nbsp;ft³
+              </span>
+              <span><transflo-number [number]="getValue([shipment], 'weight', true)"></transflo-number>
+                &nbsp;lbs
+              </span>
+            </div>
+            <div *ngIf="getValue([shipment], 'volume', false) > 0 || getValue([shipment], 'weight', false) > 0">
+              <span><transflo-number [number]="getValue([shipment], 'volume', false)"></transflo-number>
+                &nbsp;cm³
+              </span>
+              <span><transflo-number [number]="getValue([shipment], 'weight', false)"></transflo-number>
+                &nbsp;kg
+              </span>
+            </div>
+            <strong><a (click)="startEditShipment(shipment); shipmentModal.show()">BOL {{shipment.shipmentBOL}}</a></strong>
+          </li>
+        </ul>
+      </div>
+      <div class="skeleton-bubble -right" *ngIf="stop.dropoffShipments && stop.dropoffShipments.length">
+        <div class="skeleton-bubble-header">
+          <strong>Drop Off</strong>
+        </div>
+        <ul class="skeleton-bubble-list">
+          <li *ngFor="let shipment of stop.dropoffShipments">
+            <span>{{getValue([shipment], 'quantity')}} pcs </span>
+            <div *ngIf="getValue([shipment], 'volume', true) > 0 || getValue([shipment], 'weight', true) > 0">
+              <span><transflo-number [number]="getValue([shipment], 'volume', true)"></transflo-number>
+                &nbsp;ft³
+              </span>
+              <span><transflo-number [number]="getValue([shipment], 'weight', true)"></transflo-number>
+                &nbsp;lbs
+              </span>
+            </div>
+            <div *ngIf="getValue([shipment], 'volume', false) > 0 || getValue([shipment], 'weight', false) > 0">
+              <span><transflo-number [number]="getValue([shipment], 'volume', false)"></transflo-number>
+                &nbsp;cm³
+              </span>
+              <span><transflo-number [number]="getValue([shipment], 'weight', false)"></transflo-number>
+                &nbsp;kg
+              </span>
+            </div>
+            <strong><a (click)="startEditShipment(shipment); shipmentModal.show()">BOL {{shipment.shipmentBOL}}</a></strong>
+          </li>
+        </ul>
+      </div>
+      <div class="skeleton-item-container" [ngClass]="{'-danger': stop.invalid}">
+        <div class="flex flex-wrap content-stretch" *ngIf="stop.isService">
+          <p class="col-6 pr2">
+            <strong>{{stop.date}}</strong>
+            <span>{{stop.time}}</span>
+          </p>
+          <div class="col-6 right-align pl2">
+          </div>
+          <p class="col-6 self-end pr2 pt3">
+            <strong>{{stop.addressLines && stop.addressLines[0] && stop.addressLines[0].val}}</strong>
+            <span>{{stop.addressLines && stop.addressLines[1] && stop.addressLines[1].val}}</span>
+            <span>{{stop.country}}, {{stop.state}}, {{stop.postalCode}}</span>
+          </p>
+          <div class="col-6 right-align self-end pl2 pt3">
+            <strong>{{stop.contactName}}</strong>
+          </div>
+        </div>
+        <div class="flex flex-wrap content-stretch" *ngIf="!stop.isService">
+          <p class="col-6 pr2">
+            <strong>{{stop.date}}</strong>
+            <span>{{stop.time}}</span>
+          </p>
+          <div class="col-6 right-align pl2">
+            <div *ngIf="stop.truckLoad.showImperial">
+              <strong class="pl2"><transflo-number [number]="stop.truckLoad.volumeImperial"></transflo-number>
+                ft³
+              </strong>
+              <strong class="pl2"><transflo-number [number]="stop.truckLoad.weightImperial"></transflo-number>
+                lbs
+              </strong>
+            </div>
+            <div *ngIf="stop.truckLoad.showDecimal">
+              <strong class="pl2"><transflo-number [number]="stop.truckLoad.volumeDecimal"></transflo-number>
+                cm³
+              </strong>
+              <strong class="pl2"><transflo-number [number]="stop.truckLoad.weightDecimal"></transflo-number>
+                kg
+              </strong>
+            </div>
+            <div class="skeleton-item-hint">Truck Load</div>
+          </div>
+          <p class="col-6 self-end pr2 pt3">
+            <strong>{{stop.addressLines && stop.addressLines[0] && stop.addressLines[0].val}}</strong>
+            <span>{{stop.addressLines && stop.addressLines[1] && stop.addressLines[1].val}}</span><br />
+            <span>{{stop.city}}, {{stop.state}}, {{stop.postalCode}}</span>
+          </p>
+          <div class="col-6 right-align self-end pl2 pt3">
+            <strong>{{stop.contactName}}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="skeleton-item-footer" dropdown keyboardNav="true" autoClose="disabled">
+        <!--<button type="button" class="skeleton-item-add" (click)="newServiceStop(stop);serviceStopModal.show()"><span class="plus">+</span> Add Stop</button>-->
+      </div>
+      <ul class="skeleton-item-controls" [ngClass]="{'-danger': stop.invalid}">
+        <li>
+          <button type="button" title="Move Up" [hidden]="idx == 0 || readOnly" (click)="moveStop(stop, 'up')"><svg class="icon -up"><use xlink:href="#svg_up"/></svg></button>
+          <button type="button" title="Move Down" [hidden]="idx == stops.length - 1|| readOnly" (click)="moveStop(stop, 'down')"><svg class="icon -down"><use xlink:href="#svg_down"/></svg></button>
+        </li>
+        <li>
+          <button type="button" title="Change Stop" [disabled]="isCommonCarrier" [hidden]="stop.isService" (click)="selectStop(stop); stopModal.show()"><svg class="icon -pen-lg"><use xlink:href="#svg_pen_lg"/></svg></button>
+          <button type="button" title="Change Stop" [disabled]="isCommonCarrier" [hidden]="!stop.isService" (click)="selectStop(stop); serviceStopModal.show()"><svg class="icon -pen-lg"><use xlink:href="#svg_pen_lg"/></svg></button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="center pt4 pb4" >
+    <a class="button -primary -lg" (click)="createShipment(); shipmentModal.show()" [hidden]="shipments && shipments.length > 0"><span class="plus">+</span> Create First Shipment</a>
+  </div>
+</div>
+
+
+<!-- Change stop modal -->
+<div bsModal #stopModal="bs-modal" class="modal fade" (onShown)="scrollBottom()" tabindex="-1" role="dialog" aria-labelledby="myStopModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="" novalidate>
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="modal-close" aria-label="Close" (click)="stopModal.hide();" title="Close" tabindex="-1">&times;</button>
+          <h1 class="modal-title inline-block">Change Stop</h1>
+
+          <div class="dropdown inline-block button-group -large" dropdown keyboardNav="true" autoClose="outsideClick" [isOpen]="currentStop.errors && currentStop.errors.length" [hidden]="(currentStop.errors && currentStop.errors.length == 0) || !currentStop.errors">
+            <button type="button" class="button -icon -outline-danger -active fs17" dropdownToggle>!</button>
+            <div class="dropdown-menu -md -center" role="menu" dropdownMenu>
+              <h3 [hidden]="currentStop.errors && currentStop.errors.length == 0" class="label-danger">{{errorMessage}}</h3>
+              <table class="table -list" [hidden]="currentStop.errors && currentStop.errors.length == 0">
+                <tr *ngFor="let error of currentStop.errors">
+                  <td>&bull;</td>
+                  <td>
+                    <span>{{error.error}}</span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body" scroll [scrollEmitter]="scrollEmitter">
+          <div class="modal-cols flex">
+            <div class="modal-cols-separator"></div>
+            <div class="pl4 pr8 col-6">
+              <h2 class="label-alert"><span class="icon -alert -lg"></span> You are about to change a stop which is used by the following shipments:</h2>
+              <ul class="ul-short-list">
+			    <li *ngFor="let shipment of getAffectedShipments(currentStop)">
+			      <strong [hidden]="shipment.shipmentBOL">No BOL Specified</strong>
+			      <strong [hidden]="!shipment.shipmentBOL">BOL {{shipment.shipmentBOL}}</strong>
+			    </li>
+              </ul>
+            </div>
+            <div class="pl8 pr4 col-6">
+              <div class="form-group">
+                <label class="form-label">Date*</label>
+                <input autocomplete="off" date-picker [date]="currentStop && currentStop.date" (datechanged)="selectDateStop(currentStop, $event)" class="form-control -datepicker" required/>
+
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time*</label>
+                <input autocomplete="off" class="form-control" [(ngModel)]="timeValue"  (ngModelChange)="timeSelectedStop(currentStop, $event)" type="text" placeholder="" required maxlength="100"/>
+
+
+                <!--transflo-simple-dropdown [values]="times" [stringValue]="timeValue" (attributeChanged)="timeSelectedStop(currentStop, $event)"></transflo-simple-dropdown-->
+              </div>
+
+              <div class="form-group" [ngClass]="{'-x5': idx == 0}" *ngFor="let addrLine of currentStop && currentStop.addressLines; let idx = index">
+                <label class="form-label">Address Line {{idx + 1}}</label><span [hidden]="idx != 0">*</span>
+                <input [hidden]="idx == currentStop.addressLines.length - 1" [disabled]="isCommonCarrier" autocomplete="off" class="form-control" [(ngModel)]="addrLine.val" [required]="idx == 0" [maxLength]="100"/>
+                <div [hidden]="idx != currentStop.addressLines.length - 1">
+                  <button [disabled]="isCommonCarrier" [hidden]="currentStop.addressLines.length > 2" class="button -outline -addon" (click)="addAddressLine(currentStop)">+</button>
+                  <input [disabled]="isCommonCarrier" autocomplete="off" class="form-control" [(ngModel)]="addrLine.val" >
+                </div>
+              </div>
+              
+              <div class="form-group flex">
+                <div class="col-7 pr1">
+                  <label class="form-label">City*</label>
+				  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [ngClass]="{'error': loadValidationErrors.city}" [(ngModel)]="currentStop && currentStop.city" required maxlength="100"/>
+                  <!--<input autocomplete="off" [(ngModel)]="currentStop && currentStop.city" type="text" required />-->
+                </div>
+                <div class="col-5 pl1">
+                  <label class="form-label">State*</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStop && currentStop.state" required maxlength="2"/>
+                </div>
+              </div>
+              <div class="form-group flex">
+                <div class="col-7 pr1">
+                  <label class="form-label">Country</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStop && currentStop.country"  maxlength="100"/>
+                </div>
+                <div class="col-5 pl1">
+                  <label class="form-label">ZIP*</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStop && currentStop.postalCode" required maxlength="10"/>
+                </div>
+              </div>
+              <div class="form-group -x5">
+                <label class="form-label">Name*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStop && currentStop.contactName" required maxlength="100"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Company*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStop && currentStop.company" required maxlength="100"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" type="tel" [(ngModel)]="currentStop && currentStop.phoneNumber" required maxlength="50"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="button -outline" type="button" (click)="stopModal.hide();">Cancel</button>
+          <button class="button -primary" type="button" (click)="updateStop(); stopModal.hide()">Update stop for all shipments</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<!-- Service stop modal -->
+<div bsModal #serviceStopModal="bs-modal" (onShown)="scrollBottom(); showButtons();" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myStopModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="" novalidate>
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="modal-close" aria-label="Close" (click)="serviceStopModal.hide();" title="Close" tabindex="-1">&times;</button>
+          <h1 class="modal-title inline-block">{{currentServiceStop && (currentServiceStop._id || currentServiceStop.id) ? 'Change Stop' : 'Create Stop'}}</h1>
+          <div class="dropdown inline-block button-group -large" dropdown keyboardNav="true" autoClose="outsideClick" [isOpen]="currentServiceStop.errors && currentServiceStop.errors.length" [hidden]="(currentServiceStop.errors && currentServiceStop.errors.length == 0) || !currentServiceStop.errors">
+            <button type="button" class="button -icon -outline-danger -active fs17" [disabled]="isCommonCarrier" dropdownToggle>!</button>
+            <div class="dropdown-menu -md -center" role="menu" dropdownMenu>
+              <h3 [hidden]="currentServiceStop.errors && currentServiceStop.errors.length == 0" class="label-danger">{{errorMessage}}</h3>
+              <table class="table -list" [hidden]="currentServiceStop.errors && currentServiceStop.errors.length == 0">
+
+                <tr *ngFor="let error of currentServiceStop.errors">
+                  <td>&bull;</td>
+                  <td>
+                    <span>{{error.error}}</span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body" scroll [scrollEmitter]="scrollEmitter">
+          <div class="modal-cols flex justify-center">
+            <div class="pl4 pr4 col-6">
+              <div class="form-group">
+                <label class="form-label">Date*</label>
+                <input autocomplete="off" date-picker [date]="currentServiceStop && currentServiceStop.date" (datechanged)="selectDateStop(currentServiceStop, $event)" class="form-control -datepicker" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time*</label>
+                <input autocomplete="off" class="form-control" [(ngModel)]="currentServiceStop.time"  (ngModelChange)="timeSelectedStop(currentServiceStop, $event)" type="text" placeholder="" required [maxLength]="100"/>
+              </div>
+              <div class="form-group" [ngClass]="{'-x5': idx == 0}" *ngFor="let addrLine of currentServiceStop && currentServiceStop.addressLines; let idx = index" >
+                <label class="form-label">Address Line {{idx + 1}}</label><span [hidden]="idx != 0">*</span>
+                <input [hidden]="idx == currentServiceStop.addressLines.length - 1" autocomplete="off" class="form-control" [(ngModel)]="addrLine.val" [required]="idx == 0" maxlength="100"/>
+                <div [hidden]="idx != currentServiceStop.addressLines.length - 1">
+                  <button [hidden]="currentServiceStop.addressLines.length > 2" [disabled]="isCommonCarrier" class="button -outline -addon" (click)="addAddressLine(currentServiceStop)">+</button>
+                  <input [disabled]="isCommonCarrier" autocomplete="off" class="form-control" [(ngModel)]="addrLine.val" >
+                </div>
+              </div>
+              
+              <div class="form-group flex">
+                <div class="col-7 pr1">
+                  <label class="form-label">City*</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier"  class="form-control" [(ngModel)]="currentServiceStop && currentServiceStop.city" required maxlength="100"/>
+                </div>
+                <div class="col-5 pl1">
+                  <label class="form-label">State*</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentServiceStop && currentServiceStop.state" required maxlength="2"/>
+                </div>
+              </div>
+              <div class="form-group flex">
+                <div class="col-7 pr1">
+                  <label class="form-label">Country</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentServiceStop && currentServiceStop.country"  maxlength="100"/>
+                </div>
+                <div class="col-5 pl1">
+                  <label class="form-label">ZIP*</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentServiceStop && currentServiceStop.postalCode" required maxlength="10"/>
+                </div>
+              </div>
+              <div class="form-group -x5">
+                <label class="form-label">Name*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentServiceStop && currentServiceStop.contactName" required maxlength="100"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Company*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentServiceStop && currentServiceStop.company" required maxlength="100"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" type="tel" [(ngModel)]="currentServiceStop && currentServiceStop.phoneNumber" required maxlength="50"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="button -icon -outline-danger left" [hidden]="currentServiceStop && !(currentServiceStop._id || currentServiceStop.id)" title="Delete" (click)="removeServiceStop(); serviceStopModal.hide();" tabindex="-1"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button>
+          <button class="button -outline" type="button" (click)="serviceStopModal.hide();">Cancel</button>
+          <button class="button -primary" type="button" [disabled]="serviceStopButtonsDisabled" [hidden]="currentServiceStop && (currentServiceStop._id || currentServiceStop.id)" (click)="serviceStopModal.hide(); createServiceStop()">Create stop</button>
+          <button class="button -primary" type="button" [disabled]="serviceStopButtonsDisabled" [hidden]="currentServiceStop && !(currentServiceStop._id || currentServiceStop.id)" (click)="updateServiceStop(); serviceStopModal.hide()">Update stop</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Shipment modal -->
+<div bsModal #shipmentModal="bs-modal" (onShown)="scrollBottom()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myShipmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form #form="ngForm" (submit)="addShipment(); shipmentModal.hide();">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="modal-close" aria-label="Close" (click)="shipmentModal.hide()" title="Close" tabindex="-1">&times;</button>
+          <h1 class="modal-title inline-block">Shipment</h1>
+          <div class="dropdown inline-block button-group -large" dropdown keyboardNav="true" autoClose="outsideClick" [isOpen]="currentShipment && currentShipment.errors && currentShipment.errors.length" [hidden]="(currentShipment && currentShipment.errors && currentShipment.errors.length == 0) || !currentShipment || !currentShipment.errors">
+            <button type="button" class="button -icon -outline-danger -active fs17" dropdownToggle>!</button>
+            <div class="dropdown-menu -md -center" role="menu" dropdownMenu>
+              <h3 [hidden]="currentShipment && currentShipment.errors && currentShipment.errors.length == 0" class="label-danger">{{errorMessage}}</h3>
+              <table class="table -list" [hidden]="currentShipment && currentShipment.errors && currentShipment.errors.length == 0">
+                <tr *ngFor="let error of currentShipment && currentShipment.errors">
+                  <td>&bull;</td>
+                  <td>
+                    <span>{{error.error}}</span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body" scroll [scrollEmitter]="scrollEmitter">
+          <div class="flex form-group">
+            <div class="col-4 pr2">
+              <label class="form-label">BOL</label>
+              <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentShipment && currentShipment.shipmentBOL"/>
+            </div>
+            <div class="col-8 pl2">
+              <label class="form-label">Special Instructions</label>
+              <textarea rows="1" [disabled]="isCommonCarrier" autocomplete="off" class="form-control" [(ngModel)]="currentShipment && currentShipment.shipmentCarrierSpecInstructions" autosize></textarea>
+            </div>
+          </div>
+          <hr class="form-group -x5" />
+          <div class="modal-cols flex form-group -x5">
+            <div class="modal-cols-diff"></div>
+            <div class="modal-cols-separator"></div>
+            <div class="pl4 pr8 col-6">
+              <h2 class="center">Pick Up</h2>
+              <div class="form-group -x3">
+                <label class="form-label">Date*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" date-picker [date]="currentStopPickUp && currentStopPickUp.date" (datechanged)="selectDateShipment($event, 'pickup')" class="form-control -datepicker" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopPickUp.time"  (ngModelChange)="timeSelectedShipment($event, 'pickup')"  [ngClass]="{'-error': loadValidationErrors.time}" name="time" natype="text" placeholder="" required maxlength="100"/>
+
+                <!--transflo-simple-dropdown [values]="times" [stringValue]="currentStopPickUp.time" (attributeChanged)="timeSelectedShipment($event, 'pickup')"></transflo-simple-dropdown-->
+              </div>
+              <div class="form-group -x5 center" dropdown keyboardNav="true" autoClose="outsideClick"(onToggle)="searchStopsStr = ''; searchStop();">
+                <button class="button-fields" dropdownToggle>
+                  <span class="icon -fields"></span>
+                  Fill fields with existing address
+                </button>
+                <div class="dropdown-menu -xlg -center" role="menu" dropdownMenu>
+                  <div class="dropdown-filter-field">
+                    <input autocomplete="off" class="form-control" [(ngModel)]="searchStopsStr"  (ngModelChange)="searchStop()" type="text" placeholder="Filter" />
+                  </div>
+                  <div class="dropdown-filter-content" (scroll)="onScrollAddressesDebounced($event)">
+                    <div class="form-group -x2" [hidden]="(filteredStops && filteredStops.length == 0) || !filteredStops">
+                      <h5 class="dropdown-filter-title">This Load Stops</h5>
+                      <ul class="dropdown-filter-list">
+                         <li *ngFor="let stop of filteredStops">
+                          <a (click)="fillStop(stop, currentStopPickUp)" dropdownToggle>
+                            <strong>    
+                              <transflo-date [date]="stop.date" [dontShowTime]="true"></transflo-date>
+                              <small>{{stop.time}}</small>
+                            </strong>
+                            <span>{{getAddress(stop)}}, {{stop.state}}, {{stop.country}}, {{stop.city}}</span>
+                            <span class="label-gray">{{stop.contactName}}, {{stop.company}}, {{stop.phone}}</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="form-group -x2" [hidden]="(addresses && addresses.length == 0) || !addresses">
+                      <h5 class="dropdown-filter-title">Existing addressess</h5>
+                      <ul class="dropdown-filter-list">
+                        <li *ngFor="let address of addresses">
+                          <a (click)="fillAddress(address, currentStopPickUp)" dropdownToggle>
+                            <svg class="icon -star"><use xlink:href="#svg_star"/></svg>
+                            <strong>    
+
+                            </strong>
+                            <span>{{address.addressLines.join(', ')}}, {{address.state}}, {{address.country}}, {{address.city}}</span>
+                            <span class="label-gray">{{address.contactName}}, {{address.company}}, {{address.phone}}</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group" *ngFor="let addrLine of currentStopPickUp && currentStopPickUp.addressLines; let idx = index" [ngClass]="{'-x5': idx == 0}">
+                <label class="form-label">Address Line {{idx + 1}}</label><span [hidden]="idx != 0">*</span>
+				<input [hidden]="idx == currentStopPickUp.addressLines.length - 1" [disabled]="isCommonCarrier" autocomplete="off" class="form-control" [(ngModel)]="addrLine.val" [required]="idx == 0" [maxLength]=100/>
+			    <div [hidden]="idx != currentStopPickUp.addressLines.length - 1">
+				  <button [hidden]="currentStopPickUp.addressLines.length > 2" [disabled]="isCommonCarrier" class="button -outline -addon" (click)="addAddressLine(currentStopPickUp)">+</button>
+			      <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="addrLine.val">
+			    </div>
+			  </div>
+              <div class="form-group flex">
+                <div class="col-7 pr1">
+                  <label class="form-label">City*</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopPickUp && currentStopPickUp.city" required maxlength="100"/>
+                </div>
+                <div class="col-5 pl1">
+                  <label class="form-label">State*</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopPickUp && currentStopPickUp.state" required maxlength="2"/>
+                </div>
+              </div>
+              <div class="form-group flex">
+                <div class="col-7 pr1">
+                  <label class="form-label">Country</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopPickUp && currentStopPickUp.country" maxlength="100"/>
+                </div>
+                <div class="col-5 pl1">
+                  <label class="form-label">ZIP*</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopPickUp && currentStopPickUp.postalCode"required maxlength="10"/>
+                </div>
+              </div>
+              <div class="form-group -x5">
+                <label class="form-label">Name*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopPickUp && currentStopPickUp.contactName" required maxlength="100"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Company*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopPickUp && currentStopPickUp.company" required maxlength="100"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" type="tel" [(ngModel)]="currentStopPickUp && currentStopPickUp.phoneNumber"  required maxlength="50"/>
+              </div>
+            </div>
+            <div class="pl8 pr4 col-6">
+              <h2 class="center">Drop Off</h2>
+              <div class="form-group -x3">
+                <label class="form-label" >Date*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" date-picker [date]="currentStopDropOff && currentStopDropOff.date" (datechanged)="selectDateShipment($event, 'dropoff')" class="form-control -datepicker" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopDropOff.time"  (ngModelChange)="timeSelectedShipment($event, 'dropoff')" type="text" placeholder="" required maxlength="100"/>
+                <!--transflo-simple-dropdown [values]="times" [stringValue]="currentStopDropOff.time" (attributeChanged)="timeSelectedShipment($event, 'dropoff')"></transflo-simple-dropdown-->
+              </div>
+              <div class="form-group -x5 center" dropdown keyboardNav="true" autoClose="outsideClick" (onToggle)="searchStopsStr = ''; searchStop();">
+                <button class="button-fields" dropdownToggle>
+                  <span class="icon -fields"></span>
+                  Fill fields with existing address
+                </button>
+                <div class="dropdown-menu -xlg -center" role="menu" dropdownMenu>
+                  <div class="dropdown-filter-field">
+                    <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="searchStopsStr"  (ngModelChange)="searchStop()" type="text" placeholder="Filter" />
+                  </div>
+                  <div class="dropdown-filter-content"  (scroll)="onScrollAddressesDebounced($event)">
+                    <div class="form-group -x2" [hidden]="(filteredStops && filteredStops.length == 0) || !filteredStops">
+                      <h5 class="dropdown-filter-title">This Load Stops</h5>
+                      <ul class="dropdown-filter-list">
+                         <li *ngFor="let stop of filteredStops">
+                          <a (click)="fillStop(stop, currentStopDropOff)" dropdownToggle>
+                            <strong>    
+                              <transflo-date [date]="stop.date" [dontShowTime]="true"></transflo-date>
+                              <small>{{stop.time}}</small>
+                            </strong>
+                            <span>{{getAddress(stop)}}, {{stop.state}}, {{stop.country}}, {{stop.city}}</span>
+                            <span class="label-gray">{{stop.contactName}}, {{stop.company}}, {{stop.phone}}</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="form-group -x2" [hidden]="(addresses && addresses.length == 0) || !addresses">
+                      <h5 class="dropdown-filter-title">Existing addressess</h5>
+                      <ul class="dropdown-filter-list">
+                        <li *ngFor="let address of addresses">
+                          <a (click)="fillAddress(address, currentStopDropOff)" dropdownToggle>
+                            <svg class="icon -star"><use xlink:href="#svg_star"/></svg>
+                            <strong>    
+
+                            </strong>
+                            <span>{{address.addressLines.join(', ')}}, {{address.state}}, {{address.country}}, {{address.city}}</span>
+                            <span class="label-gray">{{address.contactName}}, {{address.company}}, {{address.phone}}</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group" *ngFor="let addrLine of currentStopDropOff && currentStopDropOff.addressLines; let idx = index" [ngClass]="{'-x5': idx == 0}">
+                <label class="form-label">Address Line {{idx + 1}}</label><span [hidden]="idx != 0">*</span>
+                <input [hidden]="idx == currentStopDropOff.addressLines.length - 1" [disabled]="isCommonCarrier" autocomplete="off" class="form-control" [(ngModel)]="addrLine.val" [maxLength]=100  [required]="idx == 0" />
+                <div [hidden]="idx != currentStopDropOff.addressLines.length - 1">
+                  <button [hidden]="currentStopDropOff.addressLines.length > 2" [disabled]="isCommonCarrier" class="button -outline -addon" (click)="addAddressLine(currentStopDropOff)">+</button>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="addrLine.val">
+                </div>         
+              </div>
+              <div class="form-group flex">
+                <div class="col-7 pr1">
+                  <label class="form-label">City*</label>
+				  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopDropOff && currentStopDropOff.city" maxlength="100" required />
+                  </div>
+                <div class="col-5 pl1">
+                  <label class="form-label">State*</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" type="text" name="state" [(ngModel)]="currentStopDropOff && currentStopDropOff.state" maxlength="2" required />
+                </div>
+              </div>
+              <div class="form-group flex">
+                <div class="col-7 pr1">
+                  <label class="form-label">Country</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopDropOff && currentStopDropOff.country" maxlength="100" />
+                </div>
+                <div class="col-5 pl1">
+                  <label class="form-label">ZIP*</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopDropOff && currentStopDropOff.postalCode" maxlength="10" required/>
+                </div>
+              </div>
+              <div class="form-group -x5">
+                <label class="form-label">Name*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopDropOff && currentStopDropOff.contactName" maxlength="100" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Company*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopDropOff && currentStopDropOff.company" maxlength="100" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone*</label>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" type="tel" [(ngModel)]="currentStopDropOff && currentStopDropOff.phoneNumber" maxlength="50" required/>
+              </div>
+            </div>
+          </div>
+          <div class="form-group -x7">
+            <h2>
+              Packages
+              &nbsp;
+              <button [disabled]="isCommonCarrier" class="button -outline" type="button" title="Add Line" (click)="createPackage()"><span class="plus">+</span> Add package</button>
+            </h2>
+            <table class="table -simple">
+              <thead>
+                <tr>
+                  <th width="7%">Qty</th>
+                  <th width="17%">Type</th>
+                  <th width="17%">Height</th>
+                  <th width="17%">Weight</th>
+                  <th width="17%">Volume</th>
+                  <th width="25%" class="nowrap">Freight Class</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let package of currentShipment && currentShipment.packages; let idx = index">
+                  <td>
+                    <input  autocomplete="off" class="form-control" type="number"  [(ngModel)]="package.quantity" min="1" maxlength="7" />
+                  </td>
+                  <td>
+                    <select class="form-control" [(ngModel)]="package.type">
+                      <option *ngFor="let unit of packageUnits">{{unit}}</option>
+                    </select>
+                  </td>
+                  <td>
+                    <div class="flex">
+                      <div class="col-6 -merged">
+                        <input autocomplete="off"  type="text" pattern="[0-9999999]" class="form-control" style="width: 62px;" [(ngModel)]="package.height" maxlength="7"/>
+                      </div>
+                      <div class="col-6 -merged">
+                        <select class="form-control" style="width: 62px;" [(ngModel)]="package.heightMeasure" (ngModelChange)="setMeasurement(package, package.heightMeasure)">
+                          <option *ngFor="let unit of heightUnits" [selected]="package.heightMeasure == unit">{{unit}}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="flex">
+                      <div class="col-6 -merged">
+                        <input autocomplete="off"  class="form-control" style="width: 62px;" [(ngModel)]="package.weight" type="text" pattern="[0-9999999]"  maxlength="7" />
+                      </div>
+                      <div class="col-6 -merged">
+                         <select class="form-control" style="width: 62px;" [(ngModel)]="package.weightMeasure" (ngModelChange)="setMeasurement(package, package.weightMeasure)">
+                          <option *ngFor="let unit of weightUnits" [selected]="package.weightMeasure == unit">{{unit}}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="flex">
+                      <div class="col-6 -merged">
+                        <input autocomplete="off"  class="form-control" style="width: 62px;" [(ngModel)]="package.volume" type="text" pattern="[0-9999999]"  maxlength="7"/>
+                      </div>
+                      <div class="col-6 -merged">
+                        <select class="form-control" style="width: 62px;" [(ngModel)]="package.volumeMeasure" (ngModelChange)="setMeasurement(package, package.volumeMeasure)">
+                          <option *ngFor="let unit of volumeUnits" [selected]="package.volumeMeasure == unit">{{unit}}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <button class="table-remove" type="button" title="Remove" (click)="removePackage(idx)" tabindex="-1">&times;</button>
+                    <input autocomplete="off" class="form-control" [(ngModel)]="package.freightClass"/>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="form-group -x7">
+            <h2>
+              Orders
+              &nbsp;
+              <button class="button -outline" type="button" [disabled]="isCommonCarrier" (click)="createOrder()" title="Add Line"><span class="plus">+</span> Add Order</button>
+            </h2>
+            <table class="table -simple">
+              <thead>
+                <tr>
+                  <th width="50%">Order #</th>
+                  <th width="50%">Purchase Order #</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of currentShipment && currentShipment.orders; let idx = index">
+                  <td>
+                    <input autocomplete="off" class="form-control" [(ngModel)]="order.orderNumber" />
+                  </td>
+                  <td>
+                    <button class="table-remove" type="button"  title="Remove" (click)="removeOrder(idx)" tabindex="-1">&times;</button>
+                    <input autocomplete="off" class="form-control" [(ngModel)]="order.purchaseOrderNumber"  />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer" [hidden]="currentShipment && (currentShipment._id || currentShipment.id)">
+          <button class="button -outline" type="button" (click)="shipmentModal.hide();" tabindex="-1">Cancel</button>
+          <button class="button -primary" type="submit">Add Shipment</button>
+        </div>
+        <div class="modal-footer" [hidden]="currentShipment && !(currentShipment._id || currentShipment.id)">
+          <button type="button" class="button -icon -outline-danger left" title="Delete" [disabled]="isCommonCarrier" (click)="removeShipment(); shipmentModal.hide();" tabindex="-1"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button>
+          <button class="button -outline" type="button" (click)="shipmentModal.hide();" tabindex="-1">Cancel</button>
+          <button class="button -primary" type="button" [disabled]="isCommonCarrier" (click)="updateShipment(); shipmentModal.hide()">Update Shipment</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,126 @@
+﻿  <div class="skeleton" [hidden]="!shipments.length">
+    <div class="skeleton-item" *ngFor="let stop of stops; let idx = index;">
+      <div class="skeleton-bubble -left" *ngIf="stop.pickupShipments && stop.pickupShipments.length" [hidden]="stop.isService">
+        <div class="skeleton-bubble-header">
+          <strong class="flex-auto">Pick Up</strong>
+          <div *ngIf="getValue(stop.pickupShipments, 'volume', true) > 0 || getValue(stop.pickupShipments, 'weight', true) > 0">
+            <small><transflo-number [number]="getValue(stop.pickupShipments, 'volume', true)"></transflo-number>
+              ft³
+            </small>
+            <small><transflo-number [number]="getValue(stop.pickupShipments, 'weight', true)"></transflo-number>
+              lbs
+            </small>
+          </div>
+          <div *ngIf="getValue(stop.pickupShipments, 'volume', false) > 0 || getValue(stop.pickupShipments, 'weight', false) > 0">
+            <small><transflo-number [number]="getValue(stop.pickupShipments, 'volume', false)"></transflo-number>
+              cm³
+            </small>
+            <small><transflo-number [number]="getValue(stop.pickupShipments, 'weight', false)"></transflo-number>
+              kg
+            </small>
+          </div>
+        </div>
+        <ul class="skeleton-bubble-list">
+          <li *ngFor="let shipment of stop.pickupShipments">
+            <span>{{getValue([shipment], 'quantity')}} pcs</span>
+            <div *ngIf="getValue([shipment], 'volume', true) > 0 || getValue([shipment], 'weight', true) > 0">
+              <span><transflo-number [number]="getValue([shipment], 'volume', true)"></transflo-number>
+                &nbsp;ft³
+              </span>
+              <span><transflo-number [number]="getValue([shipment], 'weight', true)"></transflo-number>
+                &nbsp;lbs
+              </span>
+            </div>
+            <div *ngIf="getValue([shipment], 'volume', false) > 0 || getValue([shipment], 'weight', false) > 0">
+              <span><transflo-number [number]="getValue([shipment], 'volume', false)"></transflo-number>
+                &nbsp;cm³
+              </span>
+              <span><transflo-number [number]="getValue([shipment], 'weight', false)"></transflo-number>
+                &nbsp;kg
+              </span>
+            </div>
+            <strong>BOL {{shipment.shipmentBOL}}</strong>
+          </li>
+        </ul>
+      </div>
+      <div class="skeleton-bubble -right" *ngIf="stop.dropoffShipments && stop.dropoffShipments.length">
+        <div class="skeleton-bubble-header">
+          <strong>Drop Off</strong>
+        </div>
+        <ul class="skeleton-bubble-list">
+          <li *ngFor="let shipment of stop.dropoffShipments">
+            <span>{{getValue([shipment], 'quantity')}} pcs</span>
+            <div *ngIf="getValue([shipment], 'volume', true) > 0 || getValue([shipment], 'weight', true) > 0">
+              <span><transflo-number [number]="getValue([shipment], 'volume', true)"></transflo-number>
+                ft³
+              </span>
+              <span><transflo-number [number]="getValue([shipment], 'weight', true)"></transflo-number>
+                lbs
+              </span>
+            </div>
+            <div *ngIf="getValue([shipment], 'volume', false) > 0 || getValue([shipment], 'weight', false) > 0">
+              <span><transflo-number [number]="getValue([shipment], 'volume', false)"></transflo-number>
+                cm³
+              </span>
+              <span><transflo-number [number]="getValue([shipment], 'weight', false)"></transflo-number>
+                kg
+              </span>
+            </div>
+            <strong>BOL {{shipment.shipmentBOL}}</strong>
+          </li>
+        </ul>
+      </div>
+      <div class="skeleton-item-container">
+        <div class="flex flex-wrap content-stretch" *ngIf="stop.isService">
+          <p class="col-6 pr2">
+            <strong>{{stop.date}}</strong>
+            <span>{{stop.time}}</span>
+          </p>
+          <div class="col-6 right-align pl2">
+          </div>
+          <p class="col-6 self-end pr2 pt3">
+            <strong>{{stop.addressLines && stop.addressLines[0] && stop.addressLines[0].val}}</strong><br />
+            <span>{{stop.addressLines && stop.addressLines[1] && stop.addressLines[1].val}}</span>
+            <span>{{stop.city}}, {{stop.state}}, {{stop.postalCode}}</span>
+          </p>
+          <div class="col-6 right-align self-end pl2 pt3">
+            <strong>{{stop.contactName}}</strong>
+          </div>
+        </div>
+        <div class="flex flex-wrap content-stretch" *ngIf="!stop.isService">
+          <p class="col-6 pr2">
+            <strong>{{stop.date}}</strong>
+            <span>{{stop.time}}</span>
+          </p>
+          <div class="col-6 right-align pl2">
+            <div *ngIf="stop.truckLoad.showImperial">
+              <strong class="pl2"><transflo-number [number]="stop.truckLoad.volumeImperial"></transflo-number>
+                ft³
+              </strong>
+              <strong class="pl2"><transflo-number [number]="stop.truckLoad.weightImperial"></transflo-number>
+                lbs
+              </strong>
+            </div>
+            <div *ngIf="stop.truckLoad.showDecimal">
+              <strong class="pl2"><transflo-number [number]="stop.truckLoad.volumeDecimal"></transflo-number>
+                cm³
+              </strong>
+              <strong class="pl2"><transflo-number [number]="stop.truckLoad.weightDecimal"></transflo-number>
+                kg
+              </strong>
+            </div>
+            <div class="skeleton-item-hint">Truck Load</div>
+          </div>
+          <p class="col-6 self-end pr2 pt3">
+            <strong>{{stop.addressLines.join(', ')}}</strong><br />
+            <span>{{stop.city}}, {{stop.state}}, {{stop.postalCode}}</span>
+          </p>
+          <div class="col-6 right-align self-end pl2 pt3">
+            <strong>{{stop.contactName}}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="skeleton-item-footer">
+      </div>
+    </div>
+  </div>

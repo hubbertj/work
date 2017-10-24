@@ -1,0 +1,44 @@
+@mixin clearfix
+  &:after
+    content: ''
+    display: table
+    clear: both
+
+// Responsive
+// +breakpoint(sm) - for Tablet
+@mixin breakpoint($media)
+  @if $media == xs
+    @media (max-width: $screen-xs-max)
+      @content
+  @else if $media == sm
+    @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max)
+      @content
+  @else if $media == md
+    @media (min-width: $screen-md-min) and (max-width: $screen-md-max)
+      @content
+  @else if $media == lg
+    @media (min-width: $screen-lg-min) and (max-width: 1659px)
+      @content
+  @else if $media == xlg
+    @media (min-width: 1660px)
+      @content
+  @else if $media == tablet
+    @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) and (orientation: portrait)
+      @content
+  @else if $media == mobile
+    @media (max-width: $screen-xs-max) and (orientation: portrait)
+      @content
+  @else if $media == iphone6
+    @media only screen and (min-device-width: 375px) and (max-device-width: 667px) and (orientation: portrait)
+      @content
+
+// +breakpoints(xs, sm) - for Phone & Tablet
+@mixin breakpoints($media...)
+  @each $mediatype in $media
+    +breakpoint($mediatype)
+      @content
+
+@mixin truncate
+  text-overflow: ellipsis
+  white-space: nowrap
+  overflow: hidden

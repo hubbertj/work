@@ -1,0 +1,103 @@
+﻿<div class="loading-page" [hidden]="!loading"><em></em><em></em><em></em></div>
+
+<div class="flex header-fake">
+  <span class="header-item header-logo">
+    <svg class="icon -logo"><use xlink:href="#svg_logo" /></svg>
+  </span>
+</div>
+
+<div class="page-header -margined" >
+  <div class="flex items-center">
+    <div class="flex-auto flex items-center">
+      <h1 class="self-baseline">Register</h1>
+    </div>
+  </div>
+	  <form class="filters-form" #registerForm="ngForm"  (ngSubmit)="onSubmit()">
+	    <div>
+	      <hr />
+	      <div class="form-group register-error" [hidden]="!usDotBrokerZipError && !userExistError && !serverErrorMessage">{{serverErrorMessage}}</div>
+	      <div class="flex">
+
+	        <div class="col-4 pr3">
+	          <div class="form-group">
+	            <label class="form-label">Carrier US DOT #</label>
+	            <input type="text" id="usdot" class="form-control" tabindex="1"
+					   required maxlength="20"
+					   [ngClass]="{'error': usDotBrokerZipError}" 
+					   name="usdot" [(ngModel)]="usdot">
+	          </div>
+			  <div class="form-group">
+			    <label class="form-label">First Name</label>
+			    <input type="text" id="firstName" class="form-control" tabindex="4"
+					   required maxlength="50"
+					   name="firstName" [(ngModel)]="firstName">
+			  </div>
+			  <div class="form-group">
+			    <label class="form-label">Create User Name</label>
+			    <input autocomplete="off" class="form-control" type="text" [(ngModel)]="userName" [ngClass]="{'error': userExistError}" required  maxlength="50"/>
+			  </div>
+	        </div>
+	        <div class="col-4 pr3 pl3">
+	          <div class="form-group">
+	            <label class="form-label">Broker ID</label>
+	            <input autocomplete="off" tabindex="2" class="form-control" type="text" [(ngModel)]="brokerID" [ngClass]="{'error': usDotBrokerZipError}" required maxlength="10"/>
+	          </div>
+			  <div class="form-group">
+			    <label class="form-label">Last Name</label>
+			    <input type="text" id="lastName" class="form-control" tabindex="5"
+					   required maxlength="50"
+					   name="lastName" [(ngModel)]="lastName">
+			  </div>
+			  <div class="form-group">
+			    <label class="form-label">Create Password</label>
+			    <input class="form-control form-control-password" autocomplete="off" [(ngModel)]="password" 
+					   (blur)="passwordValidator()" required maxlength="50"
+					   type="password" />
+					    
+			  </div>
+	        </div>
+	        <div class="col-4 pr3 pl3">
+	          <div class="form-group">
+	            <label class="form-label">Carrier Zip Code</label>
+	            <input autocomplete="off" tabindex="3" class="form-control" [(ngModel)]="zip" [ngClass]="{'error': usDotBrokerZipError}" 
+					    type="text" pattern="[0-9]{5}" title="Five digit zip code" maxlength="5" />
+	          </div>
+			  <div class="form-group">
+			    <label class="form-label">Email Address</label>
+			    <input autocomplete="off" tabindex="6" class="form-control" [ngClass]="{'error': !emailValid}" type="email" 
+					   [(ngModel)]="userEmail" (blur)="emailValidator()" required maxlength="100">
+			    <div [hidden]="emailValid" class="label-validation-error">Email Address is invalid</div>
+			  </div>
+			  <div class="form-group">
+			    <label class="form-label">Verify password</label>
+			    <input class="form-control form-control-password" autocomplete="off" [(ngModel)]="verifypassword" 
+					   (blur)="passwordValidator()" required maxlength="50"
+					   type="password" />
+				<div [hidden]="!passwordNotMatch" class="label-validation-error">Password does not match</div>
+			  </div>
+	        </div>
+	      </div>
+		<div>
+		  <div class="form-group register-eula">
+			<input [(ngModel)]="checkEULA" type="checkbox" data-toggle="toggle">
+	    I have read and agree to the Transflo Command Center terms and conditions. Click <a (click)="showEULA()">here</a> to read more.
+		  </div>
+	</div>
+		  <div class="flex">
+		    <div class="col-4 pr3">
+		    </div>
+		    <div class="col-4 pr3 pl3">
+		    </div>
+		    <div class="col-4 pr3 pl3">
+		      <div class="form-group">
+		        <label class="form-label"></label>
+		        <button class="signin-button -block" type="submit" [disabled]="!inputValid()">Register</button>
+		      </div>
+		    </div>
+		  </div>
+		  
+	    </div>
+	  
+	  </form>
+</div>
+<transflo-eula></transflo-eula>

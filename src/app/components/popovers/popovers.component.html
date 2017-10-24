@@ -1,0 +1,494 @@
+﻿<!--Chat Welcome modal-->
+<div bsModal #chat1Modal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myChatModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content -horizontal">
+      <button type="button" class="modal-close" aria-label="Close" (click)="chat1Modal.hide()" title="Close">&times;</button>
+      <div class="chat-sidebar">
+        <div class="chat-filter flex flex-column">
+          <div class="flex">
+            <input autocomplete="off" class="form-control flex-auto -addon" type="search" placeholder="Find Driver" />
+            <label class="form-addon flex items-center" title="Show only favorites"><input type="checkbox" hidden /><svg class="icon -favorite -filter"><use xlink:href="#svg_star"/></svg></label>
+          </div>
+          <div class="flex-auto"></div>
+          <div class="label-gray">Use filter to find driver</div>
+        </div>
+        <div class="chat-list">
+          <a class="card-link">
+            <span class="card-title">
+              <span class="label-lg label-link regular block truncate">
+                Boris Finerman
+                <span class="card-icon -active"><svg class="icon -favorite"><use xlink:href="#svg_star"/></svg></span>
+              </span>
+              <span class="label-gray block truncate">#123456</span>
+              <span class="label-gray block truncate">b.finerman@gmail.com</span>
+            </span>
+          </a>
+          <a class="card-link">
+            <span class="card-title">
+              <span class="label-lg label-link regular block truncate">Silva Pancheto</span>
+              <span class="label-gray block truncate">#123456</span>
+              <span class="label-gray block truncate">pancheto@gmail.com</span>
+            </span>
+          </a>
+          <a class="card-link">
+            <span class="card-title">
+              <span class="label-lg label-link regular block truncate">Antonio Badrigez</span>
+              <span class="label-gray block truncate">#123456</span>
+              <span class="label-gray block truncate">badrigez@gmail.com</span>
+            </span>
+          </a>
+          <a class="card-link">
+            <span class="card-title">
+              <span class="label-lg label-link regular block truncate">Barney Lock</span>
+              <span class="label-gray block truncate">#123456</span>
+              <span class="label-gray block truncate">kingpin@gmail.com</span>
+            </span>
+          </a>
+        </div>
+      </div>
+      <div class="flex-auto self-center center">
+        <img src="./images/chat.png" alt="" width="88" />
+        <h2 class="fs24 mb2 mt3">Welcome to Chat with Drivers!</h2>
+        <div class="label-md label-gray">Please, select a driver to start a chat.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Chat messages modal-->
+<div bsModal #chat2Modal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myChatModalLabel" aria-hidden="true" (onHide)="removeListener()" id="modal">
+  <div class="modal-dialog">
+    <div class="modal-content -horizontal">
+      <button type="button" class="modal-close" aria-label="Close" (click)="chat2Modal.hide();" title="Close">&times;</button>
+      <div class="chat-sidebar">
+        <div class="chat-filter flex flex-column">
+          <div class="flex">
+            <input autocomplete="off" class="form-control flex-auto -addon" type="search" [(ngModel)]="searchString" placeholder="Find Driver" (ngModelChange)="filterDrivers(drivers)"/>
+            <label class="form-addon flex items-center" title="Show only favorites"><input type="checkbox" [(ngModel)]="filteredByFavorite" (ngModelChange)="filterByFavorite()" hidden /><svg class="icon -favorite -filter"><use xlink:href="#svg_star"/></svg></label>
+          </div>
+          <div class="flex-auto"></div>
+          <div class="flex items-end">
+            <div class="label-gray flex-auto">{{driversList.length}} drivers found
+              <a class="italic label-green ml2" (click)="selectAll()" [hidden]="activeMode == 'solo' || allSelected">Select all</a>
+              <a class="italic label-green ml2" (click)="unselectAll()" [hidden]="activeMode == 'solo' || !allSelected">Unselect all</a>
+            </div>
+            <div class="dropdown" dropdown keyboardNav="true">
+              <button class="chat-group-button" type="button" (click)="toggleMode()" [ngClass]="{'-active': activeMode == 'multy'}">
+                <svg class="icon -chat-group chat-group-button-icon1"><use xlink:href="#svg_chatgroup"/></svg>
+                <svg class="icon -chat-group chat-group-button-icon2"><use xlink:href="#svg_chatgroup_hover"/></svg>
+                <svg class="icon -chat-group chat-group-button-icon3"><use xlink:href="#svg_chatgroup_active"/></svg>
+              </button>
+              <div class="dropdown-menu -center -lg" dropdownMenu>
+                <div class="chat-help">
+                  <h2 class="label-green">You’re about to send <br />a notification to the group drivers</h2>
+                  <p>Use <strong>SHIFT + Click</strong> or <strong>CMD + Click</strong> to choose recipients.<br /> Click on any driver to cancel.</p>
+                  <button type="button" class="button -outline">Select all drivers from the list</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-list" [hidden]="driversLoading">
+          <a class="card-link" *ngFor="let driver of driversList" [ngClass]="{'-active': activeMode == 'solo' && driver.id == activeDriver || activeMode == 'multy' && selectedObject[driver.id]}" (click)="setActiveDriver(driver, driver.id)">
+            <span class="card-title">
+              <span class="label-lg label-link regular block truncate">{{driver.name}}</span>
+              <span class="label-gray block truncate">{{driver.driverId}}</span>
+              <span class="label-gray block truncate">{{driver.email}}</span>
+            </span>
+            <span class="pl3" [hidden]="!driver.messages">
+              <span class="label-count -msg">{{driver.messages}}</span>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <div class="flex-auto self-center center" *ngIf="!activeDriver">
+        <img src="./images/chat.png" alt="" width="88" />
+        <h2 class="fs24 mb2 mt3">Welcome to Chat with Drivers!</h2>
+        <div class="label-md label-gray">Please, select a driver to start a chat.</div>
+      </div>
+
+      <div class="chat" *ngIf="activeDriver">
+        <div class="chat-header flex flex-column justify-between">
+          <div class="flex items-center pr3">
+            <h2 class="fs24 m0 truncate">{{activeMode == 'multy' ? activeDriverNames : activeDriverName}}</h2>
+            <div class="pl2" [hidden]="activeMode == 'multy'">
+              <label title="Mark as favorite"><input type="checkbox" hidden [(ngModel)]="favoriteActiveDriver"  (ngModelChange)="setAsFavorite()"/><em class="form-favorite"><svg class="icon -favorite m0"><use xlink:href="#svg_star"/></svg></em></label>
+            </div>
+            <div class="pl2" [hidden]="activeMode == 'multy'">
+              <a href="mailto:{{activeDriverEmail}}" class="button -outline -icon"><svg class="icon -mail"><use xlink:href="#svg_mail"/></svg></a>
+            </div>
+          </div>
+          <div class="chat-nav flex items-end">
+            <div class="flex-auto nowrap">
+              <a class="chat-nav-button" (click)="activeTab = 'messages'; scrollBottom()" [ngClass]="{'-active': activeTab == 'messages'}">{{ activeMode == 'solo' ? 'Messages' : 'Messages to Group'}}</a>
+              <a class="chat-nav-button" (click)="activeTab = 'notifications'; notificationType = 'general'; scrollBottom()" [ngClass]="{'-active': activeTab == 'notifications'}">{{ activeMode == 'solo' ? 'Notification' : 'Notification to Group'}}</a>
+            </div>
+          </div>
+        </div>
+        <div class="chat-body" [hidden]="activeTab == 'messages'" scroll [scrollEmitter]="scrollEmitter">
+          <div class="chat-messages">
+            <div *ngFor="let notification of notifications" class="chat-item">
+                <div class="chat-date">
+                <span class="chat-date-content">{{notification.date}}</span>
+              </div>
+              <div class="chat-notification">
+                <h5>{{notification.title}}</h5>
+                <p>{{notification.body}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-body" scroll (onScroll)="onScroll($event)" [scrollEmitter]="scrollEmitter" [hidden]="activeTab =='notifications'">
+          <!--div [hidden]="!loading"> loading </div-->
+          <div class="chat-messages">
+            <div *ngFor="let message of dialog; let idx = index" class="chat-item">
+              <div class="chat-date -new" [hidden]="!message.unread">
+                <span class="chat-date-content -new">new messages</span>
+              </div>
+              <div class="chat-date" [hidden]="!message.showDate">
+                <span class="chat-date-content">{{message.date}}</span>
+              </div>
+              <div class="chat-line" [ngClass]="{'-reverse': message.fromId == divisionId}">
+                <div class="chat-bubble" [ngClass]="{'-reverse': message.fromId == divisionId}">{{message.body}}</div>
+                <div class="chat-time">{{message.time}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-footer" [hidden]="activeTab == 'messages'">
+          <div class="form-group flex">
+            <div class="col-8 pr2">
+              <input autocomplete="off" class="form-control" placeholder="Subject" [(ngModel)]="notificationTitle" />
+            </div>
+            <div class="col-2 pr1">
+              <button type="button" class="button -outline-primary -block" (click)="notificationType = 'general'" [ngClass]="{'-active': notificationType == 'general'}">General</button>
+            </div>
+            <div class="col-2 pl1">
+              <button type="button" class="button -outline -block" (click)="notificationType = 'settlement'" [ngClass]="{'-active': notificationType == 'settlement'}">Settlement</button>
+            </div>
+          </div>
+          <div class="form-group -x15">
+            <textarea rows="6" class="form-control" placeholder="Message" [(ngModel)]="notificationMessage"></textarea>
+          </div>
+          <div class="form-group -x15">
+            <button class="button -primary -wider" type="button" [disabled]="notificationMessage == '' || notificationTitle == '' " (click)="sendNotification(notificationMessage, notificationTitle, notificationType)">Send</button>
+          </div>
+        </div>
+
+        <div class="chat-footer" [hidden]="activeTab == 'notifications'">
+          <div class="flex">
+            <div class="flex-auto">
+              <textarea autocomplete="off" rows="1" class="form-control" placeholder="Your message" [(ngModel)]="message" autosize></textarea>
+            </div>
+            <div class="pl2 self-end">
+              <button class="button -primary -wider" type="button" [disabled]="message == ''" (click)="sendMessage(message)">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--Chat notification modal-->
+<div bsModal #chat3Modal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myChatModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content -horizontal">
+      <button type="button" class="modal-close" aria-label="Close" (click)="chat3Modal.hide()" title="Close">&times;</button>
+      <div class="chat-sidebar">
+        <div class="chat-filter flex flex-column">
+          <div class="flex">
+            <input autocomplete="off" class="form-control flex-auto -addon" type="search" placeholder="Find Driver" />
+            <label class="form-addon flex items-center" title="Show only favorites"><input type="checkbox" hidden /><svg class="icon -favorite -filter"><use xlink:href="#svg_star"/></svg></label>
+          </div>
+          <div class="flex-auto"></div>
+          <div class="label-gray">Use filter to find driver</div>
+        </div>
+        <div class="chat-list">
+          <a class="card-link -active">
+              <span class="card-title">
+                <span class="label-lg label-link regular block truncate">Boris Finerman</span>
+                <span class="label-gray block truncate">#123456</span>
+                <span class="label-gray block truncate">b.finerman@gmail.com</span>
+              </span>
+          </a>
+          <a class="card-link">
+              <span class="card-title">
+                <span class="label-lg label-link regular block truncate">Silva Pancheto</span>
+                <span class="label-gray block truncate">#123456</span>
+                <span class="label-gray block truncate">pancheto@gmail.com</span>
+              </span>
+          </a>
+          <a class="card-link">
+              <span class="card-title">
+                <span class="label-lg label-link regular block truncate">Antonio Badrigez</span>
+                <span class="label-gray block truncate">#123456</span>
+                <span class="label-gray block truncate">badrigez@gmail.com</span>
+              </span>
+          </a>
+          <a class="card-link">
+              <span class="card-title">
+                <span class="label-lg label-link regular block truncate">Barney Lock</span>
+                <span class="label-gray block truncate">#123456</span>
+                <span class="label-gray block truncate">kingpin@gmail.com</span>
+              </span>
+          </a>
+        </div>
+      </div>
+      <div class="chat">
+        <div class="chat-header flex flex-column justify-between">
+          <div class="flex items-center pr3">
+            <h2 class="fs24 m0 truncate">Boris Finerman</h2>
+            <div class="pl2">
+              <label title="Mark as favorite"><input type="checkbox" checked hidden /><em class="form-favorite"><svg class="icon -favorite m0"><use xlink:href="#svg_star"/></svg></em></label>
+            </div>
+            <div class="pl2">
+              <a href="mailto:b.finerman@gmail.com" class="button -outline -icon"><svg class="icon -mail"><use xlink:href="#svg_mail"/></svg></a>
+            </div>
+          </div>
+          <div class="chat-nav flex items-end">
+            <div class="flex-auto nowrap">
+              <a class="chat-nav-button">Messages</a>
+              <a class="chat-nav-button -active">Notification</a>
+            </div>
+            <input type="search" class="form-control -inline" placeholder="Search" />
+          </div>
+        </div>
+        <div class="chat-body">
+          <div class="chat-notification">
+            <h5>Boris Finerman</h5>
+            <p>Do not forget to pass medicine control by the end of week. It's very important because otherwise you will not get huge load and should pay fine. Please pay attention to this notification! You are one of the best drivers what you constantly forget to pass medicine control.</p>
+          </div>
+          <div class="chat-date">
+            <span class="chat-date-content">Mar 19, 2016</span>
+          </div>
+        </div>
+        <div class="chat-footer">
+          <div class="flex">
+            <div class="flex-auto">
+              <div class="form-group">
+                <input autocomplete="off" class="form-control" placeholder="Subject" />
+              </div>
+              <div class="form-group -x15">
+                <textarea autocomplete="off" rows="6" class="form-control" placeholder="Your message"></textarea>
+              </div>
+            </div>
+            <div class="pl2 self-end">
+              <button class="button -primary -wider" type="button">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Chat messages to group modal-->
+<div bsModal #chat4Modal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myChatModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content -horizontal">
+      <button type="button" class="modal-close" aria-label="Close" (click)="chat4Modal.hide()" title="Close">&times;</button>
+      <div class="chat-sidebar">
+        <div class="chat-filter flex flex-column">
+          <div class="flex">
+            <input autocomplete="off" class="form-control flex-auto -addon" type="search" placeholder="Find Driver" />
+            <label class="form-addon flex items-center" title="Show only favorites"><input type="checkbox" hidden /><svg class="icon -favorite -filter"><use xlink:href="#svg_star"/></svg></label>
+          </div>
+          <div class="flex-auto"></div>
+          <div class="flex items-end">
+            <div class="label-gray flex-auto">4 drivers found</div>
+            <div class="dropdown" dropdown keyboardNav="true">
+              <button class="chat-group-button -active" type="button" dropdownToggle>
+                <svg class="icon -chat-group chat-group-button-icon1"><use xlink:href="#svg_chatgroup"/></svg>
+                <svg class="icon -chat-group chat-group-button-icon2"><use xlink:href="#svg_chatgroup_hover"/></svg>
+                <svg class="icon -chat-group chat-group-button-icon3"><use xlink:href="#svg_chatgroup_active"/></svg>
+              </button>
+              <div class="dropdown-menu -center -lg" dropdownMenu>
+                <div class="chat-help">
+                  <h2 class="label-green">You’re about to send <br />a notification to the group drivers</h2>
+                  <p>Use <strong>SHIFT + Click</strong> or <strong>CMD + Click</strong> to choose recipients.<br /> Click on any driver to cancel.</p>
+                  <button type="button" class="button -outline">Select all drivers from the list</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-list">
+          <a class="card-link -active">
+              <span class="card-title">
+                <span class="label-lg label-link regular block truncate">Boris Finerman</span>
+                <span class="label-gray block truncate">#123456</span>
+                <span class="label-gray block truncate">b.finerman@gmail.com</span>
+              </span>
+          </a>
+          <a class="card-link -active">
+              <span class="card-title">
+                <span class="label-lg label-link regular block truncate">Silva Pancheto</span>
+                <span class="label-gray block truncate">#123456</span>
+                <span class="label-gray block truncate">pancheto@gmail.com</span>
+              </span>
+          </a>
+          <a class="card-link -active">
+              <span class="card-title">
+                <span class="label-lg label-link regular block truncate">Antonio Badrigez</span>
+                <span class="label-gray block truncate">#123456</span>
+                <span class="label-gray block truncate">badrigez@gmail.com</span>
+              </span>
+          </a>
+          <a class="card-link -active">
+              <span class="card-title">
+                <span class="label-lg label-link regular block truncate">Barney Lock</span>
+                <span class="label-gray block truncate">#123456</span>
+                <span class="label-gray block truncate">kingpin@gmail.com</span>
+              </span>
+          </a>
+        </div>
+      </div>
+      <div class="chat">
+        <div class="chat-header flex flex-column justify-between">
+          <div class="flex items-center pr3">
+            <h2 class="fs24 m0 truncate pr2">Boris Finerman, Silva Pancheto, </h2>
+            <div class="dropdown -inline" dropdown keyboardNav="true">
+              <button class="button -link fs24 medium" type="button" dropdownToggle>+ 2 more</button>
+              <ul class="dropdown-menu -list -right" dropdownMenu>
+                <li>Antonio Badrigez</li>
+                <li>Barney Lock</li>
+              </ul>
+            </div>
+          </div>
+          <div class="chat-nav flex items-end">
+            <div class="flex-auto nowrap">
+              <a class="chat-nav-button -active">Messages to Group</a>
+              <a class="chat-nav-button">Notification to Group</a>
+            </div>
+            <input type="search" class="form-control -inline" placeholder="Search" />
+          </div>
+        </div>
+        <div class="chat-body">
+          <div class="chat-line -reverse">
+            <div class="chat-bubble -reverse">Good Morning Guys!</div>
+            <div class="chat-time">7:30</div>
+          </div>
+          <div class="chat-date">
+            <span class="chat-date-content">Mar 19, 2016</span>
+          </div>
+        </div>
+        <div class="chat-footer">
+          <div class="flex">
+            <div class="flex-auto">
+              <textarea rows="1" class="form-control" placeholder="Your message" autosize></textarea>
+            </div>
+            <div class="pl2 self-end">
+              <button class="button -primary -wider" type="button">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Chat notification to group modal-->
+<div bsModal #chat5Modal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myChatModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content -horizontal">
+      <button type="button" class="modal-close" aria-label="Close" (click)="chat5Modal.hide()" title="Close">&times;</button>
+      <div class="chat-sidebar">
+        <div class="chat-filter flex flex-column">
+          <div class="flex">
+            <input autocomplete="off" class="form-control flex-auto -addon" type="search" placeholder="Find Driver" />
+            <label class="form-addon flex items-center" title="Show only favorites"><input type="checkbox" hidden /><svg class="icon -favorite -filter"><use xlink:href="#svg_star"/></svg></label>
+          </div>
+          <div class="flex-auto"></div>
+          <div class="flex items-end">
+            <div class="label-gray flex-auto">4 drivers found <a class="italic label-green ml2">Select all</a></div>
+            <div class="dropdown" dropdown keyboardNav="true">
+              <button class="chat-group-button" type="button" dropdownToggle>
+                <svg class="icon -chat-group chat-group-button-icon1"><use xlink:href="#svg_chatgroup"/></svg>
+                <svg class="icon -chat-group chat-group-button-icon2"><use xlink:href="#svg_chatgroup_hover"/></svg>
+                <svg class="icon -chat-group chat-group-button-icon3"><use xlink:href="#svg_chatgroup_active"/></svg>
+              </button>
+              <div class="dropdown-menu -center -lg" dropdownMenu>
+                <div class="chat-help">
+                  <h2 class="label-green">You’re about to send <br />a notification to the group drivers</h2>
+                  <p>Use <strong>SHIFT + Click</strong> or <strong>CMD + Click</strong> to choose recipients.<br /> Click on any driver to cancel.</p>
+                  <button type="button" class="button -outline">Select all drivers from the list</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-list">
+          <a class="card-link -active">
+                <span class="card-title">
+                  <span class="label-lg label-link regular block truncate">Boris Finerman</span>
+                  <span class="label-gray block truncate">#123456</span>
+                  <span class="label-gray block truncate">b.finerman@gmail.com</span>
+                </span>
+          </a>
+          <a class="card-link">
+                <span class="card-title">
+                  <span class="label-lg label-link regular block truncate">Silva Pancheto</span>
+                  <span class="label-gray block truncate">#123456</span>
+                  <span class="label-gray block truncate">pancheto@gmail.com</span>
+                </span>
+          </a>
+          <a class="card-link -active">
+                <span class="card-title">
+                  <span class="label-lg label-link regular block truncate">Antonio Badrigez</span>
+                  <span class="label-gray block truncate">#123456</span>
+                  <span class="label-gray block truncate">badrigez@gmail.com</span>
+                </span>
+          </a>
+          <a class="card-link">
+                <span class="card-title">
+                  <span class="label-lg label-link regular block truncate">Barney Lock</span>
+                  <span class="label-gray block truncate">#123456</span>
+                  <span class="label-gray block truncate">kingpin@gmail.com</span>
+                </span>
+          </a>
+        </div>
+      </div>
+      <div class="chat">
+        <div class="chat-header flex flex-column justify-between">
+          <div class="flex items-center pr3">
+            <h2 class="fs24 m0 truncate">Boris Finerman, Antonio Badrigez</h2>
+          </div>
+          <div class="chat-nav flex items-end">
+            <div class="flex-auto nowrap">
+              <a class="chat-nav-button">Messages to Group</a>
+              <a class="chat-nav-button -active">Notification to Group</a>
+            </div>
+            <input type="search" autocomplete="off" class="form-control -inline" placeholder="Search" />
+          </div>
+        </div>
+        <div class="chat-body">
+          <div class="chat-notification">
+            <h5>Boris Finerman</h5>
+            <p>Do not forget to pass medicine control by the end of week. It's very important because otherwise you will not get huge load and should pay fine. Please pay attention to this notification! You are one of the best drivers what you constantly forget to pass medicine control.</p>
+          </div>
+          <div class="chat-date">
+            <span class="chat-date-content">Mar 19, 2016</span>
+          </div>
+        </div>
+        <div class="chat-footer">
+          <div class="flex">
+            <div class="flex-auto">
+              <div class="form-group">
+                <input autocomplete="off" class="form-control" placeholder="Subject" />
+              </div>
+              <div class="form-group -x15">
+                <textarea rows="6" class="form-control" placeholder="Your message"></textarea>
+              </div>
+            </div>
+            <div class="pl2 self-end">
+              <button class="button -primary -wider" type="button">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

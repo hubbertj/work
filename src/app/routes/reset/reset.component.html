@@ -1,0 +1,27 @@
+﻿<div class="signin">
+  <div class="signin-header">
+    <svg class="icon -logo-lg"><use xlink:href="#svg_logo_lg"/></svg>
+  </div>
+  <div class="signin-body">
+    <div class="signin-content">
+      <h2 class="signin-h2 center">Create password</h2>
+      <form novalidate (submit)="reset()">
+        <div class="form-group signin-error" *ngIf="error">{{error}}</div>
+        <div class="form-group -x2">
+          <input class="signin-form-control" [ngClass]="{'error': error}" type="password" placeholder="Enter new password" autofocus [(ngModel)]="password1" />
+        </div>
+        <div class="form-group -x2">
+          <input class="signin-form-control" [ngClass]="{'error': error}" type="password" placeholder="Confirm new password" [(ngModel)]="password2" />
+        </div>
+        <div class="form-group -x2 flex">
+          <div class="col-6 pl2 -margined">
+            <button class="signin-button -block" type="submit">Create</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="signin-footer">
+    &copy; Transflo, 2017
+  </div>
+</div>

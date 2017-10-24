@@ -1,0 +1,148 @@
+﻿<div class="loading-page" [hidden]="!loading"><em></em><em></em><em></em></div>
+
+<div class="home-container-placeholder"></div>
+<div class="home-container">
+
+  <div class="home-leftbar">
+
+      <div class="home-leftbar-body">
+        <div class="form-group">
+          <label class="form-label">Load Status</label>
+          <transflo-dropdown [list]="statusFilters" [selectedList]="filterStatus" (listChanged)="statusChanged($event)" placeholder="Select statuses"></transflo-dropdown>
+        </div>
+        <div class="form-group -x2">
+          <label class="form-label">Shipping Date</label>
+          <input autocomplete="off" class="form-control -select" placeholder="Select dates" range-picker [daterange]="filterDateShipping" (daterangechanged)="filterChanged($event, 'shipping')" />
+        </div>
+         <div class="form-group -x2">
+          <label class="form-label">Delivery Date</label>
+          <input autocomplete="off" class="form-control -select" placeholder="Select dates" range-picker [daterange]="filterDateDelivery" (daterangechanged)="filterChanged($event, 'delivery')" />
+        </div>
+        <div class="form-group -x3 -icon">
+          <img src="./images/i_shipping.png" alt="" width="17" height="21" *ngIf="locationFilter == 'shipping'">
+          <img src="./images/i_delivery.png" alt="" width="17" height="21" *ngIf="locationFilter == 'delivery'">
+        </div>
+        <div class="form-group -bordered -x2">
+          <!--label class="form-checkbox">
+            <input type="checkbox" [(ngModel)]="shippingLocations" (ngModelChange)="applyCheckboxes()"/>
+            <svg class="icon -checkbox form-checkbox-icon -green"><use xlink:href="#svg_checkbox"/></svg>
+            <span class="form-checkbox-text">Show Shipping Locations</span>
+          </label-->
+          <label class="form-radio">
+            <input type="radio" name="locationFilter" value="shipping" (click)="applyCheckboxes($event)" checked/>
+            <span class="form-radio-text -green">Show Pickup Locations</span>
+          </label>
+        </div>
+        <div class="form-group">
+          <!--label class="form-checkbox">
+            <input type="checkbox"  [(ngModel)]="deliveryLocations" (ngModelChange)="applyCheckboxes()"/>
+            <svg class="icon -checkbox form-checkbox-icon -blue"><use xlink:href="#svg_checkbox"/></svg>
+            <span class="form-checkbox-text">Show Delivery Locations</span>
+          </label-->
+          <label class="form-radio">
+            <input type="radio" name="locationFilter" value="delivery" (click)="applyCheckboxes($event)" />
+            <span class="form-radio-text -blue">Show Delivery Locations</span>
+          </label>
+        </div>
+		
+        <div class="form-group -x3 -icon" [hidden]="!isCarrier">
+          <img src="./images/i_available.png" alt="" width="19" height="15" *ngIf="driverFilter == 'available'">
+          <img src="./images/i_in_transit.png" alt="" width="19" height="15" *ngIf="driverFilter == 'intransit'">
+        </div>
+
+        <div class="form-group -bordered -x2" [hidden]="!isCarrier">
+          <label class="form-radio">
+            <input type="radio" name="driverFilter" value="available" (click)="applyCheckboxes($event)" />
+            <span class="form-radio-text -yellow">Show Available Loads</span>
+          </label>
+        </div>
+        <div class="form-group" [hidden]="!isCarrier">
+          <label class="form-radio">
+            <input type="radio" name="driverFilter" value="intransit" (click)="applyCheckboxes($event)" checked/>
+            <span class="form-radio-text -light_blue">Show In Transit Loads</span>
+          </label>
+        </div>
+        <div class="form-group -bordered -x2">
+          <button type="button" class="button -primary -block" style="margin-top: 10px" (click)="apply()">Apply</button>
+        </div>
+        <div class="home-leftbar-footer">
+          <strong>{{loadsNumber}} Loads</strong><span> and </span><strong>{{driversNumber}} drivers</strong>
+          <br />
+          satisfy filtering conditions
+        </div>
+      </div>
+
+  </div>
+
+  <div class="home-center" id="map">  
+  </div>
+  
+  <div class="home-rightbar" [ngClass]="{'-no-scroll': mode == 'load' && load.id}">
+    <div class="home-rightbar-content">
+      <!--1-->
+      <ul class="home-stats" *ngIf="mode == 'map'">
+        <li [ngClass]="getClass(stat)" *ngFor="let stat of statistics" (click)="goToStat(stat)"><span>{{stat.value}}</span> {{stat.label}}</li>
+      </ul>
+      <!--2-->
+      <div class="home-load" *ngIf="mode == 'load' && load.id">
+       <a [routerLink]="['Load Details', {divId: divisionId, loadId: load.id}]" class="form-group -x3">
+          <div class="form-label -text">Load #</div>
+          <span class="medium">{{isCarrier ? load.carrierLoadNumber : load.brokerLoadNumber}}</span>
+        </a>
+        <div class="form-group -x3">
+          <div class="form-label -text">BOL #</div>
+          <span class="medium">{{load.bolNumber}}</span>
+        </div>
+        <div class="form-group wayline-vertical-start">
+          <div class="form-label -text">Origin</div>
+          <div class="fs15 medium mb1">{{load.firstStop && load.firstStop.addressLines && load.firstStop.addressLines.join(' ')}}<br />{{load.firstStop && load.firstStop.city}}, {{load.firstStop && load.firstStop.state}} {{load.firstStop && load.firstStop.postalCode}} {{load.firstStop && load.firstStop.country}}</div>
+          {{getDate(load.firstStop && load.firstStop.date)}} &mdash; {{load.firstStop && load.firstStop.time}}
+        </div>
+        <div class="form-group -x2 medium" [ngClass]="{'-non_visible': !load.numberOfStops || load.numberOfStops <= 2}"><span class="label-count wayline-vertical-center">{{load.numberOfStops - 2}}</span> Intermediate stop</div>
+        <div class="form-group -x2 wayline-vertical-end">
+          <div class="form-label -text">Destination</div>
+          <div class="fs15 medium mb1">{{load.lastStop && load.lastStop.addressLines && load.lastStop.addressLines.join(' ')}}<br />{{load.firstStop && load.firstStop.city}}, {{load.lastStop && load.lastStop.state}} {{load.lastStop && load.lastStop.postalCode}} {{load.lastStop && load.lastStop.country}}</div>
+          {{getDate(load.lastStop && load.lastStop.date)}} &mdash; {{load.lastStop && load.lastStop.time}}
+        </div>
+        <div class="form-group -x3">
+          <transflo-drivers  [drivers]="load.carrierTenderingInfo" [isCarrier]="isCarrier" [loadId]="load.id" [divisionId]="divisionId"></transflo-drivers>
+        </div>
+        <div class="form-group -x3">
+          <div class="form-label -text">{{isCarrier ? 'Broker' : 'Carrier'}}</div>
+          {{isCarrier ? load.brokerDivision && load.brokerDivision.name || '-' : load.carrierDivision && load.carrierDivision.name || '-'}}
+        </div>
+        <div class="form-group -x3">
+          <div class="form-label -text">Attributes</div>
+          <transflo-attributes class="flex items-center form-group -x05" [attrs]="load.loadAttributes"></transflo-attributes>
+        </div>
+      </div>
+      <!--3-->
+      <div class="home-info" *ngIf="mode == 'driver' && driver.id && isCarrier">
+        <div class="form-group fs23 medium">
+          <div *ngFor="let name of driver.name && driver.name.split(' ')">{{name}}</div>
+        </div>
+        <div class="form-group -x3">#{{driver.driverId}}</div>
+        <div class="form-group -x3">
+          <div class="form-label -text">Last known location</div>
+          <div *ngFor="let adr of driver.lastKnownLocation && driver.lastKnownLocation.addressLines">{{adr}}</div>
+          <div>{{driver.lastKnownLocation && driver.lastKnownLocation.city}}, {{driver.lastKnownLocation && driver.lastKnownLocation.state}} {{driver.lastKnownLocation && driver.lastKnownLocation.postalCode}}</div>
+        </div>
+         <ul class="home-stats -inline">
+          <li *ngFor="let stat of driver.statistics" class="label-link" (click)="goToStat(stat)"><span>{{stat.value}}</span> {{stat.label}}</li>
+        </ul>
+        <div class="form-group -x3 flex">
+          <div class="pr2">
+            <label title="Mark as favorite"><input [(ngModel)]="driver.isFavorite" (ngModelChange)="setFavorite(driver)" type="checkbox" hidden /><em class="form-favorite"><svg class="icon -favorite m0"><use xlink:href="#svg_star"/></svg></em></label>
+          </div>
+          <div class="pr2">
+            <a href="mailto:{{driver.email}}" class="button -outline -icon"><svg class="icon -mail"><use xlink:href="#svg_mail"/></svg></a>
+          </div>
+          <div>
+            <a class="button -outline" messages [divisionId]="divisionId" [driverId]="driver.id">Message <span [hidden]="!driver.isNewMessage" class="label-count -msg">new</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

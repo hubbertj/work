@@ -1,0 +1,126 @@
+<header class="page-header">
+  <h1>Creating Load</h1>
+  <hr />
+  <form action="" class="filters-form" role="form" novalidate>
+    <div class="flex">
+      <div class="col-4 pr3">
+        <div class="form-group">
+          <label class="form-label">Division</label>
+          <select class="form-control">
+            <option>Div 1</option>
+            <option>Div 2</option>
+          </select>
+        </div>
+        <div class="form-group -x3">
+          <label class="form-label">Load# <small>Leave it blank if you want to fill it automatically</small></label>
+          <input autocomplete="off" class="form-control" type="text" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">BOL#</label>
+          <input autocomplete="off" class="form-control" type="text" />
+        </div>
+      </div>
+      <div class="col-4 pr3 pl3">
+        <div class="form-group">
+          <label class="form-label">Freight Terms</label>
+          <select class="form-control">
+            <option>50</option>
+            <option>100</option>
+          </select>
+        </div>
+        <div class="form-group -x3">
+          <label class="form-label">Carrier Special Instructions</label>
+          <textarea autocomplete="off" class="form-control" rows="4" style="height: 90px;"></textarea>
+        </div>
+      </div>
+      <div class="col-4 pl3">
+        <div class="form-label -text form-group">Attributes</div>
+        <div class="form-group">
+          <table class="table -list">
+            <tbody>
+            <tr>
+              <td class="align-middle center">
+                <svg class="icon -danger -md m0"><use xlink:href="#svg_danger"/></svg>
+              </td>
+              <td>
+                Hazardous
+                <button class="button -link label-danger bold">&times;</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="align-middle center">
+                <svg class="icon -ruby -md m0"><use xlink:href="#svg_ruby"/></svg>
+              </td>
+              <td>
+                High Value
+                <button class="button -link label-danger bold">&times;</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="align-middle center">
+                &bull;
+              </td>
+              <td>
+                Number of stop: 5
+                <button class="button -link label-danger bold">&times;</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="align-middle center">
+                <svg class="icon -fragile -md m0"><use xlink:href="#svg_fragile"/></svg>
+              </td>
+              <td>
+                Fragile
+                <button class="button -link label-danger bold">&times;</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="align-middle center">
+                &bull;
+              </td>
+              <td>
+                Phone number: (555) 555-1234
+                <button class="button -link label-danger bold">&times;</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <hr />
+        <div class="dropdown -inline" dropdown keyboardNav="true" autoClose="outsideClick">
+          <button type="button" class="button -outline" dropdownToggle>+ Attribute</button>
+          <div class="dropdown-menu -center -lg2" dropdownMenu>
+            <div class="form-group flex">
+              <div class="col-6 pr1">
+                <label class="form-label">Field</label>
+                <select class="form-control">
+                  <option>Field 1</option>
+                </select>
+              </div>
+              <div class="col-6 pl1">
+                <label class="form-label">Value</label>
+                <input autocomplete="off" class="form-control" />
+              </div>
+            </div>
+            <hr />
+            <div class="form-group flex">
+              <div class="flex-auto">
+                <button type="button" class="button -icon -outline-danger" title="Delete"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button>
+              </div>
+              <div>
+                <button type="reset" class="button -outline" dropdownToggle>Cancel</button>
+                <button type="button" class="button">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</header>
+
+<div class="page-content">
+  <div class="center pt4 pb4">
+    <a href="#" class="button -primary -lg">+ Create First Shipment</a>
+  </div>
+</div>

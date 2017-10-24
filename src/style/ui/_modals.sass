@@ -1,0 +1,315 @@
+﻿.modal-open
+  overflow: hidden
+
+.modal 
+  display: none
+  overflow: hidden
+  position: fixed
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+  z-index: 2001
+  -webkit-overflow-scrolling: touch
+  outline: 0
+  &.error
+    z-index: 10000
+
+.modal-dialog
+  max-width: 1000px
+  margin: 0 auto
+  height: 100%
+  > *
+    display: block
+    height: 100%
+  //+breakpoint(xs)
+  //  width: 100%
+
+.modal-content 
+  height: 100%
+  max-width: 1000px
+  background-color: #FFFFFF
+  outline: 0
+  display: flex
+  flex-direction: column
+  &.-horizontal
+    flex-direction: row
+    position: relative
+  &.-center
+    background-color: transparent
+    align-items: center
+    justify-content: center
+  //+breakpoint(xs)
+  //  width: 100%
+
+.modal-backdrop 
+  position: fixed
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+  z-index: 2000
+  background-color: #0d578e
+  &.fade
+    opacity: 0
+  &.in
+    opacity: 0.5
+
+.modal-header
+  +clearfix
+  background-color: #ffd200
+  position: relative
+  padding: 20px 60px
+  flex: none
+  //&.-mobile
+  //  +breakpoint(xs)
+  //    height: 50px
+  //    line-height: 50px
+  //    padding: 0 20px
+  //    background-color: $color-main
+
+.modal-close
+  cursor: pointer
+  width: 16px
+  height: 16px
+  overflow: hidden
+  position: absolute
+  top: 15px
+  right: 15px
+  border: none
+  outline: none
+  padding: 0
+  text-indent: -999em
+  background: none
+  &:hover
+    opacity: 0.5
+  //+breakpoint(xs)
+  //  top: 17px
+  //  right: 17px
+  &:before, &:after
+    content: ''
+    display: block
+    height: 2px
+    width: 18px
+    background-color: #000000
+    position: absolute
+    left: -1px
+    top: 7px
+    //+breakpoint(xs)
+    //  background-color: $color-body
+  &:before
+    transform: rotate(45deg)
+  &:after
+    transform: rotate(-45deg)
+  &.-white
+    &:before, &:after
+      background-color: #ffffff
+
+.modal-title 
+  margin: 0
+  font-size: 30px
+  font-weight: 500
+
+.modal-body 
+  position: relative
+  flex: 1
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  +clearfix
+  padding: 0 60px
+  //+breakpoint(xs)
+  //  padding: 0 40px
+  &:before, &:after
+    content: ''
+    display: block
+    height: 40px
+    //+breakpoint(xs)
+    //  height: 30px
+
+.modal-footer
+  text-align: right
+  +clearfix
+  padding: 20px 60px
+  border-top: 1px solid #d6d7d7
+  .button.-primary, .button.-outline
+    padding-left: 30px
+    padding-right: 30px
+
+.modal-scrollbar-measure 
+  position: absolute
+  top: -9999px
+  width: 50px
+  height: 50px
+  overflow: scroll
+
+.modal-cols
+  position: relative
+
+.modal-cols-diff
+  position: absolute
+  left: 50%
+  top: 1.5em
+  width: 104px
+  height: 2px
+  background-color: #207d9a
+  background: -moz-linear-gradient(left, rgba(48,156,164,1) 0%, rgba(13,86,142,1) 100%)
+  background: -webkit-gradient(left top, right top, color-stop(0%, rgba(48,156,164,1)), color-stop(100%, rgba(13,86,142,1)))
+  background: -webkit-linear-gradient(left, rgba(48,156,164,1) 0%, rgba(13,86,142,1) 100%)
+  background: -o-linear-gradient(left, rgba(48,156,164,1) 0%, rgba(13,86,142,1) 100%)
+  background: -ms-linear-gradient(left, rgba(48,156,164,1) 0%, rgba(13,86,142,1) 100%)
+  background: linear-gradient(to right, rgba(48,156,164,1) 0%, rgba(13,86,142,1) 100%)
+  margin-left: -52px
+  &:before, &:after
+    content: ''
+    display: block
+    position: absolute
+    top: -3px
+    width: 8px
+    height: 8px
+    border-radius: 50%
+  &:before
+    left: -4px
+    background-color: #30a46f
+  &:after
+    right: -4px
+    background-color: #0d578e
+
+.modal-cols-separator
+  position: absolute
+  left: 50%
+  top: 0
+  bottom: 0
+  overflow: hidden
+  flex: none
+  width: 1px
+  &:before, &:after
+    content: ''
+    display: block
+    position: absolute
+    height: 20000px
+    left: 0
+    width: 1px
+  &:before
+    top: 0
+    border-left: 1px dashed #7f7f7f
+  &:after
+    top: -1px
+    border-left: 1px dashed #FFFFFF
+  .modal-cols-diff + &
+    top: 5em
+
+.modal-col
+  padding-left: 80px
+  padding-right: 80px
+
+.modal-error
+  background-color: #fc6d27
+  color: #ffffff
+  text-align: center
+  width: 310px
+  border-radius: 6px
+  position: relative
+  padding: 65px 50px
+  font-size: 18px
+  font-weight: 500
+
+
+.modal-errors-list
+  background-color: #FFF
+  color: #000
+  width: 510px
+  height: 450px
+  border-radius: 6px
+  position: relative
+  padding: 20px
+  font-size: 14px
+  font-weight: 500
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.3)
+
+.modal-errors-list-container
+  height: 160px
+  overflow-y: auto
+  margin: 45px 0
+
+.modal-errors-list-container-list
+  margin: 0 40px
+  padding: 0
+
+.modal-errors-list-container-list-item
+  margin: 10px 0
+  list-style-type: none
+
+  &:before
+    content: '○'
+    font-size: 12px
+    color: #fc6d27
+    margin-right: 10px
+
+.modal-errors-list-header
+  text-align: center
+
+.modal-errors-list-footer
+  text-align: center
+
+.modal-errors-list-header-text
+  color: #fc6d27
+  font-size: 18px
+  font-weight: 500
+  text-transform: uppercase
+  &.-large
+    font-size: 44px
+    font-weight: 100
+
+.modal-eula
+  background-color: white
+  position: relative
+  width: 1100px
+  height: 600px
+  border-radius: 0 0 6px 6px
+  padding: 65px 50px
+  font-size: 18px
+  -webkit-overflow-scrolling: touch
+  overflow: scroll;
+
+.modal-eula-header
+  background-color: white
+  position: relative
+  width: 1100px
+  border-radius: 6px 6px 0 0
+  padding: 20px 60px
+
+.modal-popup
+  background-color: white
+  position: relative
+  width: 400px
+  border-radius: 0 0 6px 6px
+  font-size: 18px
+
+.modal-popup-close
+  background-color: #0c4f81;
+  position: relative
+  width: 400px
+  border-radius: 6px 6px 0 0
+  padding: 20px 60px
+
+.modal-popup-header
+  background-color: $color-gray
+  margin: 0px auto
+  padding-top: 5px
+  padding-bottom: 5px
+  padding-left: 20px
+  position: relative
+  h1
+    margin: 0
+    font-size: 30px
+    font-weight: 500
+  &.-margined
+    margin-top: 50px
+
+.modal-popup-content
+  padding-bottom: 20px 
+  padding-top: 20px 
+  //padding-right: 20px 
+  padding-left: 20px 
+  
+  

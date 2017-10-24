@@ -1,0 +1,305 @@
+.dropup,
+.dropdown 
+  position: relative
+  &.-inline
+    display: inline-block
+  &.-large
+    font-size: 30px
+    
+.dropdown-important
+  position: relative !important
+
+.dropdown-toggle:focus 
+  outline: 0
+
+.menu
+  color: $color-text
+  float: left
+  padding: 0
+  margin: 10px 0 0
+  list-style: none
+  font-size: $font-size-base
+  text-align: left
+  background-color: #FFFFFF
+  border-radius: 6px
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1)
+  background-clip: padding-box
+  > li
+    & + li
+      border-top: 1px solid #f1f1f1
+    > a
+      cursor: pointer
+      outline: none
+      display: block
+      padding: 10px 15px
+      clear: both
+      font-weight: normal
+      line-height: $line-height-base
+      white-space: nowrap
+      color: $color-text
+      &:hover
+        background-color: #f8f8f9
+    &.active
+      a
+        color: #FFFFFF
+        background-color: $color-main
+    &:first-child > a
+      border-radius: 6px 6px 0 0
+    &:last-child > a
+      border-radius: 0 0 6px 6px
+    &:first-child:last-child > a
+      border-radius: 6px
+  &.-overflow
+    height: 300px
+    overflow: auto
+    -webkit-overflow-scrolling: touch
+
+.dropdown-menu
+  color: $color-text
+  position: absolute
+  top: 100%
+  left: 0
+  z-index: 1000
+  display: none
+  float: left
+  padding: 0
+  margin: 10px 0 0
+  list-style: none
+  font-size: $font-size-base
+  text-align: left
+  background-color: #FFFFFF
+  border-radius: 6px
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1)
+  background-clip: padding-box
+  &:before
+    content: ''
+    display: block
+    width: 0
+    height: 0
+    border-left: 6px solid transparent
+    border-right: 6px solid transparent
+    border-bottom: 6px solid #FFFFFF
+    position: absolute
+    top: -6px
+    left: 6px
+  &.-shown
+    display: block
+  &.-right
+    right: 0
+    left: auto
+    &:before
+      right: 6px
+      left: auto
+  &.-center
+    left: 50%
+    &:before
+      left: 50%
+      margin-left: -6px
+  &.-text
+    padding: 20px
+  &.-sm
+    width: 260px
+    padding: 20px
+    box-shadow: 0 0 27px rgba(0,0,0,0.11)
+    &.-center
+      margin-left: -130px
+  &.-md
+    width: 330px
+    padding: 40px 50px
+    box-shadow: 0 0 27px rgba(0,0,0,0.11)
+    &.-center
+      margin-left: -165px
+  &.-lg
+    width: 360px
+    padding: 40px 60px
+    box-shadow: 0 0 27px rgba(0,0,0,0.11)
+    &.-center
+      margin-left: -180px
+    &.-text
+      padding: 30px 35px
+  &.-lg2
+    width: 400px
+    padding: 30px 40px
+    box-shadow: 0 0 27px rgba(0,0,0,0.11)
+    &.-center
+      margin-left: -200px
+  &.-xlg
+    width: 430px
+    box-shadow: 0 0 27px rgba(0,0,0,0.11)
+    &.-center
+      margin-left: -215px
+  &.-xlg2
+    width: 500px
+    padding: 30px 35px 35px
+    box-shadow: 0 0 27px rgba(0,0,0,0.11)
+    &.-center
+      margin-left: -250px
+  &.-hover
+    > li:hover
+      background-color: #f8f8f9
+      &:first-child
+        border-radius: 6px 6px 0 0
+      &:last-child
+        border-radius: 0 0 6px 6px
+
+  > li
+    & + li
+      border-top: 1px solid #f1f1f1
+    > a
+      cursor: pointer
+      outline: none
+      display: block
+      padding: 10px 15px
+      clear: both
+      font-weight: normal
+      line-height: $line-height-base
+      white-space: nowrap
+      color: $color-text
+      &:hover
+        background-color: #f8f8f9
+    > span
+      outline: none
+      display: block
+      padding: 10px 15px
+      clear: both
+      font-weight: normal
+      line-height: $line-height-base
+      white-space: nowrap
+      color: $color-text
+    &.active
+      a
+        color: #FFFFFF
+        background-color: $color-main
+    &:first-child > a
+      border-radius: 6px 6px 0 0
+    &:last-child > a
+      border-radius: 0 0 6px 6px
+    &:first-child:last-child > a
+      border-radius: 6px
+    &.-disabled
+      a
+        color: #aaaaaa
+
+  &.-header
+    box-shadow: none
+    background-color: #0d578e
+    min-width: 116px
+    &:before
+      border-bottom-color: #0d578e
+    li
+      & + li
+        border-top: none
+      a
+        padding: 15px 20px
+        color: #FFFFFF
+        &:hover
+          background-color: #0f619d
+
+  &.-list
+    font-size: 15px
+    white-space: nowrap
+    > li
+      padding: 15px 20px
+
+// Hover/Focus state
+.dropdown-menu > li > a 
+  &:hover,
+  &:focus 
+    text-decoration: none
+
+.open
+  > .dropdown-menu 
+    display: block
+    &[hidden]
+      visibility: hidden
+      z-index: -1
+  > a 
+    outline: 0
+
+
+.dropdown-backdrop 
+  position: fixed
+  left: 0
+  right: 0
+  bottom: 0
+  top: 0
+  z-index: (990)
+
+.pull-right > .dropdown-menu 
+  right: 0
+  left: auto
+
+
+.dropdown-filter-field
+  padding: 16px
+
+.dropdown-filter-content
+  max-height: 440px
+  overflow: auto
+  overflow-x: hidden
+  -webkit-overflow-scrolling: touch
+
+.dropdown-filter-title
+  text-transform: uppercase
+  font-size: 13px
+  font-weight: normal
+  color: #979797
+  margin: 0
+  padding: 0 30px 10px
+  border-bottom: 1px solid #f1f1f1
+
+.dropdown-filter-list
+  margin: 0
+  padding: 0
+  border-bottom: 1px solid #f1f1f1
+  > li
+    list-style: none
+    & + li
+      border-top: 1px solid #f1f1f1
+    > a
+      cursor: pointer
+      outline: none
+      display: block
+      padding: 12px 52px
+      clear: both
+      font-weight: normal
+      line-height: $line-height-base
+      white-space: nowrap
+      color: $color-text
+      &:hover
+        background-color: #f2f4f6
+      strong
+        display: block
+      span
+        display: block
+    &.active
+      a
+        color: #FFFFFF
+        background-color: $color-main
+
+.dropdown-close
+  position: absolute
+  top: 18px
+  right: 18px
+  width: 16px
+  height: 16px
+  padding: 0
+  background: none
+  border: none
+  text-indent: -999em
+  cursor: pointer
+  &, &:focus
+    outline: none
+  &:before, &:after
+    content: ''
+    display: block
+    position: absolute
+    background-color: $color-red
+    left: -1px
+    width: 18px
+    height: 2px
+    top: 7px
+  &:before
+    transform: rotate(45deg)
+  &:after
+    transform: rotate(-45deg)

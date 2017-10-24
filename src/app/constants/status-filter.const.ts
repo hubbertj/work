@@ -1,0 +1,29 @@
+export var StatusFilterConst:Array<any> = [{
+	id: 1,
+	text: 'Available',
+	className: '-available'
+}, { 
+	id: 2,
+	text: 'InTransit',
+	className: '-transit'
+}, { 
+	id: 3, 
+	text: 'Accepted',
+	className: '-accepted'
+}, {
+	id: 4,
+	text: 'Delivered',
+	className: '-delivered'
+}, {
+	id: 5,
+	text: 'Declined',
+	className: '-declined'
+}, {
+	id: 6,
+	text: 'Offered',
+	className: '-offered'
+}, {
+	id: 7,
+	text: 'Assigned',
+	className: '-assigned'
+}];

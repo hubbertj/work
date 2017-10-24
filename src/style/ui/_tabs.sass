@@ -1,0 +1,68 @@
+.tab-content > .tab-pane
+  display: none
+
+.tab-content > .active
+  display: block
+
+.tab-container
+  .nav
+    margin: 0 0 50px
+    padding: 0
+    display: flex
+    justify-content: center
+    box-shadow: 0 0 0 0 $color-body, -500px 0 0 0 $color-body, -1000px 0 0 0 $color-body, -1500px 0 0 0 $color-body, -2000px 0 0 0 $color-body, -2500px 0 0 0 $color-body, -3000px 0 0 0 $color-body, 500px 0 0 0 $color-body, 1000px 0 0 0 $color-body, 1500px 0 0 0 $color-body, 2000px 0 0 0 $color-body, 2500px 0 0 0 $color-body, 3000px 0 0 0 $color-body, 0 1px 0 0 #cccccc, -500px 1px 0 0 #cccccc, -1000px 1px 0 0 #cccccc, -1500px 1px 0 0 #cccccc, -2000px 1px 0 0 #cccccc, -2500px 1px 0 0 #cccccc, -3000px 1px 0 0 #cccccc, 500px 1px 0 0 #cccccc, 1000px 1px 0 0 #cccccc, 1500px 1px 0 0 #cccccc, 2000px 1px 0 0 #cccccc, 2500px 1px 0 0 #cccccc, 3000px 1px 0 0 #cccccc
+    //+breakpoint(xs)
+    //  margin: 0
+    //  background-color: $color-main
+    //  box-shadow: -20px 0 0 $color-main, 20px 0 0 $color-main
+    //  justify-content: flex-end
+    //  &:before
+    //    content: ''
+    //    display: block
+    //    flex: 1
+    li
+      list-style: none
+      width: 100%
+      border: 1px solid transparent
+      border-bottom: none
+      &.active
+        border-left-color: #cccccc
+        border-top-color: #cccccc
+        border-right-color: #cccccc
+        border-radius: 6px 6px 0 0
+        box-shadow: 0 1px 0 0 $color-body
+      //+breakpoint(xs)
+      //  border: none
+      //  width: auto
+      a
+        display: block
+        padding: 15px 30px
+        text-align: center
+        font-size: 17px
+        color: #868a8d
+        &.active
+          font-weight: 500
+          color: $color-green
+          box-shadow: 0 6px 0 0 $color-body
+        //+breakpoint(xs)
+        //  height: 50px
+        //  line-height: 46px
+        //  padding: 0
+        //  color: #3399e5
+        //  width: 55px
+        //  span, em
+        //    display: none
+        //  &.active
+        //    color: #FFFFFF
+        //    font-weight: normal
+        //    em
+        //      display: inline
+        //    strong
+        //      display: none
+    &.-sm
+      margin: 0 -26px 0 -25px
+      li
+        a
+          font-size: 11px
+          text-transform: uppercase
+          padding: 12px

@@ -1,0 +1,33 @@
+﻿<div class="signin">
+  <div class="signin-body">
+    <div class="signin-content -list">
+      <div class="form-group">
+        <div class="signin-list-icon">
+          <img src="./images/velocity1.png" width="176" height="176" alt="" class="signin-list-icon-img" />
+        </div>
+        <h1 class="signin-h1">Command Center</h1>
+        <a [routerLink]="['Home', {divId: div.id}]" class="signin-button -outline">
+        	Enter Command Center
+        </a>
+      </div>
+      <div class="form-group -x9">
+        <div class="signin-list-icon">
+          <div class="form-group">
+            <img src="./images/velocity2.png" width="176" height="176" alt="" class="signin-list-icon-img" />
+          </div>
+          <div class="form-group -x2" *ngIf="!buttonHidden">
+            <a [href]="downloadLink" target="_blank" class="signin-download">
+              <img src="./images/download.png" width="21" height="19" alt="" />
+              <span>Download app</span>
+            </a>
+          </div>
+        </div>
+        <h1 class="signin-h1">Transflo Velocity</h1>
+        <a [href]="href" class="signin-button" [ngClass]="{'disabled': buttonHidden}">Scan Document</a>
+      </div>
+    </div>
+  </div>
+  <div class="signin-footer">
+    &copy; Transflo, 2017
+  </div>
+</div>

@@ -1,0 +1,77 @@
+﻿<div class="loading-page" [hidden]="!loading" style="top: 0; left: 0; height: 100vh;"><em></em><em></em><em></em></div>
+
+<header class="header flex" *ngIf="!isSignInPage">
+  <span class=" header-item header-logo"><svg class="icon -logo"><use xlink:href="#svg_logo"/></svg></span>
+  <nav class="header-item flex-auto header-divisions">
+    <div dropdown keyboardNav="true" autoClose="nonInput" [hidden]="!selectedDivision.id">
+      <button class="header-dropdown-toggle" type="button" dropdownToggle>
+        {{selectedDivision.name  ? selectedDivision.name + '&bull;' : ''}}  
+        {{selectedDivision.code ? selectedDivision.code + '&bull;' : ''}} 
+        <span>{{selectedDivision.type}}</span>
+      </button>
+      <div class="dropdown-menu -header" role="menu" dropdownMenu>
+        <input type="text" class="header-dropdown-control" [ngModel]="searchString" (ngModelChange)="search($event)" placeholder="Filter"/>
+        <ul class="header-dropdown-menu">
+          <li *ngFor="let division of filteredDivisions">
+            <a (click)="setSelectedDivision(division, true)" [ngClass]="{'-active': division.id == selectedDivision.id}">
+              <strong>{{division.name}}</strong>
+              <span>{{division.code}} &mdash; {{division.type}}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <ul class="header-item header-menu">
+    <li><a [routerLink]="['Home', {divId: selectedDivision.id}]">Home</a></li>
+    <li><a [routerLink]="['Loads', {divId: selectedDivision.id, ddl: getDate(), dsh: getDate()}]">Loads</a></li>
+	<li [hidden]="!isCarrier"><a messages [divisionId]="selectedDivision.id">Drivers</a></li>
+    <!--<li>
+      <div dropdown keyboardNav="true">
+        <button class="header-dropdown-link" type="button" dropdownToggle>
+          •••
+        </button>
+        <div class="dropdown-menu -header" role="menu" dropdownMenu>
+          <ul class="header-dropdown-menu">
+            <li *ngFor="let item of selectedDivision.menu">
+              <a href="{{item.url}}" target="_blank">
+                <strong>{{item.name}}</strong>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </li> <-->
+  </ul>
+  <nav class="header-item header-profile">
+    <div dropdown keyboardNav="true" autoClose="outsideClick">
+      <button class="header-dropdown-toggle" type="button" dropdownToggle>
+        {{user.firstname}} {{user.lastname}}
+      </button>
+      <ul class="dropdown-menu -right -header" role="menu" dropdownMenu>
+        <li>
+          <a [routerLink]="['Profile', { divId: selectedDivision.id }]" dropdownToggle>
+            My Profile
+          </a>
+        </li>
+        <li>
+          <a (click)="showHelp()">
+            Help
+          </a>
+        </li>
+        <li>
+          <a (click)="showAbout()">
+            About
+          </a>
+        </li>
+        <li>
+          <a (click)="logout()">
+            Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+<transflo-help></transflo-help>
+<transflo-about></transflo-about>

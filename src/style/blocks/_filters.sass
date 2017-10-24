@@ -1,0 +1,79 @@
+.filter-container
+  border-top: 1px solid #e8eaec
+  border-bottom: 1px solid #e8eaec
+  padding-top: 30px
+  padding-bottom: 40px
+  position: relative
+
+.filters-clear
+  position: absolute
+  left: 0
+  bottom: -0.5em
+  font-size: 12px
+  font-weight: 500
+  color: $color-main
+  background-color: $color-gray
+  padding: 0 10px 0 0
+  border: none
+  outline: none
+  line-height: 1
+  cursor: pointer
+
+.filters-button
+  outline: none
+  border: none
+  padding: 0
+  text-align: left
+  position: absolute
+  width: 118px
+  left: 50%
+  margin-left: -59px
+  top: 100%
+  margin-top: -19px
+  height: 38px
+  border-radius: 19px
+  background-color: $color-gray
+  cursor: pointer
+  line-height: 36px
+  text-indent: 18px
+  font-size: 12px
+  font-weight: 500
+  color: $color-main
+  user-select: none
+  &:before
+    content: ''
+    display: inline-block
+    vertical-align: middle
+    margin: -3px 6px 2px 0
+    border-top: 2px solid $color-main
+    border-left: 2px solid $color-main
+    width: 5px
+    height: 5px
+    transform: rotate(225deg)
+  &.-opened
+    &:before
+      margin: 0 6px 0 0
+      transform: rotate(45deg)
+  &.-active:after
+    content: ''
+    display: block
+    width: 10px
+    height: 10px
+    border: 1px solid #ffffff
+    background-color: $color-active
+    border-radius: 50%
+    margin: 0 0 0 -5px
+    position: absolute
+    left: 50%
+    bottom: -5px
+
+.filters-direction
+  display: inline-block
+  vertical-align: middle
+  margin: 1em -1.8em
+  border-top: 2px solid #7c7c7c
+  border-left: 2px solid #7c7c7c
+  width: 5px
+  height: 5px
+  float: left
+  transform: rotate(135deg)

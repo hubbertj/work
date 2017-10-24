@@ -1,0 +1,218 @@
+.signin
+  flex: 1
+  position: relative
+  z-index: 3
+  display: flex
+  flex-direction: column
+  color: #FFFFFF
+  min-height: 100%
+  height: 100%
+  a
+    color: $color-active
+
+.signin-header
+  text-align: center
+  padding: 45px
+
+.signin-body
+  flex: 1
+  display: flex
+  align-items: center
+  justify-content: center
+
+.signin-content
+  width: 480px
+  padding-bottom: 42px
+  &.-list
+    padding-bottom: 0
+    width: 600px
+    padding-left: 220px
+    text-align: left
+
+.signin-footer
+  text-align: center
+  padding: 45px
+  opacity: 0.5
+
+.signin-h1
+  text-transform: uppercase
+  font-size: 70px
+  margin: 0 0 50px
+  font-weight: 500
+  line-height: 1.05
+
+.signin-h2
+  font-size: 30px
+
+.signin-form-control
+  display: block
+  width: 100%
+  padding: 14px 28px
+  font-size: 16px
+  line-height: $line-height-base
+  color: $color-main
+  font-weight: 500
+  background-color: #FFFFFF
+  background-image: none
+  border: none
+  border-radius: 25px
+  outline: none
+  -webkit-appearance: none
+  opacity: 0.8
+  &::placeholder
+    color: $color-main
+    font-weight: normal
+  &:focus
+    box-shadow: 0 5px 8px #144d7f
+    opacity: 1
+  &::-ms-expand
+    background-color: transparent
+    border: 0
+    transition: opacity 0.15s ease
+  &:disabled
+    background-color: #888
+    opacity: 1
+  &:disabled
+    cursor: not-allowed
+  &.-inline
+    display: inline-block
+    width: auto
+  .error &, &.error, .has-error &
+    opacity: 1
+    color: $color-danger
+    box-shadow: inset 0 0 0 1px $color-danger
+    background-color: rgba($color-danger, 0.4)
+    &::placeholder
+      color: $color-danger
+    &:focus
+      background-color: #FFFFFF
+      color: $color-main
+      box-shadow: 0 5px 8px #144d7f
+
+.form-control-password
+  /*background-image: url('../public/images/reveal_password_Eye.png')*/
+  background-repeat: no-repeat
+  background-position: right;
+
+
+.signin-button
+  font-weight: bold
+  text-align: center
+  white-space: nowrap
+  vertical-align: middle
+  touch-action: manipulation
+  cursor: pointer
+  user-select: none
+  border: none
+  font-size: 16px
+  background-color: $color-active
+  letter-spacing: 0.02em
+  padding: 14px 24px
+  position: relative
+  margin: 0
+  border-radius: 25px
+  color: $color-main !important
+  line-height: $line-height-base
+  &:hover, &:active, &:focus
+    text-decoration: none
+    outline: none
+    background-color: #fae23a
+  &.disabled,
+  &:disabled
+    cursor: not-allowed
+    opacity: .3
+
+  &.-block
+    display: block
+    width: 100%
+
+  &.-outline
+    font-weight: 500
+    background-color: transparent
+    color: #FFFFFF !important
+    box-shadow: inset 0 0 0 2px #FFFFFF
+    &:hover, &:active, &:focus
+      background-color: #FFFFFF
+      color: $color-main !important
+
+.signin-back
+  font-size: 16px
+  font-weight: 500
+  color: #FFFFFF !important
+  position: relative
+  line-height: 50px
+  display: inline-block
+  padding-left: 62px
+  &:before
+    content: ''
+    display: block
+    position: absolute
+    left: 0
+    top: 0
+    width: 50px
+    height: 50px
+    border-radius: 50%
+    border: 2px solid #FFFFFF
+  &:after
+    content: ''
+    display: block
+    width: 10px
+    height: 10px
+    border-left: 4px solid #FFFFFF
+    border-bottom: 4px solid #FFFFFF
+    position: absolute
+    left: 22px
+    top: 20px
+    transform: rotate(45deg)
+
+.signin-hr
+  margin: 20px 0
+  height: 1px
+  width: 65px
+  background-color: #62b1ec
+
+.signin-error
+  align-self: flex-start
+  font-weight: 500px
+  text-transform: uppercase
+  text-align: center
+  position: relative
+  padding: 15px 30px
+  color: $color-danger
+  &:before, &:after
+    content: ''
+    display: block
+    position: absolute
+    top: 0
+    bottom: 0
+    width: 14px
+    border-top: 1px solid $color-danger
+    border-bottom: 1px solid $color-danger
+  &:before
+    left: 0
+    border-left: 1px solid $color-danger
+    border-radius: 6px 0 0 6px
+  &:after
+    right: 0
+    border-right: 1px solid $color-danger
+    border-radius: 0 6px 6px 0
+
+.signin-list-icon
+  float: left
+  margin: 0 -220px
+  text-align: center
+
+.signin-list-icon-img
+  opacity: 0.2
+  vertical-align: top
+
+.signin-download
+  font-weight: 500
+  font-size: 16px
+  color: $color-body !important
+  text-decoration: none
+  img
+    vertical-align: middle
+    margin: -6px 4px -1px 0
+  span
+    box-shadow: inset 0 -1px 0 0 rgba(255,255,255,0.5)

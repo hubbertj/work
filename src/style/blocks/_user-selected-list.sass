@@ -1,0 +1,37 @@
+.user-selected-list
+  margin: 5px 0 0
+  padding: 0
+  max-width: 120px
+  &.-inline
+    max-width: 100%
+  .label-title + &
+    margin-top: 5px
+  > li
+    list-style: none
+    position: relative
+    & + li
+      margin-top: 4px
+      border-top: 1px solid #ededed
+      padding-top: 4px
+    > a
+      display: block
+      padding-left: 16px
+      +truncate
+    &.-no-bubble + li
+      > a
+        padding-left: 0
+  &_bubble
+    position: absolute
+    left: 0
+    color: #e7ebee
+    margin-top: 1px
+    &.-active, .-active &
+      color: $color-active
+
+.user-selected-list-dropdown
+  > li
+    > a
+      padding-left: 31px
+      color: $color-main
+  .user-selected-list_bubble
+    left: 14px

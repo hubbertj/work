@@ -1,0 +1,32 @@
+.page-header
+  position: relative
+  background-color: $color-gray
+  padding-top: 23px
+  padding-bottom: 23px
+  box-shadow: 800px 0 0 $color-gray, 1600px 0 0 $color-gray, 2400px 0 0 $color-gray, 3200px 0 0 $color-gray, -800px 0 0 $color-gray, -1600px 0 0 $color-gray, -2400px 0 0 $color-gray, -3200px 0 0 $color-gray
+  & + &
+    padding-top: 0
+    padding-bottom: 30px
+  &.-fullscreen
+    height: 88px
+  //+breakpoint(xs)
+  //  box-shadow: none
+  //  background: none
+  h1
+    margin: 0
+    font-size: 30px
+    font-weight: 500
+  &.-margined
+    margin-top: 50px
+
+.page-header-back
+  float: left
+  margin: 5px 15px 5px 0
+  & + h1
+    &:before
+      content: ''
+      display: inline-block
+      width: 1px
+      height: 20px
+      background-color: #d5d6d8
+      margin-right: 15px

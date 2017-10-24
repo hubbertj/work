@@ -1,0 +1,191 @@
+<div class="home-container">
+
+  <div class="home-leftbar">
+
+      <div class="home-leftbar-body">
+        <div class="form-group">
+          <label class="form-label">Load Status</label>
+          <transflo-dropdown [list]="filterStatus" [selectedList]="filterStatus" placeholder="Select statuses"></transflo-dropdown>
+        </div>
+        <div class="form-group -x2">
+          <label class="form-label">Shipping Date</label>
+          <input autocomplete="off" class="form-control -select" placeholder="Select dates" range-picker [daterange]="filterDateShipping" readonly />
+        </div>
+        <div class="form-group -bordered -x2">
+          <label class="form-checkbox">
+            <input type="checkbox" checked />
+            <svg class="icon -checkbox form-checkbox-icon"><use xlink:href="#svg_checkbox"/></svg>
+            <span class="form-checkbox-text">Show Shipping Locations</span>
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="form-checkbox">
+            <input type="checkbox" />
+            <svg class="icon -checkbox form-checkbox-icon"><use xlink:href="#svg_checkbox"/></svg>
+            <span class="form-checkbox-text">Show Delivery Locations</span>
+          </label>
+        </div>
+        <div class="form-group -bordered -x2">
+          <label class="form-checkbox">
+            <input type="checkbox" checked />
+            <svg class="icon -checkbox form-checkbox-icon"><use xlink:href="#svg_checkbox"/></svg>
+            <span class="form-checkbox-text">Show Available Drivers</span>
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="form-checkbox">
+            <input type="checkbox" />
+            <svg class="icon -checkbox form-checkbox-icon"><use xlink:href="#svg_checkbox"/></svg>
+            <span class="form-checkbox-text">Show In Transit Drivers</span>
+          </label>
+        </div>
+        <div class="form-group -bordered -x2">
+          <button type="button" class="button -primary -block">Apply</button>
+        </div>
+        <div class="home-leftbar-footer">
+          <strong>10 Loads</strong> and <strong>5 drivers</strong>
+          <br />
+          satisfy filtering conditions
+        </div>
+      </div>
+
+  </div>
+
+  <div class="home-center">
+   
+  </div>
+
+  <div class="home-rightbar">
+    <div class="home-rightbar-content">
+      <!--1-->
+      <ul class="home-stats">
+        <li class="medium label-link"><span>21</span> Total load count</li>
+        <li class="label-link"><span>17</span> Available Loads</li>
+        <li class="label-link"><span>13</span> In transit load count</li>
+        <li class="label-link"><span>8</span> Assigned load count</li>
+        <li class="label-link"><span>5</span> Offered loads count</li>
+        <li class="label-link"><span>7</span> Declined load count</li>
+        <li class="medium"><span>213</span> Total Driver count</li>
+        <li><span>195</span> Available Driver</li>
+        <li><span>51</span> In transit Driver count</li>
+        <li><span>48</span> Assigned Driver count</li>
+        <li><span>54</span> Drivers Offered loads</li>
+        <li><span>9</span> Drivers Declined load </li>
+      </ul>
+      <!--2-->
+      <div class="home-load">
+        <div class="form-group wayline-vertical-start">
+          <div class="form-label -text">Origin</div>
+          <div class="fs15 medium mb1">1800 NE Alberta St Portland, OR 97211 USA, CA,15229</div>
+          Mar 20, 2016 &mdash; All Day
+        </div>
+        <div class="form-group -x2 medium"><span class="label-count wayline-vertical-center">3</span> Intermediate stop</div>
+        <div class="form-group -x2 label-green wayline-vertical-end">
+          <div class="form-label -text">Destination</div>
+          <div class="fs15 medium mb1">8462 S Vaquero Dr Sandy, UT 84094 USA, CA,15229</div>
+          Mar 20, 2016 &mdash; All Day
+        </div>
+        <div class="form-group -x3">
+          <div class="form-label -text">Load #</div>
+          5054689090-6789098
+        </div>
+        <div class="form-group -x3">
+          <div class="form-label -text">Bol #</div>
+          00014-6791-8976-0011
+        </div>
+        <div class="form-group -x3">
+          <div class="form-label -text">Assigned to</div>
+          <ul class="user-selected-list -inline">
+            <li>
+              <a href="#" class="user-selected-list_bubble">
+                <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+              </a>
+              <a href="#">Sebastian P. Fleteefwewrgf</a>
+            </li>
+            <li>
+              <a href="#" class="user-selected-list_bubble -active">
+                <svg class="icon -quote"><use xlink:href="#svg_quote"/></svg>
+              </a>
+              <a href="#">Jorge A. Seachin</a>
+            </li>
+          </ul>
+        </div>
+        <div class="form-group -x3">
+          <div class="form-label -text">Broker</div>
+          Montgomery Logistics
+        </div>
+        <div class="form-group -x3">
+          <div class="form-label -text">Attributes</div>
+          <div class="pt1">
+            <svg class="icon -ruby"><use xlink:href="#svg_ruby"/></svg>
+            <div class="dropdown -inline" dropdown keyboardNav="true">
+              <button type="button" class="button -outline -xs -arrow" dropdownToggle>4</button>
+              <div class="dropdown-menu -text" role="menu" dropdownMenu>
+                <table class="table -list">
+                  <tbody>
+                  <tr>
+                    <td class="align-middle center">
+                      <svg class="icon -danger m0"><use xlink:href="#svg_danger"/></svg>
+                    </td>
+                    <td>Hazardous</td>
+                  </tr>
+                  <tr>
+                    <td class="align-middle center">
+                      <svg class="icon -ruby m0"><use xlink:href="#svg_ruby"/></svg>
+                    </td>
+                    <td>High Value</td>
+                  </tr>
+                  <tr>
+                    <td class="align-middle center">
+                      &bull;
+                    </td>
+                    <td>Number of stop: 5</td>
+                  </tr>
+                  <tr>
+                    <td class="align-middle center">
+                      <svg class="icon -fragile m0"><use xlink:href="#svg_fragile"/></svg>
+                    </td>
+                    <td>Fragile</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--3-->
+      <div class="home-info">
+        <div class="form-group fs23 medium">
+          <div>Mark</div>
+          <div>Bronson</div>
+        </div>
+        <div class="form-group -x3">mark.bronson@gmail.com</div>
+        <div class="form-group -x3">
+          <div class="form-label -text">Last known location</div>
+          <div>1800 NE Alberta St</div>
+          <div>Portland, OR 97211</div>
+          <div>USA, CA,15229</div>
+        </div>
+        <div class="form-group -x3">
+          <div class="form-label -text">Destination location</div>
+          <div>8462 S Vaquero Dr</div>
+          <div>Sandy, UT 84094</div>
+          <div>USA, CA,15229</div>
+        </div>
+        <div class="form-group -x3 flex">
+          <div class="pr2">
+            <label title="Mark as favorite"><input type="checkbox" hidden /><em class="form-favorite"><svg class="icon -favorite m0"><use xlink:href="#svg_star"/></svg></em></label>
+          </div>
+          <div class="pr2">
+            <a href="mailto:b.finerman@gmail.com" class="button -outline -icon"><svg class="icon -mail"><use xlink:href="#svg_mail"/></svg></a>
+          </div>
+          <div>
+            <a href="javascript:;" class="button -outline">Message <span class="label-count -msg">31</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

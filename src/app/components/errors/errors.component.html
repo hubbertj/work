@@ -1,0 +1,43 @@
+
+<!--Server error modal-->
+<div bsModal #serverModal="bs-modal" class="modal error fade" tabindex="-1" role="dialog" aria-labelledby="myServerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content -center">
+      <div class="modal-error">
+        <button type="button" class="modal-close -white" aria-label="Close" (click)="serverModal.hide()" title="Close">&times;</button>
+        {{text}}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--Errors list modal-->
+<div bsModal #errorsListModal="bs-modal" class="modal error fade" tabindex="-1" role="dialog" aria-labelledby="myServerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content -center">
+      <div class="modal-errors-list">
+        <div class="modal-errors-list-header">
+          <span class="modal-errors-list-header-text -large">{{errors.length}}</span>
+          <br />
+          <span class="modal-errors-list-header-text">errors at this page</span>
+        </div>
+        <div class="modal-errors-list-container">
+          <ul class="modal-errors-list-container-list ul">
+            <li class="modal-errors-list-container-list-item" *ngFor="let error of errors">
+              {{error}}
+            </li>
+          </ul>
+        </div>
+
+        <div class="modal-errors-list-footer">
+          <button type="button" class="button -outline -ml" aria-label="Close" (click)="errorsListModal.hide()" title="Close">
+            Ok, got it!
+          </button>
+        </div>
+
+      </div>
+      
+    </div>
+  </div>
+</div>

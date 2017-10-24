@@ -1,0 +1,40 @@
+﻿<div class="signin">
+  <div class="signin-header">
+    <svg class="icon -logo-lg"><use xlink:href="#svg_logo_lg"/></svg>
+  </div>
+  <div class="signin-body">
+    <div class="signin-content">
+      <form novalidate [hidden]="sent">
+
+        <div class="form-group">
+          <a [routerLink]="['Signin']" class="signin-back">Back to login</a>
+        </div>
+
+        <div class="form-group -x2 signin-error" *ngIf="error">{{error}}</div>
+
+        <div class="form-group -x2 flex">
+          <div class="flex-auto pr1">
+            <input class="signin-form-control" type="email" placeholder="Email" [ngClass]="{'error': error}" [(ngModel)]="email" autofocus />
+          </div>
+          <div class="pl2">
+            <button class="signin-button" (click)="restore()">Restore Password</button>
+          </div>
+        </div>
+      </form>
+      <form novalidate [hidden]="!sent">
+        <div class="form-group">
+          <a [routerLink]="['Signin']" class="signin-back">Back to login</a>
+        </div>
+        <div class="form-group -x3 fs24">
+          Link for password restore was sent
+          to <a>{{email}}</a>
+        </div>
+        <div class="signin-hr"></div>
+        <div class="fs16">Check email and follow the link.</div>
+      </form>
+    </div>
+  </div>
+  <div class="signin-footer">
+    &copy; Transflo, 2017
+  </div>
+</div>

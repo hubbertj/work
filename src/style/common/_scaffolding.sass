@@ -1,0 +1,54 @@
+*
+  box-sizing: border-box
+
+*:before,
+*:after
+  box-sizing: border-box
+
+@page
+  size: 595.2pt 841.9pt
+  margin: 20pt auto
+
+html
+  font-size: 10px
+  -webkit-tap-highlight-color: rgba(0,0,0,0)
+
+
+body
+  font-family: $font-family-base
+  font-size: $font-size-base
+  line-height: $line-height-base
+  color: $color-text
+  background-color: $color-body
+
+input,
+button,
+select,
+textarea
+  font-family: inherit
+  font-size: inherit
+  letter-spacing: 0.01em
+
+a
+  cursor: pointer
+  color: $color-main
+  text-decoration: none
+  &:hover,
+  &:focus
+    text-decoration: none
+
+figure
+  margin: 0
+
+img
+  vertical-align: middle
+
+hr
+  margin-bottom: 20px
+  margin-top: 20px
+  border: 0
+  border-top: 1px solid #e8eaec
+  clear: both
+
+[role="button"]
+  cursor: pointer

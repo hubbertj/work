@@ -1,0 +1,36 @@
+.page-content
+  padding-top: 40px
+  padding-bottom: 40px
+  +clearfix
+  //+breakpoint(xs)
+  //  padding-top: 20px
+  //  padding-bottom: 20px
+  &.-fullscreen
+    min-height: 810px
+
+.page-fullscreen
+  position: absolute
+  top: 138px
+  bottom: 60px
+  width: 1024px
+  margin-left: -32px
+  border-left: 5px solid $color-gray
+  border-right: 5px solid $color-gray
+  border-bottom: 5px solid $color-gray
+  display: flex
+
+.page-fullscreen-sidebar
+  width: 301px
+  border-right: 1px solid $color-gray
+  display: flex
+  flex-direction: column
+
+.page-fullscreen-filter
+  height: 119px
+  padding: 20px 25px 9px
+  border-bottom: 1px solid #ededed
+
+.page-fullscreen-header
+  height: 109px
+  padding: 20px 30px
+  border-bottom: 1px solid #ededed

@@ -1,0 +1,101 @@
+.label-count
+  display: inline-block
+  height: 18px
+  line-height: 18px
+  color: #FFFFFF
+  text-align: center
+  background-color: $color-main
+  border-radius: 9px
+  min-width: 18px
+  font-size: 11px
+  margin-right: 3px
+  padding-left: 5px
+  padding-right: 5px
+  font-weight: 500
+  &.-red
+    background-color: #f5582e
+  &.-msg
+    color: $color-main
+    background-color: $color-active
+    padding-left: 8px
+    padding-right: 8px
+    min-width: 30px
+    .button &
+      position: absolute
+      top: -9px
+      right: -15px
+
+.label-empty
+  opacity: 0.4
+
+.label-small
+  display: block
+  font-size: 10px
+
+.label-title
+  display: block
+  color: #aaaaaa
+
+.label-link
+  color: $color-main !important
+  cursor: pointer
+
+.label-text
+  color: $color-text !important
+
+.label-green
+  color: $color-green !important
+
+.label-red
+  color: $color-red !important
+
+.label-danger
+  color: $color-danger !important
+
+.label-gray
+  color: #979797 !important
+
+.label-active
+  color: $color-active !important
+
+.label-alert
+  color: $color-danger
+  font-size: 20px
+  font-weight: 500
+  margin: 40px -20px
+  text-align: center
+
+.label-validation-error
+  color: $color-danger
+  font-weight: 500
+  margin: 5px
+
+.label-lg
+  font-weight: 500
+  font-size: 17px
+
+.label-md
+  font-size: 15px
+
+.label-tooltip
+  background-color: #797a7b
+  color: #FFFFFF
+  border-radius: 50%
+  width: 18px
+  height: 18px
+  display: inline-block
+  vertical-align: middle
+  line-height: 18px
+  text-align: center
+  font-weight: 500
+  font-size: 12px
+  opacity: 0.7
+  cursor: default
+  margin: -2px 0 2px 4px
+  &:hover, .open &
+    opacity: 1
+  &.-error
+    background-color: $color-danger
+    color: #ffffff
+    opacity: 1
+

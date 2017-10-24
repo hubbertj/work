@@ -1,0 +1,201 @@
+.wrapper.-hidden-header
+  display: flex
+  flex: 1
+  flex-direction: column
+  background-color: #195f93
+  background-image: url('../public/images/signin-bg.png')
+  background-repeat: no-repeat
+  background-size: cover
+  background-position: 50% 50%
+  > transflo-header, > transflo-footer
+    display: none
+  > .container.-main
+    min-height: 100vh
+    max-width: 100%
+    margin: 0 auto
+
+.wrapper.-velocity
+  display: flex
+  background-color: #195f93
+  background-image: url('../public/images/signin-bg.png')
+  background-repeat: no-repeat
+  background-size: cover
+  background-position: 50% 50%
+  padding-top: 50px
+
+  .header
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+
+    .header-menu, .header-divisions
+      display: none
+
+    .header-profile
+      flex: 1 1 auto
+      text-align: right
+
+    .header-logo
+      overflow: hidden
+      margin-top: 4px
+
+  .footer
+    display: none
+
+  .container.-main
+    flex: 1
+
+
+.wrapper.-hidden-header.-white
+  background-color: $color-body
+  background-image: none
+
+
+.header-fake
+  height: 50px
+  position: absolute
+  left: 0
+  top: 0
+  right: 0
+  background-color: $color-main
+  a
+    color: #FFFFFF
+  ::-webkit-scrollbar-track
+    background-color: #0c4f81
+  ::-webkit-scrollbar-thumb
+    background-color: #FFFFFF
+
+.header
+  height: 50px
+  background-color: $color-main
+  a
+    color: #FFFFFF
+  ::-webkit-scrollbar-track
+    background-color: #0c4f81
+  ::-webkit-scrollbar-thumb
+    background-color: #FFFFFF
+
+.header-item
+  padding: 0 20px
+  & + &
+    padding-left: 0
+
+.header-logo
+  height: 50px
+  line-height: 50px
+  color: #FFFFFF
+
+.header-menu
+  margin: 0
+  white-space: nowrap
+  > li
+    float: left
+    list-style: none
+    > a
+      display: block
+      font-weight: bold
+      line-height: 50px
+      padding: 0 15px
+      outline: none
+      position: relative
+      text-transform: uppercase
+      &:hover
+        background-color: #0c4f81
+        color: #81bfed
+      &.router-link-active
+        &, &:hover
+          color: $color-active
+          background-color: transparent
+
+.header-dropdown-toggle, .header-dropdown-link
+  display: inline-block
+  vertical-align: top
+  height: 50px
+  line-height: 50px
+  border: none
+  padding: 0 15px
+  background: none
+  color: #FFFFFF
+  font-weight: 500
+  cursor: pointer
+  max-width: 100%
+  span
+    color: #55a0d7
+  &:hover, .open > &
+    background-color: #0c4f81
+    color: #81bfed
+  &:hover
+    &:after
+      border-top-color: #81bfed
+
+.header-dropdown-toggle
+  &:after
+    content: ''
+    display: inline-block
+    width: 0
+    height: 0
+    border-left: 4px solid transparent
+    border-right: 4px solid transparent
+    border-top: 4px solid #FFFFFF
+    vertical-align: middle
+    margin: -1px 0 1px 5px
+    .open > &
+      border-top: none
+      border-bottom: 4px solid #FFFFFF
+  .open > &
+    &:after
+      border-bottom-color: #81bfed
+
+.header-dropdown-control
+  margin: 16px
+  width: 200px
+  padding: 6px 16px
+  font-size: $font-size-base
+  line-height: $line-height-base
+  color: $color-main
+  font-weight: normal
+  background-color: #cfdde8
+  background-image: none
+  border: none
+  border-radius: 15px
+  outline: none
+  -webkit-appearance: none
+  &::placeholder
+    color: $color-main
+    font-weight: normal
+  &:focus
+    background-color: #FFFFFF
+
+.header-dropdown-menu
+  margin: 0
+  padding: 0
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  max-height: 360px
+  border-radius: 6px
+  li
+    list-style: none
+    a
+      cursor: pointer
+      display: block
+      padding: 15px 32px
+      border-top: 1px solid #32709e
+      outline: none
+      color: #FFFFFF
+      strong
+        display: block
+        font-weight: 500
+      span
+        color: #77bbee
+      &:hover
+        background-color: #0f619d
+      &.-active, &.router-link-active
+        &, span
+          color: $color-active
+    &:first-child a
+      border-top: none
+
+.header-dropdown-control + .header-dropdown-menu
+  border-radius: 0 0 6px 6px
+  border-top: 1px solid #32709e
