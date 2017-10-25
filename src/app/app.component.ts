@@ -85,29 +85,29 @@ import '../svg/svg_chatgroup_active.svg';
 })
 
 @RouteConfig([
-  {path: '/', component: DivisionsComponent, name: 'Divisions'},
-  {path: '/divisions/:divId/loads', component: LoadsComponent, name: 'Loads'},
-  {path: '/divisions/:divId/dashboard', component: DashboardComponent, name: 'Home'},
+  {path: '/', component: DivisionsComponent, name: 'Divisions', data: {roles:['authorized']}},
+  {path: '/divisions/:divId/loads', component: LoadsComponent, name: 'Loads', data: {roles:['authorized']}},
+  {path: '/divisions/:divId/dashboard', component: DashboardComponent, name: 'Home', data: {roles:['authorized']}},
 
-  {path: '/division/:divId/loads/create', component: NewLoadComponent, name: 'NewLoad'},
-  {path: '/division/:divId/loads/:loadId/tendering', component: TenderingComponent, name: 'TenderingLoad'},
+  {path: '/division/:divId/loads/create', component: NewLoadComponent, name: 'NewLoad', data: {roles:['authorized']}},
+  {path: '/division/:divId/loads/:loadId/tendering', component: TenderingComponent, name: 'TenderingLoad', data: {roles:['authorized']}},
 
-  {path: '/division/:divId/loads/:loadId/edit', component: NewLoadComponent, name: 'EditLoad'},
-  {path: '/division/:divId/loads/:loadId', component: LoadDetailsComponent, name: 'Load Details'},
-  {path: '/division/:divId/profile', component: ProfileComponent, name: 'Profile'},
+  {path: '/division/:divId/loads/:loadId/edit', component: NewLoadComponent, name: 'EditLoad', data: {roles:['authorized']}},
+  {path: '/division/:divId/loads/:loadId', component: LoadDetailsComponent, name: 'Load Details', data: {roles:['authorized']}},
+  {path: '/division/:divId/profile', component: ProfileComponent, name: 'Profile', data: {roles:['authorized']}},
 
 
-  {path: '/share/:shareId', component: SharedLoadComponent, name: 'SharedLoad'},
+  {path: '/share/:shareId', component: SharedLoadComponent, name: 'SharedLoad', data: {roles:['authorized']}},
 
-  {path: '/register', component: RegisterComponent, name: 'Register'},
+  {path: '/register', component: RegisterComponent, name: 'Register', data: {roles:['authorized']}},
 
-  {path: '/signin', component: SigninComponent, name: 'Signin'},
-  {path: '/restore', component: RestoreComponent, name: 'Restore'},
-  {path: '/division/:divId/error', component: ErrorComponent, name: 'ErrorDivision'},
-  {path: '/error', component: ErrorComponent, name: 'Error'},
-  {path: '/resetpassword', component: ResetComponent, name: 'Reset'},
-  {path: '/404', component: Error404Component, name: '404'},
-  {path: '/velocity', component: VelocityComponent, name: 'Velocity'},
+  {path: '/signin', component: SigninComponent, name: 'Signin', data: {roles:[]}},
+  {path: '/restore', component: RestoreComponent, name: 'Restore', data: {roles:['authorized']}},
+  {path: '/division/:divId/error', component: ErrorComponent, name: 'ErrorDivision', data: {roles:['authorized']}},
+  {path: '/error', component: ErrorComponent, name: 'Error', data: {roles:['authorized']}},
+  {path: '/resetpassword', component: ResetComponent, name: 'Reset', data: {roles:['authorized']}},
+  {path: '/404', component: Error404Component, name: '404', data: {roles:['authorized']}},
+  {path: '/velocity', component: VelocityComponent, name: 'Velocity', data: {roles:['authorized']}},
 
 //  {path: '/*path', redirectTo: ['404']},
 
@@ -138,5 +138,16 @@ export class AppComponent {
         _router.subscribe((uri)=> {
             _applicationRef.zone.run(() => _applicationRef.tick());
         });
+
+        _router.subscribe((uri)=> {
+          var roles  = _router.currentInstruction.component.routeData.data;
+          console.log(roles.roles);
+          // if(!(roles.roles > 0)){
+          //   console.log(roles);
+          // }
+
+        });
+        // current version of router doesn't support roles so this is needed.
+        
     }
 }
