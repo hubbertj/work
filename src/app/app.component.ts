@@ -25,7 +25,7 @@ import { ResetComponent } from './routes/reset';
 
 
 // Services
-import { UserService } from './services/index';
+import { UserService, Role} from './services/index';
 import { HttpService } from './services/index';
 import { PopoverService } from './services/index';
 import { LocalStorageService } from './services/index';
@@ -85,29 +85,29 @@ import '../svg/svg_chatgroup_active.svg';
 })
 
 @RouteConfig([
-  {path: '/', component: DivisionsComponent, name: 'Divisions', data: {roles:['authorized']}},
-  {path: '/divisions/:divId/loads', component: LoadsComponent, name: 'Loads', data: {roles:['authorized']}},
-  {path: '/divisions/:divId/dashboard', component: DashboardComponent, name: 'Home', data: {roles:['authorized']}},
+  {path: '/', component: DivisionsComponent, name: 'Divisions', data: {roles:[Role.AUTHROIZED]}},
+  {path: '/divisions/:divId/loads', component: LoadsComponent, name: 'Loads', data: {roles:[Role.AUTHROIZED]}},
+  {path: '/divisions/:divId/dashboard', component: DashboardComponent, name: 'Home', data: {roles:[Role.AUTHROIZED]}},
 
-  {path: '/division/:divId/loads/create', component: NewLoadComponent, name: 'NewLoad', data: {roles:['authorized']}},
-  {path: '/division/:divId/loads/:loadId/tendering', component: TenderingComponent, name: 'TenderingLoad', data: {roles:['authorized']}},
+  {path: '/division/:divId/loads/create', component: NewLoadComponent, name: 'NewLoad', data: {roles:[Role.AUTHROIZED]}},
+  {path: '/division/:divId/loads/:loadId/tendering', component: TenderingComponent, name: 'TenderingLoad', data: {roles:[Role.AUTHROIZED]}},
 
-  {path: '/division/:divId/loads/:loadId/edit', component: NewLoadComponent, name: 'EditLoad', data: {roles:['authorized']}},
-  {path: '/division/:divId/loads/:loadId', component: LoadDetailsComponent, name: 'Load Details', data: {roles:['authorized']}},
-  {path: '/division/:divId/profile', component: ProfileComponent, name: 'Profile', data: {roles:['authorized']}},
+  {path: '/division/:divId/loads/:loadId/edit', component: NewLoadComponent, name: 'EditLoad', data: {roles:[Role.AUTHROIZED]}},
+  {path: '/division/:divId/loads/:loadId', component: LoadDetailsComponent, name: 'Load Details', data: {roles:[Role.AUTHROIZED]}},
+  {path: '/division/:divId/profile', component: ProfileComponent, name: 'Profile', data: {roles:[Role.AUTHROIZED]}},
 
 
-  {path: '/share/:shareId', component: SharedLoadComponent, name: 'SharedLoad', data: {roles:['authorized']}},
+  {path: '/share/:shareId', component: SharedLoadComponent, name: 'SharedLoad', data: {roles:[Role.AUTHROIZED]}},
 
-  {path: '/register', component: RegisterComponent, name: 'Register', data: {roles:['authorized']}},
+  {path: '/register', component: RegisterComponent, name: 'Register', data: {roles:[Role.AUTHROIZED]}},
 
   {path: '/signin', component: SigninComponent, name: 'Signin', data: {roles:[]}},
-  {path: '/restore', component: RestoreComponent, name: 'Restore', data: {roles:['authorized']}},
-  {path: '/division/:divId/error', component: ErrorComponent, name: 'ErrorDivision', data: {roles:['authorized']}},
-  {path: '/error', component: ErrorComponent, name: 'Error', data: {roles:['authorized']}},
-  {path: '/resetpassword', component: ResetComponent, name: 'Reset', data: {roles:['authorized']}},
-  {path: '/404', component: Error404Component, name: '404', data: {roles:['authorized']}},
-  {path: '/velocity', component: VelocityComponent, name: 'Velocity', data: {roles:['authorized']}},
+  {path: '/restore', component: RestoreComponent, name: 'Restore', data: {roles:[Role.AUTHROIZED]}},
+  {path: '/division/:divId/error', component: ErrorComponent, name: 'ErrorDivision', data: {roles:[Role.AUTHROIZED]}},
+  {path: '/error', component: ErrorComponent, name: 'Error', data: {roles:[Role.AUTHROIZED]}},
+  {path: '/resetpassword', component: ResetComponent, name: 'Reset', data: {roles:[Role.AUTHROIZED]}},
+  {path: '/404', component: Error404Component, name: '404', data: {roles:[Role.AUTHROIZED]}},
+  {path: '/velocity', component: VelocityComponent, name: 'Velocity', data: {roles:[Role.AUTHROIZED]}},
 
 //  {path: '/*path', redirectTo: ['404']},
 
@@ -136,18 +136,31 @@ export class AppComponent {
 
         // Angular RC1 router fix for Safari back button
         _router.subscribe((uri)=> {
+          this.onRoute(_router.currentInstruction.component.routeData.data["roles"], uri);
             _applicationRef.zone.run(() => _applicationRef.tick());
         });
+    }
 
-        _router.subscribe((uri)=> {
-          var roles  = _router.currentInstruction.component.routeData.data;
-          console.log(roles.roles);
-          // if(!(roles.roles > 0)){
-          //   console.log(roles);
-          // }
+    // current version of router doesn't support roles so this is needed.
+    onRoute(roles: [Role], page: string){
+       let loginPageName: string = 'Signin';
+       let authHomePage: string = 'Divisions';
+       let shouldRedirectToLogin: boolean = false;
+       let userRoles: Role[] = this.userService.getAllRoles();
 
-        });
-        // current version of router doesn't support roles so this is needed.
-        
+       roles.forEach((role) => {
+         if(userRoles.indexOf(role) < 0){
+           shouldRedirectToLogin = true;
+         }
+       });
+
+       if(shouldRedirectToLogin){
+         this._router.navigate([loginPageName]);
+         return true;
+       } else if(page.toUpperCase() === loginPageName.toUpperCase() && !(userRoles.indexOf(Role.AUTHROIZED) < 0)){
+         this._router.navigate([authHomePage]);
+         return true;
+       }
+       return false;
     }
 }

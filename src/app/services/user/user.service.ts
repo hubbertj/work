@@ -11,6 +11,12 @@ import { Config } from '../../config';
 import { BrokerSettings } from '../../models/BrokerSettings.model';
 import '../../common/extensions';
 
+
+export enum Role {
+		UNAUTHROIZED = 0,
+        AUTHROIZED = 1
+};
+
 @Injectable()
 export class UserService extends BaseService {
 	private signInUrl = 'auth/signin';
@@ -29,6 +35,8 @@ export class UserService extends BaseService {
 	private sub:any;
 	private isSignInPage = true;
 	private dontAskForAuthUrls: Array<string> = ['signin', 'restore', 'share', 'resetpassword', 'register'];
+
+
 
 
 	constructor (private http: Http,  private httpService: HttpService, protected popoverService: PopoverService, protected router: Router, protected localStorageService: LocalStorageService) {
@@ -56,6 +64,19 @@ export class UserService extends BaseService {
 		} else {
 			this.router.navigate(['Home', { divId: this.user.divisions[0].id}]);	
 		};		
+	};
+
+	//gets all roles for the user;
+	public getAllRoles(){
+		let roles: Role[] = [];
+		console.log(this.httpService.token);
+		if(this.httpService.token){
+			roles.push(Role.AUTHROIZED);
+		}else{
+			roles.push(Role.UNAUTHROIZED);
+		}
+
+		return roles
 	};
 
 	private extractSecurityToken (res: Response) : string {
