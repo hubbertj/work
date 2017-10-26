@@ -69,13 +69,11 @@ export class UserService extends BaseService {
 	//gets all roles for the user;
 	public getAllRoles(){
 		let roles: Role[] = [];
-		console.log(this.httpService.token);
 		if(this.httpService.token){
 			roles.push(Role.AUTHROIZED);
 		}else{
 			roles.push(Role.UNAUTHROIZED);
 		}
-
 		return roles
 	};
 

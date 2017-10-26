@@ -99,13 +99,13 @@ import '../svg/svg_chatgroup_active.svg';
 
   {path: '/share/:shareId', component: SharedLoadComponent, name: 'SharedLoad', data: {roles:[Role.AUTHROIZED]}},
 
-  {path: '/register', component: RegisterComponent, name: 'Register', data: {roles:[Role.AUTHROIZED]}},
+  {path: '/register', component: RegisterComponent, name: 'Register', data: {roles:[]}},
 
   {path: '/signin', component: SigninComponent, name: 'Signin', data: {roles:[]}},
-  {path: '/restore', component: RestoreComponent, name: 'Restore', data: {roles:[Role.AUTHROIZED]}},
+  {path: '/restore', component: RestoreComponent, name: 'Restore', data: {roles:[]}},
   {path: '/division/:divId/error', component: ErrorComponent, name: 'ErrorDivision', data: {roles:[Role.AUTHROIZED]}},
   {path: '/error', component: ErrorComponent, name: 'Error', data: {roles:[Role.AUTHROIZED]}},
-  {path: '/resetpassword', component: ResetComponent, name: 'Reset', data: {roles:[Role.AUTHROIZED]}},
+  {path: '/resetpassword', component: ResetComponent, name: 'Reset', data: {roles:[]}},
   {path: '/404', component: Error404Component, name: '404', data: {roles:[Role.AUTHROIZED]}},
   {path: '/velocity', component: VelocityComponent, name: 'Velocity', data: {roles:[Role.AUTHROIZED]}},
 
