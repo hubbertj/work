@@ -153,8 +153,11 @@ export class UserService extends BaseService {
 				this.httpService.token = '';
 				this.router.navigate(['Signin']);
 			}).bind(this))
-			.catch(this.error.bind(this));
-		
+			.catch(((error) => {
+				this.error(error);
+				this.httpService.token = '';
+				this.router.navigate(['Signin']);
+			}).bind(this));
 	};
 
 	public restore (email) {
