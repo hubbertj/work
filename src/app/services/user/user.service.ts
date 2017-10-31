@@ -11,6 +11,12 @@ import { Config } from '../../config';
 import { BrokerSettings } from '../../models/BrokerSettings.model';
 import '../../common/extensions';
 
+
+export enum Role {
+		UNAUTHROIZED = 0,
+        AUTHROIZED = 1
+};
+
 @Injectable()
 export class UserService extends BaseService {
 	private signInUrl = 'auth/signin';
@@ -29,6 +35,8 @@ export class UserService extends BaseService {
 	private sub:any;
 	private isSignInPage = true;
 	private dontAskForAuthUrls: Array<string> = ['signin', 'restore', 'share', 'resetpassword', 'register'];
+
+
 
 
 	constructor (private http: Http,  private httpService: HttpService, protected popoverService: PopoverService, protected router: Router, protected localStorageService: LocalStorageService) {
@@ -56,6 +64,27 @@ export class UserService extends BaseService {
 		} else {
 			this.router.navigate(['Home', { divId: this.user.divisions[0].id}]);	
 		};		
+	};
+
+	//override
+	public error (error: Response) {
+		super.error(error);
+		let errorStatus = error && error.status;
+		if(errorStatus == 401){
+			this.httpService.token = '';
+			this.router.navigate(['Signin']);
+		}
+	};
+
+	//gets all roles for the user;
+	public getAllRoles(){
+		let roles: Role[] = [];
+		if(this.httpService.token){
+			roles.push(Role.AUTHROIZED);
+		}else{
+			roles.push(Role.UNAUTHROIZED);
+		}
+		return roles
 	};
 
 	private extractSecurityToken (res: Response) : string {
@@ -134,8 +163,11 @@ export class UserService extends BaseService {
 				this.httpService.token = '';
 				this.router.navigate(['Signin']);
 			}).bind(this))
-			.catch(this.error.bind(this));
-		
+			.catch(((error) => {
+				this.error(error);
+				this.httpService.token = '';
+				this.router.navigate(['Signin']);
+			}).bind(this));
 	};
 
 	public restore (email) {
