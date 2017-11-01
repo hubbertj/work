@@ -101,7 +101,7 @@ import '../svg/svg_chatgroup_active.svg';
 
   {path: '/register', component: RegisterComponent, name: 'Register', data: {roles:[]}},
 
-  {path: '/signin', component: SigninComponent, name: 'Signin', data: {roles:[]}},
+  {path: '/signin', useAsDefault: true, component: SigninComponent, name: 'Signin', data: {roles:[]}},
   {path: '/restore', component: RestoreComponent, name: 'Restore', data: {roles:[]}},
   {path: '/division/:divId/error', component: ErrorComponent, name: 'ErrorDivision', data: {roles:[Role.AUTHROIZED]}},
   {path: '/error', component: ErrorComponent, name: 'Error', data: {roles:[Role.AUTHROIZED]}},
