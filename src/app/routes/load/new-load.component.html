@@ -187,26 +187,16 @@
     <div class="skeleton-item" *ngFor="let stop of stops; let idx = index;">
       <div class="skeleton-bubble -left" *ngIf="stop.pickupShipments && stop.pickupShipments.length" [hidden]="stop.isService">
 
-        <div class="skeleton-bubble-header flex items-baseline">
-            <div class="flex-auto">
-                <div class=""><strong>Pick&nbsp;Up</strong></div>
-                <div *ngIf="getValue(stop.pickupShipments, 'volume', true) > 0 || getValue(stop.pickupShipments, 'weight', true) > 0" class="">
-                    <small><transflo-number [number]="getValue(stop.pickupShipments, 'volume', true)"></transflo-number>
-                      ft³
-                    </small>
-                    <small><transflo-number [number]="getValue(stop.pickupShipments, 'weight', true)"></transflo-number>
-                      lbs
-                    </small>
+        <div class="skeleton-bubble-header items-baseline">
+                <div class="col-12"><strong>Pick&nbsp;Up</strong></div>
+                <div *ngIf="getValue(stop.pickupShipments, 'volume', true) > 0 || getValue(stop.pickupShipments, 'weight', true) > 0" class="col-12">
+                    <small><transflo-number [number]="getValue(stop.pickupShipments, 'volume', true)"></transflo-number>&nbsp;ft³</small>
+                    <small><transflo-number [number]="getValue(stop.pickupShipments, 'weight', true)"></transflo-number>&nbsp;lbs</small>
                 </div>
-                <div *ngIf="getValue(stop.pickupShipments, 'volume', false) > 0 || getValue(stop.pickupShipments, 'weight', false) > 0" class="">
-                    <small><transflo-number [number]="getValue(stop.pickupShipments, 'volume', false)"></transflo-number>
-                      cm³
-                    </small>
-                    <small><transflo-number [number]="getValue(stop.pickupShipments, 'weight', false)"></transflo-number>
-                      kg
-                    </small>
+                <div *ngIf="getValue(stop.pickupShipments, 'volume', false) > 0 || getValue(stop.pickupShipments, 'weight', false) > 0" class="col-12">
+                    <small><transflo-number [number]="getValue(stop.pickupShipments, 'volume', false)"></transflo-number>&nbsp;cm³</small>
+                    <small><transflo-number [number]="getValue(stop.pickupShipments, 'weight', false)"></transflo-number>&nbsp;kg</small>
                 </div>
-            </div>
         </div>
         <ul class="skeleton-bubble-list">
           <li *ngFor="let shipment of stop.pickupShipments">
