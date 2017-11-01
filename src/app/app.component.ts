@@ -108,6 +108,7 @@ import '../svg/svg_chatgroup_active.svg';
   {path: '/resetpassword', component: ResetComponent, name: 'Reset', data: {roles:[]}},
   {path: '/404', component: Error404Component, name: '404', data: {roles:[Role.AUTHROIZED]}},
   {path: '/velocity', component: VelocityComponent, name: 'Velocity', data: {roles:[Role.AUTHROIZED]}},
+  {path: '**', redirectTo:['Signin']},
 
 //  {path: '/*path', redirectTo: ['404']},
 
