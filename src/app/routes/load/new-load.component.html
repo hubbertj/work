@@ -200,24 +200,16 @@
         </div>
         <ul class="skeleton-bubble-list">
           <li *ngFor="let shipment of stop.pickupShipments">
-            <div class=""><span>{{getValue([shipment], 'quantity')}} pcs</span></div>
-            <div *ngIf="getValue([shipment], 'volume', true) > 0 || getValue([shipment], 'weight', true) > 0" class="">
-              <div><transflo-number [number]="getValue([shipment], 'volume', true)"></transflo-number>
-                &nbsp;ft³
-              </div>
-              <div><transflo-number [number]="getValue([shipment], 'weight', true)"></transflo-number>
-                &nbsp;lbs
-              </div>
+            <div class="col-12"><span>{{getValue([shipment], 'quantity')}} pcs</span></div>
+            <div class="col-12 flex flex-wrap" *ngIf="getValue([shipment], 'volume', true) > 0 || getValue([shipment], 'weight', true) > 0" >
+              <div><transflo-number [number]="getValue([shipment], 'volume', true)"></transflo-number>&nbsp;ft³&nbsp;</div>
+              <div><transflo-number [number]="getValue([shipment], 'weight', true)"></transflo-number>&nbsp;lbs</div>
             </div>
-            <div *ngIf="getValue([shipment], 'volume', false) > 0 || getValue([shipment], 'weight', false) > 0" class="">
-              <span><transflo-number [number]="getValue([shipment], 'volume', false)"></transflo-number>
-                &nbsp;cm³
-              </span>
-              <span><transflo-number [number]="getValue([shipment], 'weight', false)"></transflo-number>
-                &nbsp;kg
-              </span>
+            <div class="col-12" *ngIf="getValue([shipment], 'volume', false) > 0 || getValue([shipment], 'weight', false) > 0">
+              <div><transflo-number [number]="getValue([shipment], 'volume', false)"></transflo-number>&nbsp;cm³&nbsp;</div>
+              <div><transflo-number [number]="getValue([shipment], 'weight', false)"></transflo-number>&nbsp;kg</div>
             </div>
-            <strong><a (click)="startEditShipment(shipment); shipmentModal.show()">BOL {{shipment.shipmentBOL}}</a></strong>
+            <div class="col-12"><strong><a (click)="startEditShipment(shipment); shipmentModal.show()">BOL {{shipment.shipmentBOL}}</a></strong></div>
           </li>
         </ul>
       </div>
