@@ -263,7 +263,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
         this.isCommonCarrier = division.isCommonCarrier;
 		this.divisionCode = division.code;
 
-		if (!this.loadId) {
+		if (!this.loadId && user.email && user.email !== "") {
 			this.emailsList.push(user.email);	
 		}
 	};

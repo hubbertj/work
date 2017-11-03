@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { Headers, RequestOptions } from '@angular/http';
+import { Headers, RequestOptions, Response } from '@angular/http';
 import { BaseService} from './base.service';
 
 
@@ -148,5 +148,15 @@ export class DivisionService extends BaseService {
 			.get(this.divisionUrl + '/' + divisionId + '/addresses?quantity=10' + addition)
 			.toPromise()
 			.catch(this.error.bind(this));
+	};
+
+	//override
+	public error (error: Response) {
+		super.error(error);
+		let errorStatus = error && error.status;
+		if(errorStatus == 401){
+			this.httpService.token = '';
+			this.router.navigate(['Signin']);
+		}
 	};
 }
