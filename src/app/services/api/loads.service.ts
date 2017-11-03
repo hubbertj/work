@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { Headers, RequestOptions } from '@angular/http';
+import { Headers, RequestOptions, Response } from '@angular/http';
 
 import { HttpService } from '../http/http.service';
 
@@ -176,5 +176,15 @@ export class LoadsService extends BaseService {
 			.get(this.loadsUrl + '?division=' + divisionId + filter.serialize())
 			.toPromise()
 			.catch(this.error.bind(this));
+	};
+
+	//override
+	public error (error: Response) {
+		super.error(error);
+		let errorStatus = error && error.status;
+		if(errorStatus == 401){
+			this.httpService.token = '';
+			this.router.navigate(['Signin']);
+		}
 	};
 }
