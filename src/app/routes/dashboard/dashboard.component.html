@@ -76,7 +76,7 @@
 
   <div class="home-center" id="map">
     <!-- if the map fails to load -->
-    <strong>Map Unavailable</strong>
+    <strong *ngIf="!map._loaded">Map Unavailable</strong>
   </div>
   
   <div class="home-rightbar" [ngClass]="{'-no-scroll': mode == 'load' && load.id}">

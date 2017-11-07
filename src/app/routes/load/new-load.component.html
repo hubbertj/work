@@ -508,7 +508,7 @@
 <!-- Shipment modal -->
 <div bsModal #shipmentModal="bs-modal" (onShown)="scrollBottom()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myShipmentModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <form #form="ngForm" (submit)="addShipment(); shipmentModal.hide();">
+    <form #form="ngForm" (submit)="addShipment(); shipmentModal.hide();" name="shipmentCreateForm" validate>
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="modal-close" aria-label="Close" (click)="shipmentModal.hide()" title="Close" tabindex="-1">&times;</button>
@@ -766,7 +766,7 @@
                   <td>
                     <div class="flex">
                       <div class="col-6 -merged">
-                        <input autocomplete="off"  type="text" pattern="[0-9999999]" class="form-control" style="width: 62px;" [(ngModel)]="package.height" maxlength="7"/>
+                        <input autocomplete="off"  type="number" pattern="^(0|[1-9][0-9]*)$" class="form-control" style="width: 62px;" [(ngModel)]="package.height" maxlength="7" name="packageHeight"/>
                       </div>
                       <div class="col-6 -merged">
                         <select class="form-control" style="width: 62px;" [(ngModel)]="package.heightMeasure" (ngModelChange)="setMeasurement(package, package.heightMeasure)">
@@ -778,7 +778,7 @@
                   <td>
                     <div class="flex">
                       <div class="col-6 -merged">
-                        <input autocomplete="off"  class="form-control" style="width: 62px;" [(ngModel)]="package.weight" type="text" pattern="[0-9999999]"  maxlength="7" />
+                        <input autocomplete="off"  class="form-control" style="width: 62px;" [(ngModel)]="package.weight" type="number" pattern="^(0|[1-9][0-9]*)$" maxlength="7" name="packageWeight"/>
                       </div>
                       <div class="col-6 -merged">
                          <select class="form-control" style="width: 62px;" [(ngModel)]="package.weightMeasure" (ngModelChange)="setMeasurement(package, package.weightMeasure)">
@@ -790,7 +790,7 @@
                   <td>
                     <div class="flex">
                       <div class="col-6 -merged">
-                        <input autocomplete="off"  class="form-control" style="width: 62px;" [(ngModel)]="package.volume" type="text" pattern="[0-9999999]"  maxlength="7"/>
+                        <input autocomplete="off" class="form-control" style="width: 62px;" [(ngModel)]="package.volume" type="number" pattern="^(0|[1-9][0-9]*)$" maxlength="7" name="packageVolume"/>
                       </div>
                       <div class="col-6 -merged">
                         <select class="form-control" style="width: 62px;" [(ngModel)]="package.volumeMeasure" (ngModelChange)="setMeasurement(package, package.volumeMeasure)">
