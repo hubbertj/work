@@ -764,6 +764,8 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 					.saveLoad(load)
 					.then(this.saveNotifications.bind(this))
 					.catch(this.validationErrorHandler.bind(this));
+			} else{
+				console.error("Error Unknown");
 			}
 			
 		} else {
@@ -775,6 +777,8 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
                         this.saveNotifications.bind(this)
                         )
 					.catch(this.validationErrorHandler.bind(this));
+			} else {
+				console.error("Error Unknown");
 			}
 		}
 		
@@ -1129,7 +1133,12 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 			return true;
 		});
 
-		return found ? found : stopToFind;
+		//mix in timestamp
+		var outPutFound = found ? found : stopToFind;
+		outPutFound.timeStamp = moment(stopToFind.date +
+				 '-' + stopToFind.time, 'M/D/YYYY-hh:ss A').unix();
+
+		return outPutFound;
 	};
 
 	public moveStop (stop, direction) {
@@ -1170,7 +1179,15 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 
 			// find idx and add and shift stopnum
 			for (let i = 0, length = this.stops && this.stops.length; i < length; i++) {
-				if (+moment(stop.date, 'M/D/YYYY') > +moment(this.stops[i].date, 'M/D/YYYY') || !this.stops[i].date || !stop.date) {
+
+				//old way
+				// if (+moment(stop.date, 'M/D/YYYY') > +moment(this.stops[i].date, 'M/D/YYYY') || !this.stops[i].date || !stop.date) {
+				// 	index = i + 1;
+				// } else {
+				// 	break;
+				// }
+
+				if (stop.timeStamp > this.stops[i].timeStamp || !this.stops[i].date || !stop.date) {
 					index = i + 1;
 				} else {
 					break;
@@ -1185,27 +1202,28 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 		this.recalculateSkeleton();		
 	};
 
+	/**
+	 * From form submittion add a shipment to shipment list.
+	 */
     public addShipment() {
-       
-		let stop = this.findStop(this.currentStopPickUp);
 
-		this.timeValue = '';
-
-		if (stop._id != this.currentStopPickUp._id) {
-			this.currentStopPickUp = this.findStop(this.currentStopPickUp);
-			this.currentShipment.pickup = this.currentStopPickUp._id;
-		} else {
-			this.addStop(this.currentStopPickUp, null);
-		}
-
-		
-		stop = this.findStop(this.currentStopDropOff);
+    	let stop = this.findStop(this.currentStopDropOff);
+    	this.timeValue = '';
 
 		if (stop._id != this.currentStopDropOff._id) {
 			this.currentStopDropOff = this.findStop(this.currentStopDropOff);
 			this.currentShipment.dropoff = this.currentStopDropOff._id;
 		} else {
 			this.addStop(this.currentStopDropOff, null);
+		}
+
+		stop = this.findStop(this.currentStopPickUp);
+
+		if (stop._id != this.currentStopPickUp._id) {
+			this.currentStopPickUp = this.findStop(this.currentStopPickUp);
+			this.currentShipment.pickup = this.currentStopPickUp._id;
+		} else {
+			this.addStop(this.currentStopPickUp, null);
 		}
 
 		this.currentShipment._id = this.generateTempId();
@@ -1236,7 +1254,6 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 				shipment.dropoff = stop._id;
 			}
 		}
-
 
 		return stop;
 	};
