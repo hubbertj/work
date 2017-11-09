@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer } from '@angular/core';
 import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgClass} from '@angular/common';
 import {SELECT_DIRECTIVES} from 'ng2-select/ng2-select';
 import { Router } from '@angular/router-deprecated';
@@ -27,6 +27,7 @@ declare var $: JQueryStatic;
 })
 
 export class LoadDetailsComponent implements OnInit, OnDestroy {
+	@ViewChild('addEmail') addEmailBtn:ElementRef;
 	private id;
 	private loadId;
 	private divisionId;
@@ -70,7 +71,8 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
 		private router:Router,
 		private loadsService: LoadsService,
         private userService: UserService,
-        private validationService: ValidationService
+        private validationService: ValidationService,
+        private renderer: Renderer
 	){
 		this.id  = Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
 	};
@@ -162,6 +164,10 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
             this.newSubscriber.hideEmailinValid = true;
             this.newSubscriber.events = [];
 		}
+
+		//sends a click event to email button to close it.
+		let event = new MouseEvent('click', {bubbles: false});
+    	this.renderer.invokeElementMethod(this.addEmailBtn.nativeElement, 'dispatchEvent', [event]);
 	};
 
     public editSubscriber(subscriber) {
