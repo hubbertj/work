@@ -14,6 +14,7 @@ import { AttributesComponent } from '../../components/attributes/index';
 
 import { LoadsService, UserService } from '../../services';
 import { ValidationService } from '../../services/index';
+import { NotificationRename } from "../../pipes";
 
 import * as moment from 'moment';
 declare var $: JQueryStatic;
@@ -23,7 +24,8 @@ declare var $: JQueryStatic;
     directives: [TAB_DIRECTIVES, ShareComponent, DateComponent, MapDirective, DROPDOWN_DIRECTIVES, DriversComponent, AttributesComponent, MODAL_DIRECTVES, TYPEAHEAD_DIRECTIVES, SELECT_DIRECTIVES, NgClass, CORE_DIRECTIVES, FORM_DIRECTIVES, SkeletonComponent],
     viewProviders: [BS_VIEW_PROVIDERS],
     providers: [LoadsService],
-    template: require('./load-details.component.html')
+    template: require('./load-details.component.html'),
+    pipes: [NotificationRename]
 })
 
 export class LoadDetailsComponent implements OnInit, OnDestroy {
@@ -190,6 +192,17 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
 		if (res) {
 			let body = res.json();
 			let eventGroups = [];
+
+			//TODO: remove when backend changes & remove pipe in template.
+			var events = [];
+			while(body.events.length > 0){
+				var item = body.events.pop();
+				if(item.group !== "Package"){
+					events.push(item);
+				}
+			}
+			body.events = events.reverse();
+			
 
 			this.subscribers = body.subscribers;
 

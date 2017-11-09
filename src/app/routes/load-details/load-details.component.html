@@ -80,7 +80,7 @@
                 </th>
               </tr>
               <tr *ngFor="let event of eventGroup.events">
-                <td class="align-middle">{{event.name}}</td>
+                <td class="align-middle">{{event.name | notificationRename }}</td>
                 <td class="center" *ngFor="let subscriber of subscribers">
                   <label>
                     <input type="checkbox" hidden [ngModel]="getSubscriberEvent(subscriber, event)" (ngModelChange)="setSubscriberEvent(subscriber, event, $event)"/>
