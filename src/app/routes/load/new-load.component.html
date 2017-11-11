@@ -352,7 +352,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Time*</label>
-                <input autocomplete="off" class="form-control" [(ngModel)]="timeValue"  (ngModelChange)="timeSelectedStop(currentStop, $event)" type="text" placeholder="" required maxlength="100"/>
+                <input autocomplete="off" class="form-control" [(ngModel)]="timeValue" (ngModelChange)="timeSelectedStop(currentStop, $event)" type="time" required/>
 
 
                 <!--transflo-simple-dropdown [values]="times" [stringValue]="timeValue" (attributeChanged)="timeSelectedStop(currentStop, $event)"></transflo-simple-dropdown-->
@@ -379,13 +379,13 @@
                 </div>
               </div>
               <div class="form-group flex">
-                <div class="col-7 pr1">
-                  <label class="form-label">Country</label>
-                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStop && currentStop.country"  maxlength="100"/>
-                </div>
-                <div class="col-5 pl1">
+                <div class="col-5 pr1">
                   <label class="form-label">ZIP*</label>
                   <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStop && currentStop.postalCode" required maxlength="10"/>
+                </div>
+                <div class="col-7 pl1">
+                  <label class="form-label">Country</label>
+                  <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStop && currentStop.country"  maxlength="100"/>
                 </div>
               </div>
               <div class="form-group -x5">
@@ -551,7 +551,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Time*</label>
-                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopPickUp.time"  (ngModelChange)="timeSelectedShipment($event, 'pickup')"  [ngClass]="{'-error': loadValidationErrors.time}" name="time" natype="text" placeholder="" required maxlength="100"/>
+                <input autocomplete="off" [disabled]="isCommonCarrier" type="time" class="form-control" [(ngModel)]="currentStopPickUp.time" [ngClass]="{'-error': loadValidationErrors.time}" name="time" natype="text"required maxlength="100"/>
 
                 <!--transflo-simple-dropdown [values]="times" [stringValue]="currentStopPickUp.time" (attributeChanged)="timeSelectedShipment($event, 'pickup')"></transflo-simple-dropdown-->
               </div>
@@ -648,7 +648,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Time*</label>
-                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopDropOff.time"  (ngModelChange)="timeSelectedShipment($event, 'dropoff')" type="text" placeholder="" required maxlength="100"/>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopDropOff.time" type="time" placeholder="" required maxlength="100"/>
                 <!--transflo-simple-dropdown [values]="times" [stringValue]="currentStopDropOff.time" (attributeChanged)="timeSelectedShipment($event, 'dropoff')"></transflo-simple-dropdown-->
               </div>
               <div class="form-group -x5 center" dropdown keyboardNav="true" autoClose="outsideClick" (onToggle)="searchStopsStr = ''; searchStop();">

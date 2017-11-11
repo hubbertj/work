@@ -813,19 +813,23 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 			} else {
 				this.currentStopPickUp.date = date;
 			}
-			
+			if (!this.currentStopPickUp.time) this.currentStopPickUp.time = '00:00';
 		} else {
 			if (date != '') {
 				this.currentStopDropOff.date = moment(date, 'M/D/YYYY').format('M/D/YYYY');
 			} else {
 				this.currentStopDropOff.date = date;
 			}
+			if (!this.currentStopDropOff.time) this.currentStopDropOff.time = '00:00';
 		}
 	};
 
 	public timeSelectedStop (stop, time) {
 		if (stop) {
-			stop.time = time;	
+			stop.time = time;
+			//formate  the time just to make sure it correct again.
+			stop.timeStamp = this.addTimeStamp(stop);
+			stop.time = this.formateTime(stop.timeStamp, null);	
 		}
 	};
 
@@ -837,13 +841,14 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 		}
 	};
 
-	public timeSelectedShipment (time, type) {
-		if (type == 'pickup') {
-			this.currentStopPickUp.time = time;
-		} else {
-			this.currentStopDropOff.time = time;
-		}
-	};
+	// not needed we are already have two way binding to currentStopPickUp & currentStopDropOff model
+	// public timeSelectedShipment (time, type) {
+	// 	if (type == 'pickup') {
+	// 		this.currentStopPickUp.time = time;
+	// 	} else {
+	// 		this.currentStopDropOff.time = time;
+	// 	}
+	// };
 
 	public createPackage () {
 		if (!this.currentShipment.packages) {
@@ -1135,10 +1140,22 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 
 		//mix in timestamp
 		var outPutFound = found ? found : stopToFind;
-		outPutFound.timeStamp = moment(stopToFind.date +
-				 '-' + stopToFind.time, 'M/D/YYYY-hh:ss A').unix();
+		outPutFound.timeStamp = this.addTimeStamp(outPutFound);
+		outPutFound.time = this.formateTime(outPutFound.timeStamp, null);
 
 		return outPutFound;
+	};
+
+	private formateTime(timeStamp: number, format: string){
+		if(format){
+			return moment.unix(timeStamp).format(format);
+		}
+		return moment.unix(timeStamp).format("hh:mm A");
+	};
+
+	private addTimeStamp(aStop: any){
+		return aStop.timeStamp = moment(aStop.date +
+				 '-' + aStop.time, 'M/D/YYYY-hh:mm').unix();
 	};
 
 	public moveStop (stop, direction) {
@@ -1300,7 +1317,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 			this.currentStop.addressLines[i] = Object.assign({}, stop.addressLines[i]);
 		}
 
-		this.timeValue =  stop.time || '';
+		this.timeValue = this.formateTime(stop.timeStamp, 'hh:mm') || '00:00:00';
 
 		if (stop.isService) {
 			this.currentServiceStop = this.currentStop;
@@ -1388,7 +1405,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 			},
 			dropoffShipments: [],
 			pickupShipments: [],
-			time: '12:00 PM'
+			time: null
 		};
 
 		this.currentStopDropOff = {
@@ -1404,7 +1421,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 			},
 			dropoffShipments: [],
 			pickupShipments: [],
-			time: '12:00 PM'
+			time: null
 		}
 
 		this.currentShipment = {
