@@ -10,6 +10,7 @@ import {DROPDOWN_DIRECTIVES,TAB_DIRECTIVES, MODAL_DIRECTVES, TYPEAHEAD_DIRECTIVE
 import { DatePickerDirective, AutosizeDirective, ScrollDirective } from '../../directives/index';
 import {DateComponent} from '../../components/date/index';
 import { EmailInputComponent } from '../../components/email-input/index';
+import { PhoneInputComponent } from '../../components/phone-input/index';
 
 
 import { UserService, DivisionService, LoadsService, LocalStorageService } from '../../services';
@@ -20,7 +21,13 @@ import * as _ from 'lodash';
 @Component({
 	selector: 'new-load',
 	providers: [DivisionService, LoadsService, LocalStorageService],
-    directives: [DateComponent, ScrollDirective, DROPDOWN_DIRECTIVES, EmailInputComponent, NumberComponent, TYPEAHEAD_DIRECTIVES, MODAL_DIRECTVES, NgClass, CORE_DIRECTIVES, FORM_DIRECTIVES, SimpleDropdownComponent, DatePickerDirective, TOOLTIP_DIRECTIVES, AutosizeDirective],
+    directives: [DateComponent, ScrollDirective,
+     DROPDOWN_DIRECTIVES, EmailInputComponent,
+      NumberComponent, TYPEAHEAD_DIRECTIVES,
+       MODAL_DIRECTVES, NgClass, CORE_DIRECTIVES,
+        FORM_DIRECTIVES, SimpleDropdownComponent,
+         DatePickerDirective, TOOLTIP_DIRECTIVES,
+          AutosizeDirective, PhoneInputComponent],
 	template: require('./new-load.component.html'),
 	viewProviders: [BS_VIEW_PROVIDERS]
 })

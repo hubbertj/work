@@ -398,7 +398,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Phone*</label>
-                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" type="tel" [(ngModel)]="currentStop && currentStop.phoneNumber" required maxlength="50"/>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" type="tel" [(ngModel)]="currentStop && currentStop.phoneNumber" required maxlength="11"/>
               </div>
             </div>
           </div>
@@ -488,7 +488,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Phone*</label>
-                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" type="tel" [(ngModel)]="currentServiceStop && currentServiceStop.phoneNumber" required maxlength="50"/>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" type="tel" [(ngModel)]="currentServiceStop && currentServiceStop.phoneNumber" (ngModelChange)="formatToNumber(currentServiceStop, currentServiceStop.phoneNumber)" required maxlength="11"/>
               </div>
             </div>
           </div>
@@ -637,7 +637,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Phone*</label>
-                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" type="tel" [(ngModel)]="currentStopPickUp && currentStopPickUp.phoneNumber"  required maxlength="50"/>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" type="tel" [(ngModel)]="currentStopPickUp && currentStopPickUp.phoneNumber"  required maxlength="11"/>
               </div>
             </div>
             <div class="pl8 pr4 col-6">
@@ -732,7 +732,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Phone*</label>
-                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" type="tel" [(ngModel)]="currentStopDropOff && currentStopDropOff.phoneNumber" maxlength="50" required/>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" type="tel" [(ngModel)]="currentStopDropOff && currentStopDropOff.phoneNumber" maxlength="11" required/>
               </div>
             </div>
           </div>
