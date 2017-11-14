@@ -1412,7 +1412,8 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 			},
 			dropoffShipments: [],
 			pickupShipments: [],
-			time: null
+			time: null,
+			country: 'USA'
 		};
 
 		this.currentStopDropOff = {
@@ -1428,7 +1429,8 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 			},
 			dropoffShipments: [],
 			pickupShipments: [],
-			time: null
+			time: null,
+			country: 'USA'
 		}
 
 		this.currentShipment = {
