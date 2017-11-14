@@ -646,6 +646,9 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 
 			stop.id = stop._id;
 
+			//cleans up number to send to backend
+			resultStop.phoneNumber = resultStop.phoneNumber.replace(/-/g, '');
+
 			delete resultStop.dropoffShipments;
 			delete resultStop.pickupShipments;
 			delete resultStop.invalid;
@@ -788,6 +791,8 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 				console.error("Error Unknown");
 			}
 		}
+
+
 		
 	};
 
