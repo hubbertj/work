@@ -1,5 +1,4 @@
-# pegasus-command-center
-Command Center of Pegasus Transtech
+# Angular RC1 project
 
 ### Quick start
 
