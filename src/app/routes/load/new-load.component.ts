@@ -84,6 +84,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 	private currentServiceStop:any = {};
 	private prevStop: any = {};
     private attributeButtonDisabled = true;
+    private submitting: boolean = false;
     public emailValid = true;
 
 	private errors:any = [];
@@ -257,7 +258,9 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 		this.userService.getUser(this.setIsCarrier.bind(this));
 
 		this.divisionService.getAttributes(this.divisionId)
-            .then(this.extractAttributes.bind(this));                       
+            .then(this.extractAttributes.bind(this));
+
+        this.submitting = false;                       
     
     };     
 
@@ -764,6 +767,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 
 	public saveLoad () {
 		let load = this.serializeLoad();
+		this.submitting = true;
 
 		this.dontCheck = true;
 
@@ -791,9 +795,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 				console.error("Error Unknown");
 			}
 		}
-
-
-		
+		return false;
 	};
 
  

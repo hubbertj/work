@@ -30,7 +30,7 @@
           </table>
         </div>
       </div>
-      <button type="button" class="button -primary" (click)="saveLoad()" [disabled]="isInvalid()">Save Load</button>
+      <button type="button" class="button -primary" (click)="saveLoad()" [disabled]="isInvalid() || submitting">Save Load</button>
     </div>
   </div>
   <form action="" class="filters-form" role="form" novalidate>
