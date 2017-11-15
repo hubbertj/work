@@ -25,23 +25,7 @@
   <ul class="header-item header-menu">
     <li><a [routerLink]="['Home', {divId: selectedDivision.id}]">Home</a></li>
     <li><a [routerLink]="['Loads', {divId: selectedDivision.id, ddl: getDate(), dsh: getDate()}]">Loads</a></li>
-	<li [hidden]="!isCarrier"><a messages [divisionId]="selectedDivision.id">Drivers</a></li>
-    <!--<li>
-      <div dropdown keyboardNav="true">
-        <button class="header-dropdown-link" type="button" dropdownToggle>
-          •••
-        </button>
-        <div class="dropdown-menu -header" role="menu" dropdownMenu>
-          <ul class="header-dropdown-menu">
-            <li *ngFor="let item of selectedDivision.menu">
-              <a href="{{item.url}}" target="_blank">
-                <strong>{{item.name}}</strong>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </li> <-->
+	  <li [hidden]="!selectedDivision.isCarrier"><a messages [divisionId]="selectedDivision.id">Drivers</a></li>
   </ul>
   <nav class="header-item header-profile">
     <div dropdown keyboardNav="true" autoClose="outsideClick">

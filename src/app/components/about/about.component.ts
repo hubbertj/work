@@ -9,7 +9,7 @@ import {MODAL_DIRECTVES, BS_VIEW_PROVIDERS, DROPDOWN_DIRECTIVES} from 'ng2-boots
 })
 
 export class AboutComponent {
-	@ViewChild('serverModal') serverModal;
+	@ViewChild('serverModal') serverModal; 
     public appVersion: string;
 	constructor () {};
 

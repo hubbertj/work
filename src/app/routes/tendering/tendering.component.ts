@@ -66,13 +66,13 @@ export class TenderingComponent implements OnActivate {
 	};
 
 	private searchFunc(driver) {
-		let driverName = driver.name.toUpperCase();
-
-		if (this.onlyFavorites) {
-			return driver.isFavorite && driverName.indexOf(this.searchString.toUpperCase()) != -1;
+		if (this.onlyFavorites && !driver.isFavorite) {
+			return false;
 		};
 
-		return driverName.indexOf(this.searchString.toUpperCase()) != -1;
+		return driver.name.toUpperCase().indexOf(this.searchString.toUpperCase()) != -1
+			|| driver.email.toUpperCase().indexOf(this.searchString.toUpperCase()) != -1
+			|| driver.id.toString().toUpperCase().indexOf(this.searchString.toUpperCase()) != -1;
 	};
 
 	public filter () {

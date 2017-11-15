@@ -11,10 +11,9 @@ import { Config } from '../../config';
 import { BrokerSettings } from '../../models/BrokerSettings.model';
 import '../../common/extensions';
 
-
 export enum Role {
-		UNAUTHROIZED = 0,
-        AUTHROIZED = 1
+    UNAUTHROIZED = 0,
+    AUTHROIZED = 1
 };
 
 @Injectable()
@@ -35,8 +34,6 @@ export class UserService extends BaseService {
 	private sub:any;
 	private isSignInPage = true;
 	private dontAskForAuthUrls: Array<string> = ['signin', 'restore', 'share', 'resetpassword', 'register'];
-
-
 
 
 	constructor (private http: Http,  private httpService: HttpService, protected popoverService: PopoverService, protected router: Router, protected localStorageService: LocalStorageService) {
@@ -64,9 +61,9 @@ export class UserService extends BaseService {
 		} else {
 			this.router.navigate(['Home', { divId: this.user.divisions[0].id}]);	
 		};		
-	};
-
-	//override
+    };
+    
+    //override
 	public error (error: Response) {
 		super.error(error);
 		let errorStatus = error && error.status;
@@ -76,16 +73,16 @@ export class UserService extends BaseService {
 		}
 	};
 
-	//gets all roles for the user;
-	public getAllRoles(){
-		let roles: Role[] = [];
-		if(this.httpService.token){
-			roles.push(Role.AUTHROIZED);
-		}else{
-			roles.push(Role.UNAUTHROIZED);
-		}
-		return roles
-	};
+    //gets all roles for the user;
+    public getAllRoles() {
+        let roles: Role[] = [];
+        if (this.httpService.token) {
+            roles.push(Role.AUTHROIZED);
+        } else {
+            roles.push(Role.UNAUTHROIZED);
+        }
+        return roles
+    };
 
 	private extractSecurityToken (res: Response) : string {
 		let body = res.json();

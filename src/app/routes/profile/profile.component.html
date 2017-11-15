@@ -1,18 +1,37 @@
-﻿<div class="loading-page" [hidden]="!loading"><em></em><em></em><em></em></div>
-
+<div class="loading-page" [hidden]="!loading">
+  <em></em>
+  <em></em>
+  <em></em>
+</div>
 <header class="page-header">
   <div class="flex items-center">
     <div class="flex-auto flex items-baseline">
       <h1>My Profile</h1>
     </div>
     <div class="center pt4 pb4">
-      <transflo-upload-Carriers  [brokers]="brokers" [hidden]="hideCarriersUpoad" class="button-group" (onToggle)="closeNotifications($event)"></transflo-upload-Carriers>
+      <transflo-upload-Carriers  [brokers]="brokers" [hidden]="hideCarriersUpload" class="button-group" (onToggle)="closeNotifications($event)"></transflo-upload-Carriers>
     </div>
   </div>
 </header>
-
 <div class="page-content">
-
+  <!--Message modal-->
+  <div bsModal #serverModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myServerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content -center">
+      <div class="modal-popup-close">
+      <button type="button" class="modal-close " aria-label="Close" (click)="serverModal.hide()" title="Close">&times;</button>
+      </div>
+        <div class="modal-popup">
+          <header class="modal-popup-header">
+            <h1>{{modalMessage.header}}</h1>
+          </header>
+          <div class="modal-popup-content">
+            {{modalMessage.message}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="flex form-group">
     <div class="col-4">
       <img src="./images/profile.png" alt="" width="177" height="135" class="profile-img" />
@@ -44,48 +63,209 @@
         <h5>{{division.name}}</h5>
       </div>
     </div>
-  </div>  
-  <div *ngIf="user.brokerSettings.length">
-    <div class="hr form-group -x6"></div>  
+  </div> 
+  <div class="hr form-group -x6" *ngIf="user.brokerSettings.length > 0"></div>  
+  <div class="flex form-group -x6" *ngIf="user.brokerSettings.length > 0">
+    <div class="col-4">
+      <h3 class="fs22">Associated Brokers</h3>
+    </div>
+    <div>
+      <div class="profile-broker-list">
+        <div class="profile-broker-list-table">
+					<div class="profile-broker-list-table-row">
+						<div class="profile-broker-list-table-cell form-label -text">
+							Broker Name/ID
+						</div>
+						<div class="profile-broker-list-table-cell form-label -text">
+							Driver Can Submit Documents Directly to Broker?
+						</div>
+						<div class="profile-broker-list-table-cell form-label -text">
+							Automatically Create Invoice?
+						</div>
+					</div>
+					<div class="profile-broker-list-table-row" *ngFor="let broker of user.brokerSettings">
+						<div class="profile-broker-list-table-cell">
+							<h5>{{broker.name}} &nbsp;-&nbsp; {{broker.fleetId}}</h5>
+							<span class="label-danger" [hidden]="!broker.isHover || broker.allowScanningToggle">Broker has scanning disabled</span>
+						</div>
+						<div class="profile-broker-list-table-cell center-text" (mouseenter)="broker.isHover=true" (mouseleave)="broker.isHover=false">
+							<label>
+								<input type="checkbox" hidden [disabled]="!broker.allowScanningToggle" [(ngModel)]="broker.scanningEnabled" (ngModelChange)="updateCarrierBrokerSettings($event, broker)" />
+								<em [ngClass]="{'form-switcher':broker.allowScanningToggle, 'form-switcher-placeholder':!broker.allowScanningToggle}"></em>
+							</label>
+						</div>
+						<div class="profile-broker-list-table-cell center-text" (mouseenter)="broker.isHover=true" (mouseleave)="broker.isHover=false">
+							<label>
+								<input type="checkbox" hidden [disabled]="!broker.allowScanningToggle" [(ngModel)]="broker.autoInvoicingEnabled" (ngModelChange)="updateCarrierBrokerSettings($event, broker)" />
+								<em [ngClass]="{'form-switcher':broker.allowScanningToggle, 'form-switcher-placeholder':!broker.allowScanningToggle}"></em>
+							</label>
+						</div>
+					</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hr form-group -x6"></div> 
+  <div class="form-group -x6" *ngIf="selectedDivision.type == 'carrier'">
     <div class="flex form-group -x6">
       <div class="col-4">
-        <h3 class="fs22">Associated Brokers</h3>
+        <h3 class="fs22">Carrier Invoice</h3>
       </div>
-      <div>
-        <div class="profile-broker-list">
-          <div class="profile-broker-list-table">
-            <div class="profile-broker-list-table-row">
-              <div class="profile-broker-list-table-cell form-label -text">
-                Broker Name/ID
-              </div>
-              <div class="profile-broker-list-table-cell form-label -text">
-                Allow Direct Submission of Documents by Driver?
-              </div>
-              <div class="profile-broker-list-table-cell form-label -text">
-                Automatically Create Invoice?
+      <form name="remittanceForm" (ngSubmit)="saveRemittance($event)"> 
+        <div class="carrier-invoice">
+          <div class="carrier-invoice-row">
+            <div class="carrier-invoice-label-cell">
+              <div class="carrier-invoice">
+                <div class="carrier-invoice-row">
+                  <div class="carrier-invoice-label-cell form-label -text">
+                    Carrier Name
+                  </div>
+                  <div class="carrier-invoice-input-cell">
+                    <input type="text" class="carrier-invoice-input" maxlength="50" required [(ngModel)]="selectedDivision.remittance.carrierName">
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="profile-broker-list-table-row" *ngFor="let broker of user.brokerSettings">
-              <div class="profile-broker-list-table-cell">
-                <h5>{{broker.name}} &nbsp;-&nbsp; {{broker.id}}</h5>
-                <span class="label-danger" [hidden]="!broker.isHover || broker.allowScanningToggle">Toggle disabled in Server Admin</span>
+          </div>
+          <div class="carrier-invoice-row">
+            <div class="carrier-invoice-label-cell">
+              <div class="carrier-invoice">
+                <div class="carrier-invoice-row">
+                  <div class="carrier-invoice-label-cell form-label -text">
+                    Contact Name
+                  </div>
+                  <div class="carrier-invoice-input-cell">
+                    <input type="text" class="carrier-invoice-input" maxlength="50" required [(ngModel)]="selectedDivision.remittance.contactName">
+                  </div>
+                </div>
               </div>
-              <div class="profile-broker-list-table-cell center-text" (mouseenter)="broker.isHover=true" (mouseleave)="broker.isHover=false" >            
-                <label>
-                  <input type="checkbox" hidden [disabled]="!broker.allowScanningToggle" [(ngModel)]="broker.scanningEnabled" (ngModelChange)="updateCarrierBrokerSettings($event, broker)"/>
-                  <em [ngClass]="{'form-switcher':broker.allowScanningToggle, 'form-switcher-placeholder':!broker.allowScanningToggle}"></em>
-                </label>
+            </div>
+          </div>
+          <div class="carrier-invoice-row">
+            <div class="carrier-invoice-label-cell">
+              <div class="carrier-invoice">
+                <div class="carrier-invoice-row">
+                  <div class="carrier-invoice-label-cell form-label -text">
+                    Contact Ph. - E.g. 555-555-1212
+                  </div>
+                  <div class="carrier-invoice-input-cell">
+                    <input type="text" pattern="\d{3}[\-]\d{3}[\-]\d{4}" class="carrier-invoice-input" maxlength="12" required [(ngModel)]="selectedDivision.remittance.contactPhone">
+                  </div>
+                </div>
               </div>
-              <div class="profile-broker-list-table-cell center-text" (mouseenter)="broker.isHover=true" (mouseleave)="broker.isHover=false" >            
-                <label>
-                  <input type="checkbox" hidden [disabled]="!broker.allowScanningToggle" [(ngModel)]="broker.autoInvoicingEnabled" (ngModelChange)="updateCarrierBrokerSettings($event, broker)"/>
-                  <em [ngClass]="{'form-switcher':broker.allowScanningToggle, 'form-switcher-placeholder':!broker.allowScanningToggle}"></em>
-                </label>
+            </div>
+          </div>
+          <div class="carrier-invoice-row">
+            <div class="carrier-invoice-label-cell">
+              <div class="carrier-invoice">
+                <div class="carrier-invoice-row">
+                  <div class="carrier-invoice-label-cell form-label -text">
+                    Remit To Name
+                  </div>
+                  <div class="carrier-invoice-input-cell">
+                    <input type="text" class="carrier-invoice-input" maxlength="50" required [(ngModel)]="selectedDivision.remittance.name">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carrier-invoice-row">
+            <div class="carrier-invoice-label-cell">
+              <div class="carrier-invoice">
+                <div class="carrier-invoice-row">
+                  <div class="carrier-invoice-label-cell form-label -text">
+                    Remit To Address 1
+                  </div>
+                  <div class="carrier-invoice-input-cell">
+                    <input type="text" class="carrier-invoice-input" maxlength="50" required [(ngModel)]="selectedDivision.remittance.address1">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carrier-invoice-row">
+            <div class="carrier-invoice-label-cell">
+              <div class="carrier-invoice">
+                <div class="carrier-invoice-row">
+                  <div class="carrier-invoice-label-cell form-label -text">
+                    Remit To Address 2
+                  </div>
+                  <div class="carrier-invoice-input-cell">
+                    <input type="text" class="carrier-invoice-input" maxlength="50" [(ngModel)]="selectedDivision.remittance.address2">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carrier-invoice-row">
+            <div class="carrier-invoice-label-cell">
+              <div class="carrier-invoice">
+                <div class="carrier-invoice-row">
+                  <div class="carrier-invoice-label-cell form-label -text">
+                    Remit To City
+                  </div>
+                  <div class="carrier-invoice-input-cell">
+                    <input type="text" class="carrier-invoice-input" maxlength="50" required [(ngModel)]="selectedDivision.remittance.city">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carrier-invoice-row">
+            <div class="carrier-invoice-label-cell">
+              <div class="carrier-invoice">
+                <div class="carrier-invoice-row">
+                  <div class="carrier-invoice-label-cell form-label -text">
+                    Remit To State
+                  </div>
+                  <div class="carrier-invoice-input-cell">
+                    <input type="text" class="carrier-invoice-input" maxlength="2" required [(ngModel)]="selectedDivision.remittance.state">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carrier-invoice-row">
+            <div class="carrier-invoice-label-cell">
+              <div class="carrier-invoice">
+                <div class="carrier-invoice-row">
+                  <div class="carrier-invoice-label-cell form-label -text">
+                    Remit To Zip Code
+                  </div>
+                  <div class="carrier-invoice-input-cell">
+                    <input type="text" pattern="(\d{5}([\-]\d{4})?)" class="carrier-invoice-input" maxlength="10" required [(ngModel)]="selectedDivision.remittance.zipCode">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carrier-invoice-row">
+            <div class="carrier-invoice-label-cell">
+              <div class="carrier-invoice">
+                <div class="carrier-invoice-row">
+                  <div class="carrier-invoice-label-cell form-label -text">
+                    Notice of Assignment Language
+                  </div>
+                  <div class="carrier-invoice-input-cell">
+                    <input type="text" class="carrier-invoice-input" maxlength="255" [(ngModel)]="selectedDivision.remittance.noticeOfAssignmentLanguage">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>    
+          <div class="carrier-invoice-row">
+            <div class="carrier-invoice-label-cell">
+              <div class="carrier-invoice">
+                <div class="carrier-invoice-row">
+                  <div class="carrier-invoice-label-cell form-label -text">
+                    <button type="submit" class="button -primary -block remittance-form-button">Apply Carrier Invoice</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
-  </div>  
+  </div>   
 </div>

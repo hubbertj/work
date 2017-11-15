@@ -1,29 +1,31 @@
 <div class="form-group -x05" *ngIf="attributesObject['Hazardous']"><svg class="icon -danger"><use xlink:href="#svg_danger"/></svg></div>
 <div class="form-group -x05" *ngIf="attributesObject['High Value']"><svg class="icon -ruby" title="Fragile"><use xlink:href="#svg_ruby"/></svg></div>
 <div class="form-group -x05" *ngIf="attributesObject['Fragile']"><svg class="icon -fragile" title="High Value"><use xlink:href="#svg_fragile"/></svg></div>
-<div class="form-group -x05 dropdown -inline" dropdown (onToggle)="toggled($event)" keyboardNav="true" [hidden]="attrs && attrs.length == 0">
-  <button type="button" class="button -outline -xs -arrow" dropdownToggle>{{attrs && attrs.length}}</button>
+<div class="form-group -x05 dropdown -inline" dropdown (onToggle)="toggled($event)" keyboardNav="true" [hidden]="attrs && getAttrsLength(attrs) == 0">
+  <button type="button" class="button -outline -xs -arrow" dropdownToggle>{{attrs && getAttrsLength(attrs)}}</button>
   <div class="dropdown-menu -sm -text -right" role="menu" dropdownMenu>
     <table class="table -list">
       <tbody>
-        <tr *ngFor="let attr of attrs">
-          <td *ngIf="attr && attr.key == 'Hazardous'" class="align-middle center">
-            <svg class="icon -danger m0"><use xlink:href="#svg_danger"/></svg>
-          </td>
-          <td *ngIf="attr && attr.key == 'Hazardous'" >Hazardous</td>
-          <td *ngIf="attr && attr.key == 'Fragile'" class="align-middle center">
-            <svg class="icon -fragile m0"><use xlink:href="#svg_fragile"/></svg>
-          </td>
-          <td *ngIf="attr && attr.key == 'Fragile'" >Fragile</td>
-          <td *ngIf="attr && attr.key == 'High Value'" class="align-middle center">
-            <svg class="icon -ruby m0"><use xlink:href="#svg_ruby"/></svg>
-          </td>
-          <td *ngIf="attr && attr.key == 'High Value'" >High Value</td>
-          <td *ngIf="attr && attr.key != 'High Value' && attr.key != 'Fragile' && attr.key != 'Hazardous'"  class="align-middle center">
-              &bull;
-          </td>
-          <td *ngIf="attr && attr.key != 'High Value' && attr.key != 'Fragile' && attr.key != 'Hazardous'">{{attr.key}}: {{attr.value}}</td>
-        </tr>
+        <ng-container *ngFor="let attr of attrs">
+          <tr *ngIf="attr.key.charAt(0) != '#'">
+            <td *ngIf="attr && attr.key == 'Hazardous'" class="align-middle center">
+              <svg class="icon -danger m0"><use xlink:href="#svg_danger"/></svg>
+            </td>
+            <td *ngIf="attr && attr.key == 'Hazardous'" >Hazardous</td>
+            <td *ngIf="attr && attr.key == 'Fragile'" class="align-middle center">
+              <svg class="icon -fragile m0"><use xlink:href="#svg_fragile"/></svg>
+            </td>
+            <td *ngIf="attr && attr.key == 'Fragile'" >Fragile</td>
+            <td *ngIf="attr && attr.key == 'High Value'" class="align-middle center">
+              <svg class="icon -ruby m0"><use xlink:href="#svg_ruby"/></svg>
+            </td>
+            <td *ngIf="attr && attr.key == 'High Value'" >High Value</td>
+            <td *ngIf="attr && attr.key != 'High Value' && attr.key != 'Fragile' && attr.key != 'Hazardous'"  class="align-middle center">
+                &bull;
+            </td>
+            <td *ngIf="attr && attr.key != 'High Value' && attr.key != 'Fragile' && attr.key != 'Hazardous'">{{attr.key}}: {{attr.value}}</td>
+          </tr>
+        </ng-container>
       </tbody>
     </table>
   </div>

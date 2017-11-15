@@ -1,4 +1,4 @@
-﻿<header class="page-header flex items-center" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<header class="page-header flex items-center" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
   <h1 class="pr3">Loads</h1>
   <div [hidden]="isCommonCarrier">
     <a class="button -primary" [routerLink]="['NewLoad', {divId: divisionId}]"> <span class="plus">+</span>Create new load</a>
@@ -15,12 +15,6 @@
         <label class="form-label" for="filter_identifiers">Parameters</label>
         <input autocomplete="off" class="form-control" type="text" placeholder="Load #, BOL #, attributes" id="filter_identifiers" [(ngModel)]="paramsFilter" />
       </div>
-	  <!--
-      <div class="col-4 pr3" [hidden]="isCarrier">
-        <label class="form-label">Broker</label>
-        <transflo-dropdown [list]="filterDivision" (listChanged)="divisionChanged($event)" [selectedList]="divisionFilter" valueField="name" placeholder="Select brokers"></transflo-dropdown>
-      </div>
-	  -->
       <div>
         <label class="form-label">&nbsp;</label>
         <button class="button" type="submit" (click)="submit($event)">Apply</button>
@@ -65,7 +59,11 @@
           </div>
         </div>
         <div class="col-4">
-          <div class="form-group -x3" [hidden]="!isCarrier">
+            <div class="form-group"  [hidden]="!isCarrier">
+                <label class="form-label">Assigned by Broker</label>
+                <transflo-dropdown [list]="assignedByBrokers" (listChanged)="divisionChanged($event)" [selectedList]="divisionFilter" valueField="text" placeholder="Select broker"></transflo-dropdown>
+              </div>
+          <div class="form-group" [hidden]="!isCarrier">
             <label class="form-label">Offered to Driver</label>
             <transflo-dropdown [list]="drivers" (listChanged)="driverChanged($event, 'offered')" [selectedList]="offeredDriversFilter" valueField="text" placeholder="Select driver"></transflo-dropdown>
           </div>
@@ -73,9 +71,9 @@
             <label class="form-label">Assigned to Driver</label>
             <transflo-dropdown [list]="drivers" (listChanged)="driverChanged($event, 'assigned')" [selectedList]="assignedDriversFilter" valueField="text" placeholder="Select driver"></transflo-dropdown>
           </div>
-          <div class="form-group"  [hidden]="!isCarrier">
+          <div class="form-group"  [hidden]="isCarrier">
             <label class="form-label">Assigned to Carrier</label>
-            <transflo-dropdown [list]="carriers" (listChanged)="carrierChanged($event, 'assigned')" [selectedList]="assignedCarriersFilter" valueField="text" placeholder="Select carrier"></transflo-dropdown>
+            <transflo-dropdown [list]="assignedToCarriers" (listChanged)="carrierChanged($event, 'assigned')" [selectedList]="assignedCarriersFilter" valueField="text" placeholder="Select carrier"></transflo-dropdown>
           </div>
         </div>
       </div>
@@ -100,7 +98,7 @@
         <th [hidden]="isCarrier">Carrier</th>
         <th [hidden]="!isCarrier">Broker</th>
         <th [hidden]="!isCarrier">Driver</th>
-	    <th [hidden]="isCarrier"></th>
+	      <th [hidden]="isCarrier"></th>
         <th>Status</th>
 	
         <th >Attrs</th>
@@ -138,46 +136,43 @@
 		<!--Broker carrier-->
         <td [hidden]="isCarrier">
           <div class="form-group">
-            <span *ngIf="(!load.brokerTenderingInfo[0])" class="label-title nowrap">
-          
-			  <button class="button -outline -xs" type="button" *ngIf="(!load.carrierDivision || !load.carrierDivision.code)" [disabled]="load.status == 'Delivered'" (click)="gotoTendering(load.id, $event)"><span class="plus">+</span> Assign</button>
-            </span>
-            
+            <span *ngIf="(!load.brokerTenderingInfo[0])" class="label-title nowrap">          
+			        <button class="button -outline -xs" type="button" *ngIf="(!load.carrierDivision || !load.carrierDivision.code)" [disabled]="load.status == 'Delivered'" (click)="gotoTendering(load.id, $event)"><span class="plus">+</span> Assign</button>
+            </span>            
           </div>
           <div class="form-group -x05">
             <div class="label-title">{{load.carrierDivision && load.carrierDivision.code}}</div>
             <div>
-			  <div [hidden]="!load.brokerTenderingInfo[0]">
-			    <span class="label-title nowrap">
-			      Assigned to&nbsp;
-			      <button class="button -outline -xs -icon" type="button" title="Edit" (click)="gotoTendering(load.id, $event)">
-			        <svg class="icon -pen"><use xlink:href="#svg_pen" /></svg>
-			      </button>
-			    </span>
-				{{load.brokerTenderingInfo[0] ? load.brokerTenderingInfo[0].name : ''}}
-			  </div>
-			</div>
+              <div [hidden]="!load.brokerTenderingInfo[0]">
+                <span class="label-title nowrap">
+                  Assigned to&nbsp;
+                  <button class="button -outline -xs -icon" type="button" title="Edit" (click)="gotoTendering(load.id, $event)">
+                    <svg class="icon -pen"><use xlink:href="#svg_pen" /></svg>
+                  </button>
+                </span>
+                {{load.brokerTenderingInfo[0] ? load.brokerTenderingInfo[0].name : ''}}
+              </div>
+            </div>
           </div>
         </td>
         <td [hidden]="!isCarrier">
           <div class="label-title">{{load.brokerTenderingInfo[0] ? load.brokerTenderingInfo[0].name : '' }}</div>
-		</td>
+        </td>
         <td>
           <transflo-drivers (onToggle)="setOpenedPopups($event)"  [drivers]="load.carrierTenderingInfo" [isCarrier]="isCarrier" [divisionId]="divisionId" [loadId]="load.id" [loadStatus]="load.status"></transflo-drivers>
         </td>
         <td >
-          <span class="nowrap" [ngClass]="{'label-green': load.status == 'Available', 'label-red': load.status == 'Declined'}">{{load.status}}</span>
-		
+          <span class="nowrap" [ngClass]="{'label-green': load.status == 'Available', 'label-red': load.status == 'Declined'}">{{load.status}}</span>    
         </td>
         <td >
           <transflo-attributes [attrs]="load.loadAttributes" (onToggle)="setOpenedPopups($event)" >{{load.loadAttributes}}</transflo-attributes>
         </td>
-		<td></td>
+        <td></td>
         <td class="-half">
           <div class="height100">
             <div class="dropdown" dropdown (onToggle)="setOpenedPopups($event)" keyboardNav="true" autoClose="outsideClick">
               <button class="table-actions" title="Actions" type="button" dropdownToggle>&bull;</button>
-              <ul class="dropdown-menu -right dropdown-load" role="menu" dropdownMenu>
+              <ul class="dropdown-menu -right" role="menu" dropdownMenu>
                 <li role="menuitem">
                   <a class="dropdown-item" (click)="getLink(load, $event);" dropdownToggle>
                     Share
@@ -187,28 +182,24 @@
 				          <a class="dropdown-item" (click)="editLoad(load, $event)" [hidden]="load.status=='Delivered'">Edit</a></li>
                 <li role="menuitem" [hidden]="isCommonCarrier" [ngClass]="{'-disabled': isCommonCarrier}">
 				          <a class="dropdown-item" (click)="cloneLoad(load, $event)">Clone</a></li>
-                <li role="menuitem" [hidden]="isCarrier && load.brokerDivision" [ngClass]="{'-disabled': load.status == 'InTransit'}">
+                <li role="menuitem" [hidden]="isCarrier && load.brokerDivision" [ngClass]="{'-disabled': load.status != 'Available'}">
                   <a class="dropdown-item" (click)="showMoveLoadPopup(load, $event)" dropdownToggle>
                     Move to division
                   </a>
                 </li>
                 <!-- Document scans, remove comments below in further releases -->
-                <li (mouseenter)="load.showDocuments=true" class="dropdown-submenu" (mouseleave)="load.showDocuments=false" role="menuitem">
-                  <a dropdownToggle>View Document</a>
-                  <ul type="1" class="dropdown-menu  dropdown-load"  *ngIf="load.showDocuments">
-                    <li  *ngFor="let ds of load.documentScans">
-                      <a class="dropdown-item" [href]="ds.url">{{ds.label.split('|')[0]}}</a>
-                    </li>
-                  </ul>
+                <li role="menuitem" [ngClass]="{'-disabled': !load.documentScans || !load.documentScans.length}">
+                  <a class="dropdown-item" (click)="showDocumentScans(load.id, $event);" dropdownToggle>
+                    View Documents
+                  </a>
                 </li>
-                <!--<li role="menuitem" *ngFor="let link of load.menu">
+                <!--li role="menuitem" *ngFor="let link of load.menu">
                   <a class="dropdown-item" dropdownToggle href="{{link.url}}" target="_blank">{{link.name}}</a>
-                </li>-->
+                </li-->
                 <li role="menuitem" [hidden]="isCommonCarrier" [ngClass]="{'-disabled': isCommonCarrier}">
-				  <a class="dropdown-item label-red" (click)="deleteLoad(load, $event)">Delete</a></li>
+				        <a class="dropdown-item label-red" (click)="deleteLoad(load, $event)">Delete</a></li>
               </ul>
             </div>
-
             <div class="dropdown-menu -right -xlg2 -shown" role="menu" [hidden]="loadSharePopupId != load.id" (click)="formClicked($event)">
               <h2>Tracking Link</h2>
               <div class="form-group">
@@ -246,26 +237,26 @@
                       <input autocomplete="off" (keyup)="keyUp(load, $event)" class="multiple-field ng-pristine ng-valid ng-touched" type="text" placeholder="Type email" [(ngModel)]="load.newEmail" (ngModelChange)="addEmail(load)" (blur)="addEmail(load, true)">
                     </form>
                   </div>
-				  <br />
-				  <div class="form-group">
-				    <label for="additional_information" class="pr2 nowrap">Personalize Message</label>
-				    <div class="pr2 flex-auto">
-				      <textarea class="form-control" [(ngModel)]="info" rows="4" maxlength="1000" placeholder="Additional Message"></textarea>
-				    </div>
-				  </div>
+                  <br />
+                  <div class="form-group">
+                    <label for="additional_information" class="pr2 nowrap">Personalize Message</label>
+                    <div class="pr2 flex-auto">
+                      <textarea class="form-control" [(ngModel)]="info" rows="4" maxlength="1000" placeholder="Additional Message"></textarea>
+                    </div>
+                  </div>
                 </div>
                 <button class="button -outline self-end" type="button" (click)="sendTackingLink(load)">Send</button>
               </div>
             </div>
             <!-- Document scans, remove comments below in further releases -->
-            <!--div class="dropdown-menu -right -shown" role="menu" [hidden]="docScansPopupId != load.id">
+            <div class="dropdown-menu -right -shown" role="menu" [hidden]="docScansPopupId != load.id">
               <ul class="menu -overflow">
                 <li *ngFor="let scan of load.documentScans" role="menuitem">
                     <a class="dropdown-item" href="{{scan.url}}" target="_blank">{{scan.label}}
                     </a>
                 </li>
               </ul>
-            </div-->
+            </div>
 
             <div class="dropdown-menu -right -lg2 -shown" [hidden]="loadMovePopupId != load.id" (click)="formClicked($event)">
               <h2>Move load to other division</h2>

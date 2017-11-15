@@ -53,6 +53,8 @@ export class LoadsComponent implements OnInit, OnDestroy {
 	private states = UStates;
 	private drivers = [];
 	private carriers = [];
+	private assignedToCarriers = [];
+	private assignedByBrokers = [];
 	private shownAll = false;
     private overLimit = false;
     private info: string;
@@ -60,6 +62,7 @@ export class LoadsComponent implements OnInit, OnDestroy {
 	private carriersForMove:any = [];
 	private brokersForMove: any = [];
 	private openedPopups = 0;
+	private brokerInstructionsAttributeName = '!BrokerInstructions';
 
 	public loadLoading = false;
 	public currentLoad: any = {};
@@ -203,7 +206,7 @@ export class LoadsComponent implements OnInit, OnDestroy {
 	};
 
 	public showMoveLoadPopup (load, event) {
-		if (load.status != 'InTransit') {
+		if (load.status == 'Available') {
 			this.closeAllPopups();
 
 			this.moveLoad = load;
@@ -627,24 +630,28 @@ export class LoadsComponent implements OnInit, OnDestroy {
     {
         if (user.divisions) {
 
-            this.brokersForMove = user.divisions.map((div) => {
+			this.assignedByBrokers = user.divisions.map((div) => {
                 return {
                     type: div.type,
                     text: _.compact([div.name, div.code]).join(' — '), 
                     id: div.id
                 }
             }).filter((div) => {
-                return div.type == 'broker' && div.id != this.divisionId;
-            });;
+				return div.type == 'broker';
+			});
 
+            this.brokersForMove = this.assignedByBrokers.filter((div) => {
+                return div.id != this.divisionId;
+			});;
 
+			
             if (this.divisionFilterRaw && this.divisionFilterRaw.length) {
 
                 this.divisionFilter = [];
 
                 for (let div of this.divisionFilterRaw) {
 
-                    this.divisionFilter.push(this.filterDivision.find((d: any) => d.id == div));
+                    this.divisionFilter.push(this.assignedByBrokers.find((d: any) => d.id == div));
                 }
 
                 this.divisionFilterRaw = [];
@@ -681,8 +688,6 @@ export class LoadsComponent implements OnInit, OnDestroy {
 			}
 
 		}
-
-		this.getBrokers();
 	};
 
 	public setLoads (results):void {
@@ -699,6 +704,11 @@ export class LoadsComponent implements OnInit, OnDestroy {
 			load.trackingLink = '';
 			load.expired = 3;
 			load.time = 'hours';
+			if (load.loadAttributes && load.loadAttributes.length){
+				load.loadAttributes = load.loadAttributes.filter((attr) => {
+					return attr.key != this.brokerInstructionsAttributeName;
+				});
+			}
 		});
 		
 		this.overLimit = body && body.isOverLimit;
@@ -754,7 +764,7 @@ export class LoadsComponent implements OnInit, OnDestroy {
                 }
             }).filter((div) => {
                 return div.type == 'carrier';
-            });
+			});
 
             this.carriersForMove = user.divisions.map((div) => {
                 return {
@@ -767,32 +777,50 @@ export class LoadsComponent implements OnInit, OnDestroy {
             });;
 
 
-            if (this.assignedCarriersFilterRaw && this.assignedCarriersFilterRaw.length) {
+			this.divisionService.getCarriers(+this.divisionId)
+			.then((res) =>{
+				if (res && res.text()){
+					let body = res.json();
+					this.assignedToCarriers = body.map((div) => {
+						return {
+							type: div.type,
+							text: div.name,
+							id: div.id
+						}
+					})
+				}
+			})
+			.then(() => {
+				if (this.assignedCarriersFilterRaw && this.assignedCarriersFilterRaw.length) {
 
-                this.assignedCarriersFilter = [];
+					this.assignedCarriersFilter = [];
+	
+					for (let div of this.assignedCarriersFilterRaw) {
+						this.assignedCarriersFilter.push(this.assignedToCarriers.find((d) => d.id == div));
+					}
+	
+					this.assignedCarriersFilterRaw = [];
+				};
 
-                for (let div of this.assignedCarriersFilterRaw) {
-                    this.assignedCarriersFilter.push(this.carriers.find((d) => d.id == div));
-                }
+				if (this.offeredCarriersFilterRaw && this.offeredCarriersFilterRaw.length) {
+					this.offeredCarriersFilter = [];
+			
+					for (let div of this.offeredCarriersFilterRaw) {
+						this.offeredCarriersFilter.push(this.carriers.find((d) => d.id == div));
+					}
+	
+					this.offeredCarriersFilterRaw = [];
+				};
 
-                this.assignedCarriersFilterRaw = [];
-            };
-
-            if (this.offeredCarriersFilterRaw && this.offeredCarriersFilterRaw.length) {
-                this.offeredCarriersFilter = [];
-
-                for (let div of this.offeredCarriersFilterRaw) {
-                    this.offeredCarriersFilter.push(this.carriers.find((d) => d.id == div));
-                }
-
-                this.offeredCarriersFilterRaw = [];
-            };
-
-            if (this.isCarrier) {
-                this.loadDrivers();
-            } else {
-                this.setBrokerFilters(user);
-            };
+			})
+			.then(() =>{
+				if (this.isCarrier) {
+					this.loadDrivers();
+				} 	
+				
+				this.setBrokerFilters(user);
+			})
+			.catch(this.error);
         }
 	};
 

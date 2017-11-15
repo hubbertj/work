@@ -85,30 +85,30 @@ import '../svg/svg_chatgroup_active.svg';
 })
 
 @RouteConfig([
-  {path: '/', component: DivisionsComponent, name: 'Divisions', data: {roles:[Role.AUTHROIZED]}},
-  {path: '/divisions/:divId/loads', component: LoadsComponent, name: 'Loads', data: {roles:[Role.AUTHROIZED]}},
-  {path: '/divisions/:divId/dashboard', component: DashboardComponent, name: 'Home', data: {roles:[Role.AUTHROIZED]}},
+    { path: '/', component: DivisionsComponent, name: 'Divisions', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/divisions/:divId/loads', component: LoadsComponent, name: 'Loads', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/divisions/:divId/dashboard', component: DashboardComponent, name: 'Home', data: { roles: [Role.AUTHROIZED] } },
 
-  {path: '/division/:divId/loads/create', component: NewLoadComponent, name: 'NewLoad', data: {roles:[Role.AUTHROIZED]}},
-  {path: '/division/:divId/loads/:loadId/tendering', component: TenderingComponent, name: 'TenderingLoad', data: {roles:[Role.AUTHROIZED]}},
+    { path: '/division/:divId/loads/create', component: NewLoadComponent, name: 'NewLoad', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/division/:divId/loads/:loadId/tendering', component: TenderingComponent, name: 'TenderingLoad', data: { roles: [Role.AUTHROIZED] } },
 
-  {path: '/division/:divId/loads/:loadId/edit', component: NewLoadComponent, name: 'EditLoad', data: {roles:[Role.AUTHROIZED]}},
-  {path: '/division/:divId/loads/:loadId', component: LoadDetailsComponent, name: 'Load Details', data: {roles:[Role.AUTHROIZED]}},
-  {path: '/division/:divId/profile', component: ProfileComponent, name: 'Profile', data: {roles:[Role.AUTHROIZED]}},
+    { path: '/division/:divId/loads/:loadId/edit', component: NewLoadComponent, name: 'EditLoad', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/division/:divId/loads/:loadId', component: LoadDetailsComponent, name: 'Load Details', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/division/:divId/profile', component: ProfileComponent, name: 'Profile', data: { roles: [Role.AUTHROIZED] } },
 
 
-  {path: '/share/:shareId', component: SharedLoadComponent, name: 'SharedLoad', data: {roles:[Role.AUTHROIZED]}},
+    { path: '/share/:shareId', component: SharedLoadComponent, name: 'SharedLoad', data: { roles: [Role.AUTHROIZED] } },
 
-  {path: '/register', component: RegisterComponent, name: 'Register', data: {roles:[]}},
+    { path: '/register', component: RegisterComponent, name: 'Register', data: { roles: [] } },
 
-  {path: '/signin', useAsDefault: true, component: SigninComponent, name: 'Signin', data: {roles:[]}},
-  {path: '/restore', component: RestoreComponent, name: 'Restore', data: {roles:[]}},
-  {path: '/division/:divId/error', component: ErrorComponent, name: 'ErrorDivision', data: {roles:[Role.AUTHROIZED]}},
-  {path: '/error', component: ErrorComponent, name: 'Error', data: {roles:[Role.AUTHROIZED]}},
-  {path: '/resetpassword', component: ResetComponent, name: 'Reset', data: {roles:[]}},
-  {path: '/404', component: Error404Component, name: '404', data: {roles:[Role.AUTHROIZED]}},
-  {path: '/velocity', component: VelocityComponent, name: 'Velocity', data: {roles:[Role.AUTHROIZED]}},
-  {path: '**', redirectTo:['Signin']},
+    { path: '/signin', useAsDefault: true, component: SigninComponent, name: 'Signin', data: { roles: [] } },
+    { path: '/restore', component: RestoreComponent, name: 'Restore', data: { roles: [] } },
+    { path: '/division/:divId/error', component: ErrorComponent, name: 'ErrorDivision', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/error', component: ErrorComponent, name: 'Error', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/resetpassword', component: ResetComponent, name: 'Reset', data: { roles: [] } },
+    { path: '/404', component: Error404Component, name: '404', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/velocity', component: VelocityComponent, name: 'Velocity', data: { roles: [Role.AUTHROIZED] } },
+    { path: '**', redirectTo:['Signin'] },
 
 //  {path: '/*path', redirectTo: ['404']},
 
@@ -131,37 +131,37 @@ import '../svg/svg_chatgroup_active.svg';
 ])
 
 export class AppComponent {
-    constructor(private viewContainerRef:ViewContainerRef, private userService:UserService, private _applicationRef:ApplicationRef, private _router:Router) {
+    constructor(private viewContainerRef: ViewContainerRef, private userService: UserService, private _applicationRef: ApplicationRef, private _router: Router) {
         // You need this small hack in order to catch application root view container ref
         this.viewContainerRef = viewContainerRef;
 
         // Angular RC1 router fix for Safari back button
-        _router.subscribe((uri)=> {
-          this.onRoute(_router.currentInstruction.component.routeData.data["roles"], uri);
+        _router.subscribe((uri) => {
+            this.onRoute(_router.currentInstruction.component.routeData.data["roles"], uri);
             _applicationRef.zone.run(() => _applicationRef.tick());
         });
     }
 
     // current version of router doesn't support roles so this is needed.
-    onRoute(roles: [Role], page: string){
-       let loginPageName: string = 'Signin';
-       let authHomePage: string = 'Divisions';
-       let shouldRedirectToLogin: boolean = false;
-       let userRoles: Role[] = this.userService.getAllRoles();
+    onRoute(roles: [Role], page: string) {
+        let loginPageName: string = 'Signin';
+        let authHomePage: string = 'Divisions';
+        let shouldRedirectToLogin: boolean = false;
+        let userRoles: Role[] = this.userService.getAllRoles();
 
-       roles.forEach((role) => {
-         if(userRoles.indexOf(role) < 0){
-           shouldRedirectToLogin = true;
-         }
-       });
+        roles.forEach((role) => {
+            if (userRoles.indexOf(role) < 0) {
+                shouldRedirectToLogin = true;
+            }
+        });
 
-       if(shouldRedirectToLogin){
-         this._router.navigate([loginPageName]);
-         return true;
-       } else if(page.toUpperCase() === loginPageName.toUpperCase() && !(userRoles.indexOf(Role.AUTHROIZED) < 0)){
-         this._router.navigate([authHomePage]);
-         return true;
-       }
-       return false;
+        if (shouldRedirectToLogin) {
+            this._router.navigate([loginPageName]);
+            return true;
+        } else if (page.toUpperCase() === loginPageName.toUpperCase() && !(userRoles.indexOf(Role.AUTHROIZED) < 0)) {
+            this._router.navigate([authHomePage]);
+            return true;
+        }
+        return false;
     }
 }

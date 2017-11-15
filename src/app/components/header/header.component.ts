@@ -7,6 +7,7 @@ import { MessagesDirective } from '../../directives';
 import { HelpComponent } from '../../components/help/index';
 import { AboutComponent } from '../../components/about/index';
 import { EULAComponent } from '../../components/index';
+import { LocalStorageService } from '../../services/localstorage/localstorage.service';
 
 import { ROUTER_DIRECTIVES, Router } from '@angular/router-deprecated';
 import { Config } from '../../config';
@@ -21,7 +22,6 @@ declare var $: JQueryStatic;
 	selector: 'transflo-header',
     template: require('./header.component.html'),
     directives: [DROPDOWN_DIRECTIVES, ROUTER_DIRECTIVES, MessagesDirective, HelpComponent, AboutComponent]
-    //providers: [UserService]
 })
 
 export class HeaderComponent implements OnInit, OnDestroy {
@@ -36,10 +36,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 	private selectedDivision: Division;
 	private dontShowHeaderUrl: Array<string> = ['signin', 'restore', 'share', 'resetpassword', 'register'];
     private sub;
-    private isCarrier = false;
 	public loading = false;
 
-	constructor(private userService:UserService, private router: Router) {
+	constructor(private userService:UserService, private router: Router, private localStorageService: LocalStorageService) {
 		this.sub = router.subscribe((url) => this.checkPage(url));
 
 		this.selectedDivision = new Division({});
@@ -83,16 +82,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
 		this.initialize();
 	};
 
-	setSelectedDivision (division, routeHome) {
+	setSelectedDivision (division: Division, routeHome) {
 		if (routeHome) this.router.navigate(['Home', {divId: division.id}]);
-		this.searchString = '';
+		this.searchString = '';	
+		var selectedDivisionTemp = JSON.parse(this.localStorageService.getItem('selectedDivision'));
 		
-		this.selectedDivision = division;
-		this.isCarrier = division.type == 'carrier';   
+		if (selectedDivisionTemp){
+			this.selectedDivision = (selectedDivisionTemp.id === division.id) ? selectedDivisionTemp : division;
+		} else {
+			this.selectedDivision = division;
+		};
 		
-		if (this.isCarrier) {
+		this.localStorageService.setItem('selectedDivision', JSON.stringify(this.selectedDivision)); 
+		
+		if (this.selectedDivision.isCarrier) {
 			var httpService = this.userService.getBrokerSettings(this.selectedDivision.id);
-		}
+		};
 	};
 
 	public useUser (user) {
@@ -108,8 +113,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         } else {
             if (this.user.divisions)					
 				this.setSelectedDivision(this.user.divisions[0], false);
-        }
-        this.isCarrier = this.selectedDivision.type == 'carrier'; 
+        };
 	};
 
 	public getDate () {

@@ -58,7 +58,8 @@ export class DashboardComponent implements OnInit {
 	private shippingLocations: boolean = true;
 	private deliveryLocations: boolean = true;
 	private availableDrivers: boolean = true;
-    private intransitDrivers: boolean = true;
+	private intransitDrivers: boolean = true;
+	private brokerInstructionsAttributeName = '!BrokerInstructions';
 
 	public arrowMarker:any = [];
 	public driversNumber;
@@ -203,6 +204,13 @@ export class DashboardComponent implements OnInit {
 	private parseLoad (res) {
 		if (res) {
 			this.load = res.text() && res.json();
+
+			//filter out broker instruction attribute
+			if (this.load.loadAttributes && this.load.loadAttributes.length) {
+				this.load.loadAttributes = this.load.loadAttributes.filter((attr)=>{
+					return attr.key != this.brokerInstructionsAttributeName;
+				})
+			}
 		}
 	};
 

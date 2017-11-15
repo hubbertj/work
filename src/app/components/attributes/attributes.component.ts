@@ -26,5 +26,11 @@ export class AttributesComponent implements OnChanges {
 		this.onToggle.emit(val);
 	};
 
+	public getAttrsLength(attrs) {
+		let newArray = attrs.filter(x => x.key.charAt(0) != '#') || [];
+
+		return newArray.length;
+	};
+
 	constructor() {}
 }

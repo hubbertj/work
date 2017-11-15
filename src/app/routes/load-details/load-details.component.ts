@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer} from '@angular/core';
 import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgClass} from '@angular/common';
 import {SELECT_DIRECTIVES} from 'ng2-select/ng2-select';
 import { Router } from '@angular/router-deprecated';
@@ -25,10 +25,11 @@ declare var $: JQueryStatic;
     viewProviders: [BS_VIEW_PROVIDERS],
     providers: [LoadsService],
     template: require('./load-details.component.html'),
-    pipes: [NotificationRename]
+	pipes: [NotificationRename]
 })
 
 export class LoadDetailsComponent implements OnInit, OnDestroy {
+	@ViewChild('addEmail') addEmailBtn:ElementRef;
 	private id;
 	private loadId;
 	private divisionId;
@@ -66,13 +67,16 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
         hideEmailinValid: <boolean> true,
         events: []
     };
-    private notificationsDropdown = false;
+	private notificationsDropdown = false;
+	private brokerInstructionAttributeName = '!BrokerInstructions';
+	private brokerInstructions;
 
 	constructor (
 		private router:Router,
 		private loadsService: LoadsService,
         private userService: UserService,
-        private validationService: ValidationService
+        private validationService: ValidationService,
+		private renderer: Renderer
 	){
 		this.id  = Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
 	};
@@ -164,6 +168,10 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
             this.newSubscriber.hideEmailinValid = true;
             this.newSubscriber.events = [];
 		}
+
+		//sends a click event to email button to close it.
+		let event = new MouseEvent('click', {bubbles: false});
+    	this.renderer.invokeElementMethod(this.addEmailBtn.nativeElement, 'dispatchEvent', [event]);
 	};
 
     public editSubscriber(subscriber) {
@@ -202,7 +210,6 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
 				}
 			}
 			body.events = events.reverse();
-			
 
 			this.subscribers = body.subscribers;
 
@@ -268,7 +275,11 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
 			// if it's inside the notification dropdown -- dont hide it
 			if (!$(event.target).closest('.-notification-dropdown').length && $.contains($('body')[0], event.target)) {
 				this.closeNotifications(event);
-			}
+			};
+
+			if (event.target instanceof HTMLAnchorElement){
+				window.open(event.target.getAttribute('href'), '_blank');
+			};
 		});
 	};
 
@@ -292,7 +303,22 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
 			}
 
 			this.stops.sort((a,b) => a.stopNum - b.stopNum);
-			this.loading = false;			
+			this.loading = false;
+
+			if (this.load.loadAttributes && this.load.loadAttributes.length){
+				var brokerInstructionAttributes = this.load.loadAttributes.filter((attr)=>{
+					return attr.key === this.brokerInstructionAttributeName;
+				})
+
+				for (var i = 0; i < brokerInstructionAttributes.length; i++){
+					this.brokerInstructions = brokerInstructionAttributes[i].value;
+				}
+
+				//Filter out broker instructions before it gets mapped to screen incorrectly.
+				this.load.loadAttributes = this.load.loadAttributes.filter((attr)=> {
+					return attr.key != this.brokerInstructionAttributeName;
+				})
+			}
 			
 			if (this.load.loadTracking) {
 				this.loadsService.getBreadcrumbs(this.loadId)

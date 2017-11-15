@@ -90,56 +90,61 @@
             <label class="form-label">Special Instructions</label>
             <textarea class="form-control" rows="4" [(ngModel)]="carrierSpecialInstructions"></textarea>
           </div>
+          <div class="form-group">
+            <label class="form-label">Broker Instructions</label>
+            <textarea class="form-control" rows="4" [(ngModel)]="brokerInstructions" [readonly]="isCarrier" maxlength="1000"></textarea>
+          </div>
         </div>
         <div class="col-4 pl3">
           <div class="form-label -text form-group">Attributes</div>
           <div class="form-group" [hidden]="loadAttributes.length == 0">
             <table class="table -list">
               <tbody>
-
-              <tr *ngFor="let attribute of loadAttributes; let idx = index">
-                <td class="align-middle center" [hidden]="!attribute.hasIcon" width="10%">
-                  <div *ngIf="attribute.name == 'Hazardous'">
-                    <svg class="icon -danger -md m0"><use xlink:href="#svg_danger"/></svg>
-                  </div>
-                  <div  *ngIf="attribute.name == 'High Value'">
-                    <svg class="icon -ruby -md m0"><use xlink:href="#svg_ruby"/></svg>
-                  </div>
-                  <div  *ngIf="attribute.name == 'Fragile'">
-                    <svg class="icon -fragile -md m0"><use xlink:href="#svg_fragile"/></svg>
-                  </div>
-                </td>
-                <td class="align-middle center" width="10%" [hidden]="attribute.hasIcon">
-                  &bull;
-                </td>
-                <td class="dropdown-important" dropdown keyboardNav="true" (onToggle)="onAttributesToggled($event, attribute)" autoClose="disabled">
-                  <span dropdownToggle>{{attribute.name}}</span><span dropdownToggle [hidden]="attribute.hasIcon">: {{attribute.value}}</span>
-                  <div class="dropdown-menu -center -lg2" dropdownMenu>
-                    <div class="form-group flex">
-                      <div class="col-6" [ngClass]="{'col-12': loadAttrType == 'boolean'}">
-                        <label class="form-label">Field</label>
-                        <transflo-simple-dropdown [values]="allAttributes" [stringValue]="stringValue" (attributeChanged)="loadAttributeSelected($event)"></transflo-simple-dropdown>
+                <ng-container *ngFor="let attribute of loadAttributes; let idx = index">
+                  <tr *ngIf="attribute.name.charAt(0) != '#'">
+                    <td class="align-middle center" [hidden]="!attribute.hasIcon" width="10%">
+                      <div *ngIf="attribute.name == 'Hazardous'">
+                        <svg class="icon -danger -md m0"><use xlink:href="#svg_danger"/></svg>
                       </div>
-                      <div class="col-6 pl2" [hidden]="loadAttrType == 'boolean'">
-                        <label class="form-label">Value</label>
-                        <input autocomplete="off" class="form-control" *ngIf="loadAttrType == 'string'" type="text" [(ngModel)]="loadValue" (ngModelChange)="attributeValueChanged()"/>
-                        <input autocomplete="off" class="form-control" *ngIf="loadAttrType == 'number'" type="number" [(ngModel)]="loadValue" (ngModelChange)="attributeValueChanged()"/>
+                      <div  *ngIf="attribute.name == 'High Value'">
+                        <svg class="icon -ruby -md m0"><use xlink:href="#svg_ruby"/></svg>
                       </div>
-                    </div>
-                    <hr />
-                    <div class="form-group flex">
-                      <div class="flex-auto">
-                        <button type="button" class="button -icon -outline-danger" (click)="removeAttribute(idx)" title="Delete"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button>
+                      <div  *ngIf="attribute.name == 'Fragile'">
+                        <svg class="icon -fragile -md m0"><use xlink:href="#svg_fragile"/></svg>
                       </div>
-                      <div>
-                        <button type="reset" class="button -outline" dropdownToggle>Cancel</button>
-                        <button type="button" class="button -wider" (click)="updateAttribute(idx)" [disabled]="attributeButtonDisabled">Update</button>
+                    </td>
+                    <td class="align-middle center" width="10%" [hidden]="attribute.hasIcon">
+                      &bull;
+                    </td>
+                    <td class="dropdown-important" dropdown keyboardNav="true" (onToggle)="onAttributesToggled($event, attribute)" autoClose="disabled">
+                      <span dropdownToggle>{{attribute.name}}</span><span dropdownToggle [hidden]="attribute.hasIcon">: {{attribute.value}}</span>
+                      <div class="dropdown-menu -center -lg2" dropdownMenu>
+                        <div class="form-group flex">
+                          <div class="col-6" [ngClass]="{'col-12': loadAttrType == 'boolean'}">
+                            <label class="form-label">Field</label>
+                            <transflo-simple-dropdown [values]="allAttributes" [stringValue]="stringValue" (attributeChanged)="loadAttributeSelected($event)"></transflo-simple-dropdown>
+                          </div>
+                          <div class="col-6 pl2" [hidden]="loadAttrType == 'boolean'">
+                            <label class="form-label">Value</label>
+                            <input autocomplete="off" class="form-control" *ngIf="loadAttrType == 'string'" type="text" [(ngModel)]="loadValue" (ngModelChange)="attributeValueChanged()"/>
+                            <input autocomplete="off" class="form-control" *ngIf="loadAttrType == 'number'" type="number" [(ngModel)]="loadValue" (ngModelChange)="attributeValueChanged()"/>
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group flex">
+                          <div class="flex-auto">
+                            <button type="button" class="button -icon -outline-danger" (click)="removeAttribute(idx)" title="Delete"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button>
+                          </div>
+                          <div>
+                            <button type="reset" class="button -outline" dropdownToggle>Cancel</button>
+                            <button type="button" class="button -wider" (click)="updateAttribute(idx)" [disabled]="attributeButtonDisabled">Update</button>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <button class="button -link label-danger bold" (click)="removeAttribute(idx)" tabindex="-1">&times;</button>
-                </td>
-              </tr>
+                      <button class="button -link label-danger bold" (click)="removeAttribute(idx)" tabindex="-1">&times;</button>
+                    </td>
+                  </tr>                
+                </ng-container>
               </tbody>
             </table>
           </div>
@@ -352,7 +357,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Time*</label>
-                <input autocomplete="off" class="form-control" [(ngModel)]="timeValue" (ngModelChange)="timeSelectedStop(currentStop, $event)" type="time" required/>
+                <input autocomplete="off" class="form-control" [(ngModel)]="timeValue"  (ngModelChange)="timeSelectedStop(currentStop, $event)" type="time" required/>
 
 
                 <!--transflo-simple-dropdown [values]="times" [stringValue]="timeValue" (attributeChanged)="timeSelectedStop(currentStop, $event)"></transflo-simple-dropdown-->
@@ -551,7 +556,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Time*</label>
-                <input autocomplete="off" [disabled]="isCommonCarrier" type="time" class="form-control" [(ngModel)]="currentStopPickUp.time" [ngClass]="{'-error': loadValidationErrors.time}" name="time" natype="text"required maxlength="100"/>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopPickUp.time" [ngClass]="{'-error': loadValidationErrors.time}" name="time" natype="text" type="time" required />
 
                 <!--transflo-simple-dropdown [values]="times" [stringValue]="currentStopPickUp.time" (attributeChanged)="timeSelectedShipment($event, 'pickup')"></transflo-simple-dropdown-->
               </div>
@@ -589,8 +594,8 @@
                             <strong>    
 
                             </strong>
-                            <span>{{address.addressLines.join(', ')}}, {{address.state}}, {{address.country}}, {{address.city}}</span>
-                            <span class="label-gray">{{address.contactName}}, {{address.company}}, {{address.phone}}</span>
+                            <span>{{getAddress(address)}}</span>
+                            <span class="label-gray">{{getContactInfo(address)}}</span>
                           </a>
                         </li>
                       </ul>
@@ -648,7 +653,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Time*</label>
-                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopDropOff.time" type="time" placeholder="" required maxlength="100"/>
+                <input autocomplete="off" [disabled]="isCommonCarrier" class="form-control" [(ngModel)]="currentStopDropOff.time" type="time" required />
                 <!--transflo-simple-dropdown [values]="times" [stringValue]="currentStopDropOff.time" (attributeChanged)="timeSelectedShipment($event, 'dropoff')"></transflo-simple-dropdown-->
               </div>
               <div class="form-group -x5 center" dropdown keyboardNav="true" autoClose="outsideClick" (onToggle)="searchStopsStr = ''; searchStop();">
@@ -670,7 +675,7 @@
                               <transflo-date [date]="stop.date" [dontShowTime]="true"></transflo-date>
                               <small>{{stop.time}}</small>
                             </strong>
-                            <span>{{getAddress(stop)}}, {{stop.state}}, {{stop.country}}, {{stop.city}}</span>
+                            <span>{{getAddressFromStop(stop)}}, {{stop.state}}, {{stop.country}}, {{stop.city}}</span>
                             <span class="label-gray">{{stop.contactName}}, {{stop.company}}, {{stop.phone}}</span>
                           </a>
                         </li>
@@ -685,8 +690,8 @@
                             <strong>    
 
                             </strong>
-                            <span>{{address.addressLines.join(', ')}}, {{address.state}}, {{address.country}}, {{address.city}}</span>
-                            <span class="label-gray">{{address.contactName}}, {{address.company}}, {{address.phone}}</span>
+                            <span>{{getAddress(address)}}</span>
+                            <span class="label-gray">{{getContactInfo(address)}}</span>
                           </a>
                         </li>
                       </ul>
@@ -790,7 +795,7 @@
                   <td>
                     <div class="flex">
                       <div class="col-6 -merged">
-                        <input autocomplete="off" class="form-control" style="width: 62px;" [(ngModel)]="package.volume" type="number" pattern="^(0|[1-9][0-9]*)$" maxlength="7" name="packageVolume"/>
+                        <input autocomplete="off"  class="form-control" style="width: 62px;" [(ngModel)]="package.volume" type="number" pattern="^(0|[1-9][0-9]*)$" maxlength="7" name="packageVolume"/>
                       </div>
                       <div class="col-6 -merged">
                         <select class="form-control" style="width: 62px;" [(ngModel)]="package.volumeMeasure" (ngModelChange)="setMeasurement(package, package.volumeMeasure)">

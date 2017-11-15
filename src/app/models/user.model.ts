@@ -9,11 +9,9 @@ export class User {
 		this.id = object.id;
 		this.menu = object.menu;
 		this.isVelocity = object.isVelocity;
+		this.brokerSettings = [];
 		if (object.divisions && object.divisions.length) {
 			this.divisions = object.divisions.map((div) => new Division(div));	
-		}
-		if (object.brokers && object.brokers.length) {
-			this.brokerSettings = object.brokerSettings.map((div) => new BrokerSettings(div));	
 		}
 	};
 	email: string;

@@ -106,7 +106,9 @@ export class PopoversComponent {
 	private filterDrivers (drivers) {
 		if (this.searchString) {
 			this.driversList = _.filter(drivers, (driver:any)=>{
-				return driver.name.toUpperCase().indexOf(this.searchString.toUpperCase()) != -1;
+				return driver.name.toUpperCase().indexOf(this.searchString.toUpperCase()) != -1
+				|| driver.email.toUpperCase().indexOf(this.searchString.toUpperCase()) != -1
+				|| driver.id.toString().toUpperCase().indexOf(this.searchString.toUpperCase()) != -1;
 			});
 		} else {
 			this.driversList = drivers;
@@ -294,7 +296,7 @@ export class PopoversComponent {
 					this.allSelected = true;
 				};
 			}
-
+			
 			this.activeDriverNames = _.map(_.filter(this.drivers, (driver:any)=>this.selectedObject[driver.id]), 'name').join(', ');
 		}
 		
@@ -376,11 +378,18 @@ export class PopoversComponent {
 	};
 
 	public removeListener () {
+		if (this.timer == null)
+			return;
+		
 		clearInterval(this.timer);
+		this.timer = null;
 	};
 
 	public startListener () {
-		this.timer = setInterval(this.getNewMessages.bind(this), 30000);
+		if (this.timer != null)
+			this.removeListener();
+
+		this.timer = setInterval(this.getNewMessages.bind(this), 10000);
 	};
 
 	public parseMessage (res) {
@@ -437,7 +446,8 @@ export class PopoversComponent {
 		if (this.message != '' && this.activeMode == 'solo') {
 			this.divisionService
 				.sendMessages(this.divisionId, [this.activeDriver], message)
-				.then(this.parseMessage.bind(this));
+				.then(this.parseMessage.bind(this))
+				.then(() => {this.getMessages(this.activeDriver, this.perPage)});
 
 			this.message = '';
 		}
@@ -504,7 +514,6 @@ export class PopoversComponent {
 				this.getDrivers(values.divisionId);
 				this.setActiveDriver(null, values.driverId);
 				this.getNotifications();
-				this.startListener();
 				this.chat2Modal.show();	
 			} else {
 				this.driversLoading = true;
@@ -512,6 +521,8 @@ export class PopoversComponent {
 				this.chat2Modal.show();	
 			}
 			
+			if (this.activeMode == 'solo')
+				this.startListener();
 		}
 	};
 

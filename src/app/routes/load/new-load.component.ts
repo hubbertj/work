@@ -10,7 +10,6 @@ import {DROPDOWN_DIRECTIVES,TAB_DIRECTIVES, MODAL_DIRECTVES, TYPEAHEAD_DIRECTIVE
 import { DatePickerDirective, AutosizeDirective, ScrollDirective } from '../../directives/index';
 import {DateComponent} from '../../components/date/index';
 import { EmailInputComponent } from '../../components/email-input/index';
-import { PhoneInputComponent } from '../../components/phone-input/index';
 
 
 import { UserService, DivisionService, LoadsService, LocalStorageService } from '../../services';
@@ -21,13 +20,7 @@ import * as _ from 'lodash';
 @Component({
 	selector: 'new-load',
 	providers: [DivisionService, LoadsService, LocalStorageService],
-    directives: [DateComponent, ScrollDirective,
-     DROPDOWN_DIRECTIVES, EmailInputComponent,
-      NumberComponent, TYPEAHEAD_DIRECTIVES,
-       MODAL_DIRECTVES, NgClass, CORE_DIRECTIVES,
-        FORM_DIRECTIVES, SimpleDropdownComponent,
-         DatePickerDirective, TOOLTIP_DIRECTIVES,
-          AutosizeDirective, PhoneInputComponent],
+    directives: [DateComponent, ScrollDirective, DROPDOWN_DIRECTIVES, EmailInputComponent, NumberComponent, TYPEAHEAD_DIRECTIVES, MODAL_DIRECTVES, NgClass, CORE_DIRECTIVES, FORM_DIRECTIVES, SimpleDropdownComponent, DatePickerDirective, TOOLTIP_DIRECTIVES, AutosizeDirective],
 	template: require('./new-load.component.html'),
 	viewProviders: [BS_VIEW_PROVIDERS]
 })
@@ -50,6 +43,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 	private brokerLoadNumber;
 	private freightTerms;
 	private carrierSpecialInstructions;
+	private brokerInstructions;
 	private loadAttributes:any = [];
 	private bolNumber;
 	private rate;
@@ -84,8 +78,8 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 	private currentServiceStop:any = {};
 	private prevStop: any = {};
     private attributeButtonDisabled = true;
-    private submitting: boolean = false;
     public emailValid = true;
+	private submitting: boolean = false;
 
 	private errors:any = [];
 	private errorMessage: any = '';
@@ -119,6 +113,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 	public feetToCm = 30.48;
 	public lbsToKg = 0.453592;
 	public ft3toCm3 = 28316.8;
+	private brokerInstructionsAttributeName = '!BrokerInstructions'; 
 
 	// We dont need to send request after each scroll -- just debounce it.
 	public onScrollAddressesDebounced = _.debounce(this.onScrollAddresses.bind(this), 200);
@@ -260,8 +255,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 		this.divisionService.getAttributes(this.divisionId)
             .then(this.extractAttributes.bind(this));
 
-        this.submitting = false;                       
-    
+		this.submitting = false;
     };     
 
     public setIsCarrier(user) {
@@ -272,7 +266,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
         this.isCarrier = division.type == 'carrier';
         this.isCommonCarrier = division.isCommonCarrier;
 		this.divisionCode = division.code;
-
+        
 		if (!this.loadId && user.email && user.email !== "") {
 			this.emailsList.push(user.email);	
 		}
@@ -309,14 +303,56 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 		}
 	};
 
-	public getAddress (stop) {
+	public getAddressFromStop (stop) {
 		let result = [];
 		for (let adrLine of stop.addressLines) {
 			result.push(adrLine.val);
 		};
 
+		if (stop.city && stop.city.length)
+			result.push(stop.city);
+
+		if (stop.state && stop.state.length)
+			result.push(stop.state);
+		
+		if (stop.country && stop.country.length)
+			result.push(stop.country)
+		
 		return  result.join(', ');
 	};
+
+	public getAddress (address) {
+		let result = [];
+		for (let adrLine of address.addressLines) {
+			result.push(adrLine);
+		};
+
+		if (address.city && address.city.length)
+			result.push(address.city);
+
+		if (address.state && address.state.length)
+			result.push(address.state);
+		
+		if (address.country && address.country.length)
+			result.push(address.country)
+		
+		return  result.join(', ');
+	};
+
+	public getContactInfo(stop){
+		let result = [];
+
+		if (stop.contactName && stop.contactName.length)
+			result.push(stop.contactName);
+		
+		if (stop.company && stop.company.length)
+			result.push(stop.company);
+
+		if (stop.phoneNumber && stop.phoneNumber.length)
+			result.push(stop.phoneNumber);
+
+		return result.join(', ');
+	}
 
 	public fillStop (data, stop) {
 		stop.addressLines = [];
@@ -572,6 +608,22 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 			this.brokerLoadNumber = body.brokerLoadNumber;
 			this.freightTerms = body.freightTerms;
 			this.carrierSpecialInstructions = body.carrierSpecialInstructions;
+
+			if (body.loadAttributes && body.loadAttributes.length){
+				var brokerInstructionAttribute = body.loadAttributes.filter((attr) => {
+					return attr.key === this.brokerInstructionsAttributeName;
+				});
+
+				for (var i = 0; i < brokerInstructionAttribute.length; i++){
+					this.brokerInstructions = brokerInstructionAttribute[i].value; //should only ever be 1.
+				}
+				
+				//filter out broker instructions from attribute list before it gets mapped.
+				body.loadAttributes = body.loadAttributes.filter((attr)=>{ 
+					return attr.key != this.brokerInstructionsAttributeName;
+				})
+			};
+
 			this.loadAttributes = body.loadAttributes && body.loadAttributes.map((attr)=>({
 				name: attr.key,
 				value: attr.value,
@@ -690,6 +742,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 			brokerLoadNumber: this.brokerLoadNumber,
 			freightTerms: this.freightTerms,
 			carrierSpecialInstructions: this.carrierSpecialInstructions,
+			brokerInstructions: this.brokerInstructions,
 			loadAttributes: this.loadAttributes && this.loadAttributes.map((attr)=>({
 				key: attr.name,
 				value: attr.value
@@ -699,7 +752,10 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
             bolNumber: this.bolNumber,
             loadTracking: this.tracking
         };
-        
+		
+		if (this.brokerInstructions && this.brokerInstructions.length){
+			load.loadAttributes.push({key:"!BrokerInstructions", value:this.brokerInstructions})
+		}
 
         if (this.isCarrier || this.isCommonCarrier) {
 			load['carrierId'] = this.divisionId;
@@ -778,7 +834,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 					.saveLoad(load)
 					.then(this.saveNotifications.bind(this))
 					.catch(this.validationErrorHandler.bind(this));
-			} else{
+			} else {
 				console.error("Error Unknown");
 			}
 			
@@ -795,6 +851,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 				console.error("Error Unknown");
 			}
 		}
+
 		return false;
 	};
 
@@ -843,7 +900,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 			stop.time = time;
 			//formate  the time just to make sure it correct again.
 			stop.timeStamp = this.addTimeStamp(stop);
-			stop.time = this.formateTime(stop.timeStamp, null);	
+			stop.time = this.formateTime(stop.timeStamp, null);		
 		}
 	};
 
@@ -1237,8 +1294,9 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 	 * From form submittion add a shipment to shipment list.
 	 */
     public addShipment() {
+       
+		let stop = this.findStop(this.currentStopDropOff);
 
-    	let stop = this.findStop(this.currentStopDropOff);
     	this.timeValue = '';
 
 		if (stop._id != this.currentStopDropOff._id) {
@@ -1247,6 +1305,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 		} else {
 			this.addStop(this.currentStopDropOff, null);
 		}
+
 
 		stop = this.findStop(this.currentStopPickUp);
 
@@ -1285,6 +1344,7 @@ export class NewLoadComponent implements OnInit, OnActivate, OnDestroy {
 				shipment.dropoff = stop._id;
 			}
 		}
+
 
 		return stop;
 	};

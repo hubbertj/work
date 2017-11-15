@@ -1,4 +1,4 @@
-﻿<div class="loading-page" [hidden]="!loading"><em></em><em></em><em></em></div>
+<div class="loading-page" [hidden]="!loading"><em></em><em></em><em></em></div>
 <header class="page-header">
   <div class="flex items-center">
     <div class="flex-auto flex items-baseline">
@@ -9,7 +9,7 @@
       <transflo-share [loadId]="loadId" class="button-group" (onToggle)="closeNotifications($event)"></transflo-share>
       <!-- Document scans, remove comments below in further releases -->
       <div class="button -link -sm" dropdown keyboardNav="true" autoClose="outsideClick"  (onToggle)="closeNotifications($event)">
-        <button title="scans" class="button -link -sm" type="button" dropdownToggle>Document scans</button>
+        <button title="scans" class="button -link -sm" type="button" dropdownToggle [disabled]="!load.documentScans || !load.documentScans.length">Document scans</button>
         <div class="dropdown-menu -right" dropdownMenu  role="menu">
           <ul class="menu -overflow">
             <li *ngFor="let scan of load.documentScans" role="menuitem"><a class="dropdown-item" target="_blank" href="{{scan.url}}">{{scan.label}}</a></li>
@@ -56,7 +56,7 @@
                 </th>
                 <th class="center" *ngIf="idx == 0">
                   <div class="dropdown -inline" dropdown keyboardNav="true" autoClose="outsideClick">
-                    <button class="button -link -sm medium" dropdownToggle><span class="plus">+</span> Add Email</button>
+                    <button class="button -link -sm medium" dropdownToggle #addEmail><span class="plus">+</span> Add Email</button>
                     <div class="dropdown-menu -lg -text -right" role="menu" dropdownMenu>
                       <div class="flex items-end">
                         <div class="flex-auto">
@@ -97,8 +97,7 @@
         </div>
       </div>
       <!-- Document scans, remove comments below in further releases -->
-
-      <div class="button -link -sm" dropdown keyboardNav="true" autoClose="outsideClick"  (onToggle)="closeNotifications($event)">
+      <!-- <div class="button -link -sm" dropdown keyboardNav="true" autoClose="outsideClick"  (onToggle)="closeNotifications($event)">
         <button title="links" class="button -link -sm" type="button" dropdownToggle>Links</button>
         <div class="dropdown-menu -right" dropdownMenu  role="menu">
           <ul class="menu">
@@ -109,7 +108,7 @@
             </li>
           </ul>
         </div>
-      </div>
+      </div> -->
       <span class="buttons-separator"></span>
 
       <!-- Remove this span after implementation of links and document scans -->
@@ -204,6 +203,16 @@
           <div class="dropdown-menu -lg -text -center" role="menu" dropdownMenu>
             <h3>Special Instructions</h3>
             {{load.carrierSpecialInstructions}}
+          </div>
+        </div>
+      </div>
+      <div class="pr4 pl3">
+        <div class="form-label -text">Broker Instructions</div>
+        <div dropdown keyboardNav="true">
+          <button type="button" class="button -link -sm -dotted" dropdownToggle>Read Instructions</button>
+          <div class="dropdown-menu -lg -text -center" role="menu" dropdownMenu>
+            <h3>Broker Instructions</h3>
+            {{brokerInstructions}}
           </div>
         </div>
       </div>
