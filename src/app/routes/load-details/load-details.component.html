@@ -1,11 +1,10 @@
 <div class="loading-page" [hidden]="!loading"><em></em><em></em><em></em></div>
 <header class="page-header">
   <div class="flex items-center">
-    <div class="flex-auto flex items-baseline">
-      <h1>Load #{{isCarrier ? load.carrierLoadNumber : load.brokerLoadNumber}}</h1>
-      <div [ngClass]="{'label-red': load.status === 'Declined', 'label-green': load.status !== 'Declined'}" class="label-lg pl2">{{load.status}}</div>
+    <div class="col-7 items-baseline">
+      <h1>Load #{{isCarrier ? load.carrierLoadNumber : load.brokerLoadNumber}}<span [ngClass]="{'label-red': load.status === 'Declined', 'label-green': load.status !== 'Declined'}" class="label-lg pl2">{{load.status}}</span></h1>
     </div>
-    <div>
+    <div class="col-5 items-baseline">
       <transflo-share [loadId]="loadId" class="button-group" (onToggle)="closeNotifications($event)"></transflo-share>
       <!-- Document scans, remove comments below in further releases -->
       <div class="button -link -sm" dropdown keyboardNav="true" autoClose="outsideClick"  (onToggle)="closeNotifications($event)">
