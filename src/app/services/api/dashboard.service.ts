@@ -12,12 +12,19 @@ import { LocalStorageService } from '../localstorage/localstorage.service';
 
 @Injectable()
 export class DashboardService extends BaseService {
+	private authUrl = 'auth';
 	private statisticsUrl = 'statistics';
 	private mappointsUrl = 'mappoints';
 
 	constructor (private httpService:HttpService, protected popoverService: PopoverService, protected router: Router, protected localStorageService: LocalStorageService) {
 		//this.popoverService = popoverService;
 		super(popoverService, router, localStorageService);
+	};
+
+	public getAuthorized () {
+		return this.httpService.get(this.authUrl)
+			.toPromise()
+			.catch(this.error.bind(this));
 	};
 
 	public getLocations (filters) {

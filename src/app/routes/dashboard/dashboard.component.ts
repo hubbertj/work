@@ -603,8 +603,26 @@ export class DashboardComponent implements OnInit {
 		}));
 	}
 
+	/**
+	 *  Simple check if a user is authoized, for faster redirect to login.
+	 */
+	private checkUserAuthorization(){
+		this.dashboardService
+                .getAuthorized()
+                .then((res) => {
+                	let user = res.text() && res.json();
+                	// console.log(user);
+                }).catch((error) => {
+                	console.error('token not authorized.');
+                });
+
+       return false;
+	};
+
 	ngOnInit () {
 		let filteredDates = JSON.parse(this.localStorageService.getItem('dashboardDates'));
+
+		this.checkUserAuthorization();
 
 		if (filteredDates) {
 			this.filterDateShipping = {
