@@ -17,6 +17,7 @@ export class LoadsService extends BaseService {
 	private loadsUrl = 'loads';
 	private loadUrl = (loadId)=> 'loads/' + loadId;
 	private cloneUrl = 'loads/clone';
+	private getStopsUrl = (loadId)=> 'loads/' + loadId + '/stops';
 	private getNotificationsUrl = (loadId)=> 'loads/' + loadId + '/notifications';
 	private getMessagesUrl = (loadId)=> 'loads/' + loadId + '/messages';
 	private changeOwnerShipUrl = (loadId)=> 'loads/' + loadId + '/changeownership';
@@ -118,6 +119,28 @@ export class LoadsService extends BaseService {
     public getLoadSummary(loadId, divisionId) {
 		return this.httpService
             .get(this.loadSummaryUrl(loadId) + '?division=' + divisionId)
+			.toPromise()
+			.catch(this.error.bind(this));
+	};
+
+	public getStops(loadId, filters){
+
+		let filtersStr = '?division=' + filters.divisionId;
+
+		if (filters.status) {
+			filtersStr += '&status=' + filters.status;
+		}
+
+		if (filters.shippingDatesRange) {
+			filtersStr += '&shippingDatesRange=' + filters.shippingDatesRange;
+		}
+
+		if (filters.deliveryDatesRange) {
+			filtersStr += '&deliveryDatesRange=' + filters.deliveryDatesRange;
+		}
+
+		return this.httpService
+			.get(this.getStopsUrl(loadId + filtersStr))
 			.toPromise()
 			.catch(this.error.bind(this));
 	};

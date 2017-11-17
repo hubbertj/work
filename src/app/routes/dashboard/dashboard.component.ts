@@ -6,6 +6,7 @@ import { DriversComponent } from '../../components/drivers/drivers.component';
 import { AttributesComponent } from '../../components/attributes/attributes.component';
 import { DropdownComponent } from '../../components/dropdown/dropdown.component';
 import { MessagesDirective } from '../../directives/index';
+import { Observable } from 'rxjs/Observable';
 
 import { DashboardService, DivisionService, LoadsService, LocalStorageService } from '../../services/index';
 import * as moment from 'moment';
@@ -62,7 +63,7 @@ export class DashboardComponent implements OnInit {
 	private brokerInstructionsAttributeName = '!BrokerInstructions';
 
 	public arrowMarker:any = [];
-	public driversNumber;
+	public driversNumber: number = 0;
 	public loadsNumber;
 
 	constructor(
@@ -180,7 +181,81 @@ export class DashboardComponent implements OnInit {
 
 	};
 
-    private parseLocations(res) {
+	/**
+	 * checks if location long and lat and grabs from backend if needed.
+	 * @param {[object]} res res from the server
+	 */
+	private getCheckGeoLocations(res){
+		if(!res) return false;
+	
+		let locations = res.text() && res.json();
+		let points = locations.loadPoints.concat(locations.driverPoints);
+
+		let geoLocations = Observable.create(function(observer) {
+			
+			var count = points.length;
+			while(points.length > 0){
+				let point = points.pop();
+					if(point.latitude === 0 || point.longitude === 0 ){
+						this.loadsService.getStops(point.id, this.filters)
+							.then((ares) => {
+								let aPoint = ares.text() && ares.json();
+								observer.next({original: point, found: aPoint});
+								count --;
+								if(count === 0){
+									observer.complete();
+								}
+							});
+					}else{
+						observer.next({original: point, found: null});
+						count --;
+						if(count === 0){
+							observer.complete();
+						}
+					}
+			}	
+		}.bind(this));
+
+		let subscribe = geoLocations.subscribe(obj => {
+			let foundLocation = obj.found;
+			let originalLocation = obj.original;
+			if(foundLocation){
+				originalLocation.latitude = +foundLocation.to.latitude;
+				originalLocation.longitude = +foundLocation.to.longitude;
+			}
+
+			this.parseAndAddLocation(originalLocation);
+		}, (error) => {
+			console.error(error);
+		},() => {
+			// console.log("Map loading completed");
+		});
+
+		this.loading = false;
+		//old code;
+		// this.parseLocations(res);
+	};
+
+	/**
+	 * filters a location and places it on the map
+	 * @param {[object]} location a point on the map.
+	 */
+	private parseAndAddLocation(location){
+	
+		if(this.filterFunc(location)){
+			this.locations.push(location);
+			this.driversNumber = this.locations.filter((loc)=>loc.type == 'availableDriver' || loc.type == 'intransitDriver').length;
+			this.loadsNumber = this.locations.filter((loc)=>loc.type == 'deliveryLoc' || loc.type == 'shippingLoc').length;
+			this.drawPoints(true);
+			this.loading = false;
+		}
+	};
+
+	/**
+	 * DEPERCATED OLD
+	 * @param {[responds]} res from the server
+	 */
+	private parseLocations(res) {
 		if (res) {
 			let locations = res.text() && res.json();
 
@@ -188,8 +263,11 @@ export class DashboardComponent implements OnInit {
 
 			this.locations = this.rawLocations.filter(this.filterFunc.bind(this));
 
+
+
 			this.driversNumber = this.locations.filter((loc)=>loc.type == 'availableDriver' || loc.type == 'intransitDriver').length;
 			this.loadsNumber = this.locations.filter((loc)=>loc.type == 'deliveryLoc' || loc.type == 'shippingLoc').length;
+
 			this.drawPoints(true);
 			this.loading = false;
 		}
@@ -478,7 +556,7 @@ export class DashboardComponent implements OnInit {
 
 		this.dashboardService
 			.getLocations(this.filters)
-			.then(this.parseLocations.bind(this));
+			.then(this.getCheckGeoLocations.bind(this));
 	};
 
     ngAfterViewChecked() {
