@@ -1,5 +1,4 @@
-# pegasus-command-center
-Command Center of Pegasus Transtech
+# Good exmaple of Angular 2 RC.1
 
 ### Quick start
 
