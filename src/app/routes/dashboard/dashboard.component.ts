@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../services/index';
+import { UserService, Config } from '../../services/index';
 import { ROUTER_DIRECTIVES, Router, RouteParams } from '@angular/router-deprecated';
 import { RangePickerDirective } from '../../directives/rangepicker/rangepicker.directive';
 import { DriversComponent } from '../../components/drivers/drivers.component';
@@ -16,7 +16,6 @@ import { StatusFilterConst } from '../../constants/index';
 
 declare var $: JQueryStatic;
 declare var L: any;
-declare var MQ: any;
 
 @Component({
     selector: 'dashboard',
@@ -65,6 +64,7 @@ export class DashboardComponent implements OnInit {
 	public arrowMarker:any = [];
 	public driversNumber: number = 0;
 	public loadsNumber;
+	private mapKey = Config.mapquestkey;
 
 	constructor(
 		private userService:UserService, 
@@ -563,24 +563,34 @@ export class DashboardComponent implements OnInit {
 	};
 
     public drawMap() {
-
         if (typeof this.map == 'undefined') {
+
+        	if(typeof this.mapKey == 'undefined'){
+        		this.map = {};
+				this.map._loaded = false;
+				return;
+        	} else {
+        		L.mapquest.key = this.mapKey;
+        	}
+
 			// set max boudns for map
 			let southWest = L.latLng(-89.98155760646617, -180);
 			let northEast = L.latLng(89.99346179538875, 180);
             let bounds = L.latLngBounds(southWest, northEast);
-			let mapLayer = MQ.mapLayer({
-				continuousWorld: false, // disable maps duplicating 
-				noWrap: true
+
+			this.map = L.mapquest.map('map', {
+			  center: [ 39.828175, -98.5795 ], // center of US.
+			  layers: L.mapquest.tileLayer('map'),
+			  zoom: 4,
+			  minZoom: 3, // 
+			  maxBoundsViscosity: 1.0
 			});
 
-			this.map = L.map('map', {
-				layers: mapLayer,
-				center: [ 39.828175, -98.5795 ], // center of US.
-				zoom: 4,
-				minZoom: 3, // 
-				maxBoundsViscosity: 1.0
-			});
+			if(!this.map || !this.map.hasOwnProperty('_loaded')){
+				this.map = {};
+				this.map._loaded = false;
+				return;
+			};
 
 			this.map.setMaxBounds(bounds);
 
@@ -646,6 +656,7 @@ export class DashboardComponent implements OnInit {
         this.localStorageService.getItem('dashboardDates');
         
         this.drawMap();
+
         if (!isNaN(this.divisionId)) {
             this.dashboardService
                 .getStatistics(this.divisionId)

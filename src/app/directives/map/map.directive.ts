@@ -1,9 +1,9 @@
-import { Directive, ElementRef, OnInit, Input, Output, EventEmitter, OnChanges, OnDestroy } from '@angular/core';
+import { Directive, ElementRef, Renderer, OnInit, Input, Output, EventEmitter, OnChanges, OnDestroy } from '@angular/core';
+import { Config } from '../../services/index';
 import * as moment from 'moment';
 
 declare var $: JQueryStatic;
 declare var L: any;
-declare var MQ: any;
 
 @Directive({
   selector: '[map]'
@@ -14,15 +14,17 @@ export class MapDirective implements OnInit, OnChanges, OnDestroy {
 	private id;
 	private map;
 	private popup;
+	private mapKey = Config.mapquestkey;
 
 	@Input() breadcrumbs:any = [];
 	@Input() stops: any = [];
 	@Input() nextStop: any = {};
 	@Input() show:boolean = false;
 	@Input() truck:any = {};
+	@Input() loadError:boolean = false;
 
 	ngOnInit () {
-
+		
 	};
 
 	ngAfterViewChecked () {
@@ -30,42 +32,42 @@ export class MapDirective implements OnInit, OnChanges, OnDestroy {
 	};
 
     public drawMap() {
-        if (typeof MQ == 'undefined') {
+        if (typeof this.mapKey == 'undefined') {
+        	this.loadError = true;
             return;
+        }else{        	
+        	L.mapquest.key = this.mapKey;
         }
 
 		if (!this.map) {
 			let southWest = L.latLng(-89.98155760646617, -180);
 			let northEast = L.latLng(89.99346179538875, 180);
 			let bounds = L.latLngBounds(southWest, northEast);
-			let mapLayer = MQ.mapLayer({
-				continuousWorld: false, // disable maps duplicating 
-				noWrap: true //
-			});
 
-			this.map = L.map('el' + this.id, {
-				layers: mapLayer,
-				center: [ 39.828175, -98.5795 ], // center of US.
-				zoom: 4,
-				minZoom: 3,
-				maxBoundsViscosity: 1.0
+			this.map = L.mapquest.map('el' + this.id, {
+			  center: [ 39.828175, -98.5795 ], // center of US.
+			  layers: L.mapquest.tileLayer('map'),
+			  zoom: 4,
+			  minZoom: 3, // 
+			  maxBoundsViscosity: 1.0
 			});
 
 			this.map.setMaxBounds(bounds);
 			this.map.scrollWheelZoom.disable();
+
+			this.loadError = !this.map._loaded;
 
 		} else {
 			this.map.invalidateSize();
 		}
 	};
 
-
 	ngOnDestroy () {
 		
 	};
 
     public drawPolyline() {
-        if (typeof MQ == 'undefined') {
+        if (typeof this.mapKey == 'undefined') {
             return;
         }
 
@@ -143,7 +145,7 @@ export class MapDirective implements OnInit, OnChanges, OnDestroy {
 	};
 
     public drawStops() {
-        if (typeof MQ == 'undefined') {
+        if (typeof this.mapKey == 'undefined') {
             return;
         }
 
@@ -185,7 +187,7 @@ export class MapDirective implements OnInit, OnChanges, OnDestroy {
 	};
 
     drawTruck() {
-        if (typeof MQ == 'undefined') {
+        if (typeof this.mapKey == 'undefined') {
             return;
         }
 
