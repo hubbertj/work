@@ -1,4 +1,4 @@
-﻿<div class="loading-page" [hidden]="!loading"><em></em><em></em><em></em></div>
+<div class="loading-page" [hidden]="!loading"><em></em><em></em><em></em></div>
 
 <div class="home-container-placeholder"></div>
 <div class="home-container">
@@ -18,6 +18,11 @@
           <label class="form-label">Delivery Date</label>
           <input autocomplete="off" class="form-control -select" placeholder="Select dates" range-picker [daterange]="filterDateDelivery" (daterangechanged)="filterChanged($event, 'delivery')" />
         </div>
+
+        <div class="form-group -x3">
+            <button type="button" class="button -primary -block" style="margin-top: 10px" (click)="apply()">Apply</button>
+          </div>
+
         <div class="form-group -x3 -icon">
           <img src="./images/i_shipping.png" alt="" width="17" height="21" *ngIf="locationFilter == 'shipping'">
           <img src="./images/i_delivery.png" alt="" width="17" height="21" *ngIf="locationFilter == 'delivery'">
@@ -53,17 +58,14 @@
         <div class="form-group -bordered -x2" [hidden]="!isCarrier">
           <label class="form-radio">
             <input type="radio" name="driverFilter" value="available" (click)="applyCheckboxes($event)" />
-            <span class="form-radio-text -yellow">Show Available Loads</span>
+            <span class="form-radio-text -yellow">Show Available Drivers</span>
           </label>
         </div>
         <div class="form-group" [hidden]="!isCarrier">
           <label class="form-radio">
             <input type="radio" name="driverFilter" value="intransit" (click)="applyCheckboxes($event)" checked/>
-            <span class="form-radio-text -light_blue">Show In Transit Loads</span>
+            <span class="form-radio-text -light_blue">Show In Transit Drivers</span>
           </label>
-        </div>
-        <div class="form-group -bordered -x2">
-          <button type="button" class="button -primary -block" style="margin-top: 10px" (click)="apply()">Apply</button>
         </div>
         <div class="home-leftbar-footer">
           <strong>{{loadsNumber}} Loads</strong><span> and </span><strong>{{driversNumber}} drivers</strong>
@@ -98,7 +100,33 @@
         <li [ngClass]="getClass(stat)" *ngFor="let stat of statistics" (click)="goToStat(stat)"><span>{{stat.value}}</span> {{stat.label}}</li>
       </ul>
       <!--2-->
-      <div class="home-load" *ngIf="mode == 'load' && load.id">
+      <div class="home-info" *ngIf="mode == 'driver' && driver && driver.id && isCarrier">
+          <div class="form-group fs23 medium">
+            <div *ngFor="let name of driver.name && driver.name.split(' ')">{{name}}</div>
+          </div>
+          <div class="form-group -x3">#{{driver.driverId}}</div>
+          <div class="form-group -x3">
+            <div class="form-label -text">Last known location</div>
+            <div *ngFor="let adr of driver.lastKnownLocation && driver.lastKnownLocation.addressLines">{{adr}}</div>
+            <div>{{driver.lastKnownLocation && driver.lastKnownLocation.city}}, {{driver.lastKnownLocation && driver.lastKnownLocation.state}} {{driver.lastKnownLocation && driver.lastKnownLocation.postalCode}}</div>
+          </div>
+           <ul class="home-stats -inline">
+            <li *ngFor="let stat of driver.statistics" class="label-link" (click)="goToStat(stat)"><span>{{stat.value}}</span> {{stat.label}}</li>
+          </ul>
+          <div class="form-group -x3 flex">
+            <div class="pr2">
+              <label title="Mark as favorite"><input [(ngModel)]="driver.isFavorite" (ngModelChange)="setFavorite(driver)" type="checkbox" hidden /><em class="form-favorite"><svg class="icon -favorite m0"><use xlink:href="#svg_star"/></svg></em></label>
+            </div>
+            <div class="pr2">
+              <a href="mailto:{{driver.email}}" class="button -outline -icon"><svg class="icon -mail"><use xlink:href="#svg_mail"/></svg></a>
+            </div>
+            <div>
+              <a class="button -outline" messages [divisionId]="divisionId" [driverId]="driver.id">Message <span [hidden]="!driver.isNewMessage" class="label-count -msg">new</span></a>
+            </div>
+          </div>
+        </div>
+      <!--3-->
+      <div class="home-load" *ngIf="load && load.id">
        <a [routerLink]="['Load Details', {divId: divisionId, loadId: load.id}]" class="form-group -x3">
           <div class="form-label -text">Load #</div>
           <span class="medium">{{isCarrier ? load.carrierLoadNumber : load.brokerLoadNumber}}</span>
@@ -115,7 +143,7 @@
         <div class="form-group -x2 medium" [ngClass]="{'-non_visible': !load.numberOfStops || load.numberOfStops <= 2}"><span class="label-count wayline-vertical-center">{{load.numberOfStops - 2}}</span> Intermediate stop</div>
         <div class="form-group -x2 wayline-vertical-end">
           <div class="form-label -text">Destination</div>
-          <div class="fs15 medium mb1">{{load.lastStop && load.lastStop.addressLines && load.lastStop.addressLines.join(' ')}}<br />{{load.firstStop && load.firstStop.city}}, {{load.lastStop && load.lastStop.state}} {{load.lastStop && load.lastStop.postalCode}} {{load.lastStop && load.lastStop.country}}</div>
+          <div class="fs15 medium mb1">{{load.lastStop && load.lastStop.addressLines && load.lastStop.addressLines.join(' ')}}<br />{{load.lastStop && load.lastStop.city}}, {{load.lastStop && load.lastStop.state}} {{load.lastStop && load.lastStop.postalCode}} {{load.lastStop && load.lastStop.country}}</div>
           {{getDate(load.lastStop && load.lastStop.date)}} &mdash; {{load.lastStop && load.lastStop.time}}
         </div>
         <div class="form-group -x3">
@@ -127,33 +155,7 @@
         </div>
         <div class="form-group -x3">
           <div class="form-label -text">Attributes</div>
-          <transflo-attributes class="flex items-center form-group -x05" [attrs]="load.loadAttributes"></transflo-attributes>
-        </div>
-      </div>
-      <!--3-->
-      <div class="home-info" *ngIf="mode == 'driver' && driver.id && isCarrier">
-        <div class="form-group fs23 medium">
-          <div *ngFor="let name of driver.name && driver.name.split(' ')">{{name}}</div>
-        </div>
-        <div class="form-group -x3">#{{driver.driverId}}</div>
-        <div class="form-group -x3">
-          <div class="form-label -text">Last known location</div>
-          <div *ngFor="let adr of driver.lastKnownLocation && driver.lastKnownLocation.addressLines">{{adr}}</div>
-          <div>{{driver.lastKnownLocation && driver.lastKnownLocation.city}}, {{driver.lastKnownLocation && driver.lastKnownLocation.state}} {{driver.lastKnownLocation && driver.lastKnownLocation.postalCode}}</div>
-        </div>
-         <ul class="home-stats -inline">
-          <li *ngFor="let stat of driver.statistics" class="label-link" (click)="goToStat(stat)"><span>{{stat.value}}</span> {{stat.label}}</li>
-        </ul>
-        <div class="form-group -x3 flex">
-          <div class="pr2">
-            <label title="Mark as favorite"><input [(ngModel)]="driver.isFavorite" (ngModelChange)="setFavorite(driver)" type="checkbox" hidden /><em class="form-favorite"><svg class="icon -favorite m0"><use xlink:href="#svg_star"/></svg></em></label>
-          </div>
-          <div class="pr2">
-            <a href="mailto:{{driver.email}}" class="button -outline -icon"><svg class="icon -mail"><use xlink:href="#svg_mail"/></svg></a>
-          </div>
-          <div>
-            <a class="button -outline" messages [divisionId]="divisionId" [driverId]="driver.id">Message <span [hidden]="!driver.isNewMessage" class="label-count -msg">new</span></a>
-          </div>
+          <transflo-attributes class="flex items-center form-group -x05" [attrs]="load && load.loadAttributes"></transflo-attributes>
         </div>
       </div>
     </div>

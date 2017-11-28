@@ -29,7 +29,7 @@ export class ScrollDirective implements OnChanges {
 		if (event && event.height == 0) {
 			height = event.height;
 		} else {
-			height = el.children().height();	
+			height = el.height() || el.children().height();	
 		}
 
 		el.scrollTop(height);

@@ -234,9 +234,10 @@
                       <span class="multiple-selected-delete" (click)="removeEmail(load, idx)" title="Delete">×</span>
                     </span>
                     <form (submit)="addEmail(load, true)">
-                      <input autocomplete="off" (keyup)="keyUp(load, $event)" class="multiple-field ng-pristine ng-valid ng-touched" type="text" placeholder="Type email" [(ngModel)]="load.newEmail" (ngModelChange)="addEmail(load)" (blur)="addEmail(load, true)">
+                      <input autocomplete="off" (keyup)="keyUp(load, $event)" (keydown.backspace)="keyDownBackspace(load)" class="multiple-field ng-pristine ng-valid ng-touched" type="text" placeholder="Type email" [(ngModel)]="load.newEmail" (ngModelChange)="addEmail(load)" (blur)="addEmail(load, true)">
                     </form>
                   </div>
+                  <span *ngIf="showEmailInvalid" class="label-validation-error">Email is invalid</span>
                   <br />
                   <div class="form-group">
                     <label for="additional_information" class="pr2 nowrap">Personalize Message</label>
@@ -245,7 +246,7 @@
                     </div>
                   </div>
                 </div>
-                <button class="button -outline self-end" type="button" (click)="sendTackingLink(load)">Send</button>
+                <button [disabled]="isEmailInvalid" class="button -outline self-end" type="button" (click)="sendTrackingLink(load)">Send</button>
               </div>
             </div>
             <!-- Document scans, remove comments below in further releases -->

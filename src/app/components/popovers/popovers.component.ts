@@ -26,7 +26,7 @@ export class PopoversComponent {
 	@ViewChild('chat3Modal') chat3Modal;
 	@ViewChild('chat4Modal') chat4Modal;
 	@ViewChild('chat5Modal') chat5Modal;
-
+	
 	public subscribtion;
 	public eventHide;
 
@@ -55,6 +55,8 @@ export class PopoversComponent {
 	public favoriteActiveDriver = false;
 	public activeTab = 'messages';
 	public notificationType = 'general';
+	public sending = false;
+	public chatLoading = false;
 
 	public scrollEmitter = new EventEmitter();
 
@@ -134,9 +136,12 @@ export class PopoversComponent {
 			this.selectedObject[this.activeDriver] = true;
 			this.activeDriverNames = this.activeDriverName;
 		} else {
-			this.startListener();
-			this.getMessages (this.activeDriver, this.perPage);
-			this.getNotifications();
+			Promise.all([
+				this.startListener(),
+				this.getMessages (this.activeDriver, this.perPage),
+				this.getNotifications(),
+			])
+			.then(() => this.scrollBottom())
 		}
 	};
 
@@ -212,7 +217,8 @@ export class PopoversComponent {
 				unread: unread,
 				date: this.getDate(el.timestamp),
 				time: this.getTime(el.timestamp),
-				showDate: showDate
+				showDate: showDate,
+				_unread: el._unread || el.unread
 			}
 		});
      
@@ -237,9 +243,11 @@ export class PopoversComponent {
 	};
 
 	public getMessages (id, count) {
-		if (id) {
-			this.divisionService.getMessagesDriver(this.divisionId, id, count, null, null)
-				.then(this.parseDialog.bind(this));	
+		if (id){
+			this.chatLoading = true;
+			return this.divisionService.getMessagesDriver(this.divisionId, id, count, null, null)
+				.then(this.parseDialog.bind(this))
+				.then(() => {this.chatLoading = false;});
 		}
 	};
 
@@ -271,6 +279,8 @@ export class PopoversComponent {
 
 	public setActiveDriver (driver, id) {
 		if (this.activeMode == 'solo') {
+			this.dialog = [];
+
 			if (id) {
 				this.activeDriver = id;	
 			}
@@ -282,9 +292,13 @@ export class PopoversComponent {
 				this.favoriteActiveDriver = driver.isFavorite;
 			}
 
-			this.getMessages(this.activeDriver, this.perPage);
-			this.getNotifications();
-			this.scrollBottom();
+			if (this.activeDriver){
+				Promise.all([
+					this.getMessages(this.activeDriver, this.perPage),
+					this.getNotifications()
+				])
+				.then(() => this.scrollBottom());
+			}
 		} else {
 			if (this.selectedObject[driver.id] && _.keys(this.selectedObject).length > 1) {
 				delete this.selectedObject[driver.id];
@@ -305,7 +319,7 @@ export class PopoversComponent {
 	public onScroll (event) {
 		let top = $(event.currentTarget).scrollTop();
 	
-		if (top == 0) {
+		if (!this.chatLoading && top == 0) {
 			this.loadMore();
 		}
 	};
@@ -313,12 +327,15 @@ export class PopoversComponent {
 	public loadMore () {
 		let lastId;
 
+		this.chatLoading = true;
+
 		if (this.dialog.length && this.activeDriver) {
 			lastId = this.dialog[this.dialog.length - 1].id;
 
 			if (this.lastPartLength) {
 				this.divisionService.getMessagesDriver(this.divisionId, this.activeDriver, this.perPage, lastId, null)
-					.then(this.appendDialog.bind(this));	
+					.then(this.appendDialog.bind(this))
+					.then(() => this.chatLoading = false );	
 			}
 		}
 	};
@@ -330,7 +347,8 @@ export class PopoversComponent {
 			firstId = this.dialog[0].id;
 
 			this.divisionService.getMessagesDriver(this.divisionId, this.activeDriver, this.perPage, null, firstId)
-					.then(this.prependDialog.bind(this));	
+					.then(this.prependDialog.bind(this))
+					.then(() => this.sending = false);	
 		}
 	};
 
@@ -342,6 +360,7 @@ export class PopoversComponent {
 	public prependDialog (res) {
 		this.dialog = _.filter(this.dialog, 'id');
 		this.dialog = _.each(this.dialog, (el)=>{
+			el._unread = el._unread;
 			el.unread = false;
 		});
 
@@ -353,11 +372,7 @@ export class PopoversComponent {
 			};
 
 			this.sortDialog();
-
-			if (_.find(body, (mess:any)=>mess.fromId == this.userId)) {
-				this.scrollBottom();
-			}
-
+			this.scrollBottom();
 		}
 	};
 
@@ -397,57 +412,56 @@ export class PopoversComponent {
 	};
 
 	public sendNotification (message, title, type) {
-		if (this.notificationMessage != '' && this.notificationTitle !='' && this.activeMode == 'solo') {
-			this.divisionService
+		if (this.notificationMessage != '' && this.notificationTitle !='') {
+			this.sending = true;
+
+			if (this.activeMode == 'solo'){
+				this.divisionService
 				.sendNotifications(this.divisionId, [this.activeDriver], {
 					message: message,
 					title: title,
 					type: type
 				})
 				.then(this.getNotifications.bind(this));
-
-			this.notificationMessage = '';
-			this.notificationTitle = '';
-		}
-
-		if (this.notificationMessage != '' && this.notificationTitle !='' && this.activeMode == 'multy') {
-
-			this.divisionService
+			}
+			else if (this.activeMode == 'multy') {
+				this.divisionService
 				.sendNotifications(this.divisionId, _.keys(this.selectedObject), {
 					message: message,
 					title: title,
 					type: type
 				});
 
-			this.notifications.push({
-				body: message,
-				title: title,
-				timestamp: new Date()
-			});
+				this.notifications.push({
+					body: message,
+					title: title,
+					timestamp: new Date()
+				});
 
-			this.notifications = _.map(this.notifications, (not:any)=>({
-				body: not.body,
-				title: not.title,
-				timestamp: not.timestamp,
-				date: this.getDate(not.timestamp)
-			}));
+				this.notifications = _.map(this.notifications, (not:any)=>({
+					body: not.body,
+					title: not.title,
+					timestamp: not.timestamp,
+					date: this.getDate(not.timestamp)
+				}));
 
-			this.notifications.sort((mess1, mess2)=> +new Date(mess2.timestamp) - +new Date(mess1.timestamp));
-
-
-			this.notificationMessage = '';
-			this.notificationTitle = '';
-			this.scrollBottom();
-
+				this.notifications.sort((mess1, mess2)=> +new Date(mess2.timestamp) - +new Date(mess1.timestamp));
+				this.scrollBottom();
+				this.sending = false;
+			}
 		}
+		this.notificationMessage = '';
+		this.notificationTitle = '';
 	}
 
 	public sendMessage (message) {
 		if (this.message != '' && this.activeMode == 'solo') {
+
+			this.sending = true;
+
 			this.divisionService
 				.sendMessages(this.divisionId, [this.activeDriver], message)
-				.then(this.parseMessage.bind(this))
-				.then(() => {this.getMessages(this.activeDriver, this.perPage)});
+				.then(this.parseMessage.bind(this));
 
 			this.message = '';
 		}
@@ -501,7 +515,8 @@ export class PopoversComponent {
 		if (this.activeDriver) {
 			this.divisionService
 				.getNotifications(this.divisionId, this.activeDriver)
-				.then(this.parseNotifications.bind(this));	
+				.then(this.parseNotifications.bind(this))
+				.then(() => this.sending = false);	
 		}
 	};
 
@@ -532,7 +547,27 @@ export class PopoversComponent {
 		this.chat3Modal.hide();
 		this.chat4Modal.hide();
 		this.chat5Modal.hide();
-		this.removeListener();
 	}
 
+	public enterKeyPressed (event) {
+		if (event.keyCode === 13){
+			event.stopPropagation();
+			event.preventDefault();
+
+			switch (event.target.id){
+				case "messageTextArea":
+					this.sendMessage(this.message);
+					break;
+				case "notificationTextArea":
+					this.sendNotification(this.notificationMessage, this.notificationTitle, this.activeMode);
+					break;
+			}
+		}
+	}
+
+	public closeChat(){
+		this.removeListener();
+		this.activeDriver = null;
+		this.searchString = '';
+	}
 }

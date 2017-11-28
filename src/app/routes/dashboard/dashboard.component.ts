@@ -16,6 +16,7 @@ import { StatusFilterConst } from '../../constants/index';
 
 declare var $: JQueryStatic;
 declare var L: any;
+declare var MQ: any;
 
 @Component({
     selector: 'dashboard',
@@ -255,7 +256,7 @@ export class DashboardComponent implements OnInit {
 	 * DEPERCATED OLD
 	 * @param {[responds]} res from the server
 	 */
-	private parseLocations(res) {
+    private parseLocations(res) {
 		if (res) {
 			let locations = res.text() && res.json();
 
@@ -263,11 +264,8 @@ export class DashboardComponent implements OnInit {
 
 			this.locations = this.rawLocations.filter(this.filterFunc.bind(this));
 
-
-
 			this.driversNumber = this.locations.filter((loc)=>loc.type == 'availableDriver' || loc.type == 'intransitDriver').length;
 			this.loadsNumber = this.locations.filter((loc)=>loc.type == 'deliveryLoc' || loc.type == 'shippingLoc').length;
-
 			this.drawPoints(true);
 			this.loading = false;
 		}
@@ -434,17 +432,25 @@ export class DashboardComponent implements OnInit {
 	public getDataForTab () {
 		switch (this.mode) {
 			case 'driver':
+				this.load = {};
 				this.driver = {};
 				this.divisionService
 					.getDriver(this.divisionId, this.activePoint.id)
 					.then(this.parseDriver.bind(this))
+				
+				if (this.activePoint.associatedLoad) {
+					this.loadsService
+						.getLoadSummary(this.activePoint.associatedLoad.id, this.divisionId)
+						.then(this.parseLoad.bind(this));
+				};
 				break;
-			
+
 			case 'load':
+				this.driver = {};
 				this.load = {};
 
-                this.loadsService
-                    .getLoadSummary(this.activePoint.id, this.divisionId)
+				this.loadsService
+					.getLoadSummary(this.activePoint.id, this.divisionId)
 					.then(this.parseLoad.bind(this));
 				break;
 
@@ -563,9 +569,10 @@ export class DashboardComponent implements OnInit {
 	};
 
     public drawMap() {
+
         if (typeof this.map == 'undefined') {
 
-        	if(typeof this.mapKey == 'undefined'){
+			if(typeof this.mapKey == 'undefined'){
         		this.map = {};
 				this.map._loaded = false;
 				return;
@@ -631,9 +638,8 @@ export class DashboardComponent implements OnInit {
 
 	ngOnInit () {
 		let filteredDates = JSON.parse(this.localStorageService.getItem('dashboardDates'));
-
 		this.checkUserAuthorization();
-
+		
 		if (filteredDates) {
 			this.filterDateShipping = {
 				startDate: moment(filteredDates.filterDateShipping.startDate, 'MM DD YYYY').toDate(),
@@ -656,7 +662,6 @@ export class DashboardComponent implements OnInit {
         this.localStorageService.getItem('dashboardDates');
         
         this.drawMap();
-
         if (!isNaN(this.divisionId)) {
             this.dashboardService
                 .getStatistics(this.divisionId)

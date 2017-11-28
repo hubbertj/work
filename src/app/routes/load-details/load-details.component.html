@@ -11,7 +11,7 @@
         <button title="scans" class="button -link -sm" type="button" dropdownToggle [disabled]="!load.documentScans || !load.documentScans.length">Document scans</button>
         <div class="dropdown-menu -right" dropdownMenu  role="menu">
           <ul class="menu -overflow">
-            <li *ngFor="let scan of load.documentScans" role="menuitem"><a class="dropdown-item" target="_blank" href="{{scan.url}}">{{scan.label}}</a></li>
+            <li *ngFor="let scan of load.documentScans" role="menuitem"><a id="{{'scanLink_' + scan.label}}"class="dropdown-item" target="_blank" href="{{scan.url}}">{{scan.label}}</a></li>
           </ul>
         </div>
       </div>

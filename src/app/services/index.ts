@@ -7,4 +7,3 @@ export * from './http/http.service';
 export * from './localstorage/localstorage.service';
 export * from './popover-service/popover-service.service';
 export * from '../config';
-

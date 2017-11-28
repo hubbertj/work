@@ -125,24 +125,24 @@ export class LoadsService extends BaseService {
 
 	public getStops(loadId, filters){
 
-		let filtersStr = '?division=' + filters.divisionId;
+	let filtersStr = '?division=' + filters.divisionId;
 
-		if (filters.status) {
-			filtersStr += '&status=' + filters.status;
-		}
+	if (filters.status) {
+		filtersStr += '&status=' + filters.status;
+	}
 
-		if (filters.shippingDatesRange) {
-			filtersStr += '&shippingDatesRange=' + filters.shippingDatesRange;
-		}
+	if (filters.shippingDatesRange) {
+		filtersStr += '&shippingDatesRange=' + filters.shippingDatesRange;
+	}
 
-		if (filters.deliveryDatesRange) {
-			filtersStr += '&deliveryDatesRange=' + filters.deliveryDatesRange;
-		}
+	if (filters.deliveryDatesRange) {
+		filtersStr += '&deliveryDatesRange=' + filters.deliveryDatesRange;
+	}
 
-		return this.httpService
-			.get(this.getStopsUrl(loadId + filtersStr))
-			.toPromise()
-			.catch(this.error.bind(this));
+	return this.httpService
+		.get(this.getStopsUrl(loadId + filtersStr))
+		.toPromise()
+		.catch(this.error.bind(this));
 	};
 
 	public createLoad (load) {

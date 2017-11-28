@@ -35,18 +35,19 @@
               <span class="multiple-selected-delete" (click)="removeEmail(idx)" title="Delete">×</span>
             </span>
             <form (submit)="addEmail(true)">
-              <input id="tracking_email_field" autocomplete="off" autofocus="" (keyup)="keyUp($event)" class="multiple-field -w100 ng-pristine ng-valid ng-touched" type="text" placeholder="Type email" [(ngModel)]="newEmail" (ngModelChange)="addEmail()" (blur)="addEmail(true)">
+              <input id="tracking_email_field" autocomplete="off" autofocus="" (keyup)="keyUp($event)" (keydown.backspace)="keyDownBackspace()" class="multiple-field -w100 ng-pristine ng-valid ng-touched" type="text" placeholder="Type email" [(ngModel)]="newEmail" (ngModelChange)="addEmail()" (blur)="addEmail(true)">
             </form>		    
           </div>
+          <span *ngIf="showEmailInvalid" class="label-validation-error">Email is invalid</span>
 		  <br />
 		  <div class="form-group">
 		    <label for="additional_information" class="pr2 nowrap">Personalize Message</label>
 		    <div class="pr2 flex-auto">
 		      <textarea class="form-control" [(ngModel)]="info" rows="4" maxlength="1000" placeholder="Additional Message"></textarea>
-		    </div>
-		  </div>
         </div>
-        <button class="button -outline self-end" type="button" dropdownToggle (click)="sendTackingLink()">Send</button>
+		    </div>
+        </div>
+        <button [disabled]="isEmailInvalid" class="button -outline self-end" type="button" dropdownToggle (click)="sendTrackingLink()">Send</button>
       </div>
     </div>
   </div>

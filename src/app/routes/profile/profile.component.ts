@@ -28,6 +28,8 @@ export class ProfileComponent implements OnInit {
     public selectedDivision: Division;
     public modalMessage: ModalMessage;
     private remittanceUpdateUrl: string = 'divisions/remittance';
+    private filteredDivisions:Array<Division>;
+    private filteredBrokerSettings:Array<BrokerSettings>;
     
     constructor(private userService: UserService, private localStorageService: LocalStorageService, private httpService: HttpService, 
                 private popoverService: PopoverService) {
@@ -45,7 +47,6 @@ export class ProfileComponent implements OnInit {
     ngOnInit() {
         this.loading = true;
         this.userService.getUser(this.setUser.bind(this));
-        this.selectedDivision = JSON.parse(this.localStorageService.getItem('selectedDivision')) || new Division(null);
     };
 
     public setUser(user) {
@@ -54,6 +55,13 @@ export class ProfileComponent implements OnInit {
        
         this.brokers = this.user.divisions.filter((div) => div.type == 'broker');
         this.hideCarriersUpload = !this.user.divisions.some(x => x.type == 'broker');
+
+        this.selectedDivision = JSON.parse(this.localStorageService.getItem('selectedDivision')) || new Division(null);
+
+        if (this.selectedDivision){
+            this.filteredDivisions = user.divisions.filter((div) => {return div.id != this.selectedDivision.id})
+            this.filteredBrokerSettings = user.brokerSettings.filter((brokerSetting)=> {return brokerSetting.id != this.selectedDivision.id});
+        }
     };
 
     public closeNotifications(event) {        

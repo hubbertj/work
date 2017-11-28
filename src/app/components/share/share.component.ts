@@ -21,7 +21,9 @@ export class ShareComponent {
 	private trackingLink;
 	private expired = 3;
     private time = 'hours';
-    private info: string;
+	private info: string;
+	private isEmailInvalid: boolean = true;
+	private showEmailInvalid: boolean = false;
 
 
 	public extractLink (res) {
@@ -40,14 +42,33 @@ export class ShareComponent {
 	};
 
 	public keyUp (event) {
-		if (this.newEmail == '' && event.keyCode == 8) {
-			this.removeEmail(this.trackedEmails.length - 1);
+		if (this.newEmail && this.newEmail.length){
+			this.isEmailInvalid = true;
+		}
+
+		
+
+		if (this.newEmail.length && event.keyCode == 13) {
+			this.addEmail(true);
 		}
 	};
+
+	public keyDownBackspace() {
+		if (this.newEmail == '') {
+			this.removeEmail(this.trackedEmails.length - 1);
+		}
+	}
 
 	public addEmail (lastCheck) {
 		let lastSymbol = this.newEmail[this.newEmail.length - 1];
 		let email: any;
+		this.showEmailInvalid = false;
+
+		if (!this.newEmail.length){
+			this.isEmailInvalid = !(this.trackedEmails && this.trackedEmails.length > 0)
+			this.showEmailInvalid = this.isEmailInvalid;
+			return;
+		}
 
 		if (lastSymbol == ' ' || lastSymbol == ';' || lastSymbol == ',' || lastCheck) {
 			email = this.newEmail.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
@@ -55,6 +76,10 @@ export class ShareComponent {
 			if (email) {
 				this.trackedEmails.push(email[0]);
 				this.newEmail = '';
+				this.isEmailInvalid = false;
+			}
+			else {
+				this.showEmailInvalid = true;
 			}
 		}
 
@@ -62,23 +87,26 @@ export class ShareComponent {
 
 	public removeEmail (index) {
 		this.trackedEmails.splice(index, 1);
+		this.isEmailInvalid = (this.newEmail && this.newEmail.length >= 0) || (!this.trackedEmails || !this.trackedEmails.length);
 	};
 
 	public toggle (val) {
 		this.onToggle.emit(val);		
 	};
 
-	public sendTackingLink () {
+	public sendTrackingLink () {
 		this.addEmail(true);
 		
-		let sharingInfo = {
-			link: this.trackingLink,
-			expirationTime: this.time == 'hours' ? this.expired : this.expired * 24,
-            emails: this.trackedEmails,
-            additionalInfo: this.info
+		if (!this.isEmailInvalid){
+			let sharingInfo = {
+				link: this.trackingLink,
+				expirationTime: this.time == 'hours' ? this.expired : this.expired * 24,
+				emails: this.trackedEmails,
+				additionalInfo: this.info
+			}
+	
+			this.loadsService.shareLink(this.loadId, sharingInfo);
 		}
-
-		this.loadsService.shareLink(this.loadId, sharingInfo);
 	}
 
 	constructor(private loadsService: LoadsService) {}

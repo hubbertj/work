@@ -213,10 +213,11 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
 
 			this.subscribers = body.subscribers;
 
-			if (this.subscribers && !this.subscribers.length) {
+			var email = this.userService.getUserEmail()
+			if (this.subscribers && !this.subscribers.length && email){
 				this.subscribers.push({
 					label: 'Me',
-					email: this.userService.getUserEmail(),
+					email: email,
 					events: []
 				});
 			}
@@ -277,7 +278,7 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
 				this.closeNotifications(event);
 			};
 
-			if (event.target instanceof HTMLAnchorElement){
+			if (event.target instanceof HTMLAnchorElement && event.target.id && event.target.id.startsWith('scanLink_', 0)){
 				window.open(event.target.getAttribute('href'), '_blank');
 			};
 		});

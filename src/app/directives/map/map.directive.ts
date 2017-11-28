@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Renderer, OnInit, Input, Output, EventEmitter, OnChanges, OnDestroy } from '@angular/core';
+import { Directive, ElementRef, OnInit, Input, Output, EventEmitter, OnChanges, OnDestroy } from '@angular/core';
 import { Config } from '../../services/index';
 import * as moment from 'moment';
 
@@ -24,7 +24,7 @@ export class MapDirective implements OnInit, OnChanges, OnDestroy {
 	@Input() loadError:boolean = false;
 
 	ngOnInit () {
-		
+
 	};
 
 	ngAfterViewChecked () {
@@ -61,6 +61,7 @@ export class MapDirective implements OnInit, OnChanges, OnDestroy {
 			this.map.invalidateSize();
 		}
 	};
+
 
 	ngOnDestroy () {
 		

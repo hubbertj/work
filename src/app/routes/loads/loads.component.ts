@@ -111,7 +111,9 @@ export class LoadsComponent implements OnInit, OnDestroy {
 	public filter: any;
 	public showPagination = true;
 
-    public filtersOpened = false;
+	public filtersOpened = false;
+	public isEmailInvalid: boolean = true;
+	public showEmailInvalid: boolean = false;
 
 	constructor(
 		private loadsService: LoadsService, 
@@ -159,14 +161,32 @@ export class LoadsComponent implements OnInit, OnDestroy {
 	};
 
 	public keyUp (load, event) {
-		if (load.newEmail == '' && event.keyCode == 8) {
-			this.removeEmail(load, load.trackedEmails.length - 1);
+		
+		if (load.newEmail && load.newEmail.length){
+			this.isEmailInvalid = true;
+		}
+
+		if (load.newEmail.length && event.keyCode == 13) {
+			this.addEmail(load, true);
 		}
 	};
+
+	public keyDownBackspace(load) {
+		if (load.newEmail == '') {
+			this.removeEmail(load, load.trackedEmails.length - 1);
+		}
+	}
 
 	public addEmail (load, lastCheck) {
 		let lastSymbol = load.newEmail[load.newEmail.length - 1];
 		let email: any;
+		this.showEmailInvalid = false;
+
+		if (!load.newEmail.length){
+			this.isEmailInvalid = !(load.trackedEmails && load.trackedEmails.length > 0)
+			this.showEmailInvalid = this.isEmailInvalid;
+			return;
+		}
 
 		if (lastSymbol == ' ' || lastSymbol == ';' || lastSymbol == ',' || lastCheck) {
 			email = load.newEmail.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
@@ -174,6 +194,10 @@ export class LoadsComponent implements OnInit, OnDestroy {
 			if (email) {
 				load.trackedEmails.push(email[0]);
 				load.newEmail = '';
+				this.isEmailInvalid = false;
+			}
+			else {
+				this.showEmailInvalid = true;
 			}
 		}
 
@@ -181,20 +205,23 @@ export class LoadsComponent implements OnInit, OnDestroy {
 
 	public removeEmail (load, index) {
 		load.trackedEmails.splice(index, 1);
+		this.isEmailInvalid = (load.newEmail && load.newEmail.length) || (!load.trackedEmails || !load.trackedEmails.length)
 	};
 
-	public sendTackingLink (load) {
+	public sendTrackingLink (load) {
 		this.addEmail(load, true);
 
-		let sharingInfo = {
-			link: load.trackingLink,
-			expirationTime: load.time == 'hours' ? load.expired : load.expired * 24,
-            emails: load.trackedEmails,
-            additionalInfo: this.info
+		if (!this.isEmailInvalid){
+			let sharingInfo = {
+				link: load.trackingLink,
+				expirationTime: load.time == 'hours' ? load.expired : load.expired * 24,
+				emails: load.trackedEmails,
+				additionalInfo: this.info
+			}
+	
+			this.loadsService.shareLink(load.id, sharingInfo);
+			this.hideSharePopup();
 		}
-
-		this.loadsService.shareLink(load.id, sharingInfo);
-		this.hideSharePopup();
 	};
 
 

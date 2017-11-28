@@ -56,7 +56,7 @@
 </div>
 
 <!--Chat messages modal-->
-<div bsModal #chat2Modal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myChatModalLabel" aria-hidden="true" (onHide)="removeListener()" id="modal">
+<div bsModal #chat2Modal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myChatModalLabel" aria-hidden="true" (onHide)="closeChat()" id="modal">
   <div class="modal-dialog">
     <div class="modal-content -horizontal">
       <button type="button" class="modal-close" aria-label="Close" (click)="chat2Modal.hide();" title="Close">&times;</button>
@@ -92,7 +92,7 @@
           <a class="card-link" *ngFor="let driver of driversList" [ngClass]="{'-active': activeMode == 'solo' && driver.id == activeDriver || activeMode == 'multy' && selectedObject[driver.id]}" (click)="setActiveDriver(driver, driver.id)">
             <span class="card-title">
               <span class="label-lg label-link regular block truncate">{{driver.name}}</span>
-              <span class="label-gray block truncate">{{driver.driverId}}</span>
+              <span class="label-gray block truncate">{{'#' + driver.id}}</span>
               <span class="label-gray block truncate">{{driver.email}}</span>
             </span>
             <span class="pl3" [hidden]="!driver.messages">
@@ -140,7 +140,7 @@
           </div>
         </div>
         <div class="chat-body" scroll (onScroll)="onScroll($event)" [scrollEmitter]="scrollEmitter" [hidden]="activeTab =='notifications'">
-          <!--div [hidden]="!loading"> loading </div-->
+          <div class="loading-text" [hidden]="!chatLoading">Loading... </div>
           <div class="chat-messages">
             <div *ngFor="let message of dialog; let idx = index" class="chat-item">
               <div class="chat-date -new" [hidden]="!message.unread">
@@ -150,7 +150,7 @@
                 <span class="chat-date-content">{{message.date}}</span>
               </div>
               <div class="chat-line" [ngClass]="{'-reverse': message.fromId == divisionId}">
-                <div class="chat-bubble" [ngClass]="{'-reverse': message.fromId == divisionId}">{{message.body}}</div>
+                <div class="chat-bubble" [ngClass]="{'-reverse': message.fromId == divisionId, '-unread': message.fromId == divisionId && message._unread}" >{{message.body}}</div>
                 <div class="chat-time">{{message.time}}</div>
               </div>
             </div>
@@ -169,20 +169,20 @@
             </div>
           </div>
           <div class="form-group -x15">
-            <textarea rows="6" class="form-control" placeholder="Message" [(ngModel)]="notificationMessage"></textarea>
+            <textarea id="notificationTextArea" rows="6" class="form-control" placeholder="Message" [(ngModel)]="notificationMessage" (keydown)="enterKeyPressed($event)"></textarea>
           </div>
           <div class="form-group -x15">
-            <button class="button -primary -wider" type="button" [disabled]="notificationMessage == '' || notificationTitle == '' " (click)="sendNotification(notificationMessage, notificationTitle, notificationType)">Send</button>
+            <button class="button -primary -wider" type="button" [disabled]="notificationMessage == '' || notificationTitle == '' " (click)="sendNotification(notificationMessage, notificationTitle, notificationType)">{{sending ? 'Sending': 'Send'}}</button>
           </div>
         </div>
 
         <div class="chat-footer" [hidden]="activeTab == 'notifications'">
           <div class="flex">
             <div class="flex-auto">
-              <textarea autocomplete="off" rows="1" class="form-control" placeholder="Your message" [(ngModel)]="message" autosize></textarea>
+              <textarea id="messageTextArea" autocomplete="off" rows="1" class="form-control" placeholder="Your message" [(ngModel)]="message" (keydown)="enterKeyPressed($event)" autosize></textarea>
             </div>
             <div class="pl2 self-end">
-              <button class="button -primary -wider" type="button" [disabled]="message == ''" (click)="sendMessage(message)">Send</button>
+              <button class="button -primary -wider" type="button" [disabled]="message == ''" (click)="sendMessage(message)">{{sending ? 'Sending': 'Send'}}</button>
             </div>
           </div>
         </div>

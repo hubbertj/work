@@ -58,49 +58,49 @@
       <h3 class="fs22">Associated Divisions</h3>
     </div>
     <div class="col-8 flex flex-wrap">
-      <div class="col-6 pr4 pb4" *ngFor="let division of user.divisions">
+      <div class="col-6 pr4 pb4" *ngFor="let division of filteredDivisions">
         <div class="form-label -text">{{division.code}} &nbsp;&bull;&nbsp; {{division.type}}</div>
         <h5>{{division.name}}</h5>
       </div>
     </div>
   </div> 
-  <div class="hr form-group -x6" *ngIf="user.brokerSettings.length > 0"></div>  
-  <div class="flex form-group -x6" *ngIf="user.brokerSettings.length > 0">
+  <div class="hr form-group -x6" *ngIf="filteredBrokerSettings && filteredBrokerSettings.length"></div>  
+  <div class="flex form-group -x6" *ngIf="filteredBrokerSettings && filteredBrokerSettings.length">
     <div class="col-4">
       <h3 class="fs22">Associated Brokers</h3>
     </div>
     <div>
       <div class="profile-broker-list">
         <div class="profile-broker-list-table">
-					<div class="profile-broker-list-table-row">
-						<div class="profile-broker-list-table-cell form-label -text">
-							Broker Name/ID
-						</div>
-						<div class="profile-broker-list-table-cell form-label -text">
-							Driver Can Submit Documents Directly to Broker?
-						</div>
-						<div class="profile-broker-list-table-cell form-label -text">
-							Automatically Create Invoice?
-						</div>
-					</div>
-					<div class="profile-broker-list-table-row" *ngFor="let broker of user.brokerSettings">
-						<div class="profile-broker-list-table-cell">
-							<h5>{{broker.name}} &nbsp;-&nbsp; {{broker.fleetId}}</h5>
-							<span class="label-danger" [hidden]="!broker.isHover || broker.allowScanningToggle">Broker has scanning disabled</span>
-						</div>
-						<div class="profile-broker-list-table-cell center-text" (mouseenter)="broker.isHover=true" (mouseleave)="broker.isHover=false">
-							<label>
-								<input type="checkbox" hidden [disabled]="!broker.allowScanningToggle" [(ngModel)]="broker.scanningEnabled" (ngModelChange)="updateCarrierBrokerSettings($event, broker)" />
-								<em [ngClass]="{'form-switcher':broker.allowScanningToggle, 'form-switcher-placeholder':!broker.allowScanningToggle}"></em>
-							</label>
-						</div>
-						<div class="profile-broker-list-table-cell center-text" (mouseenter)="broker.isHover=true" (mouseleave)="broker.isHover=false">
-							<label>
-								<input type="checkbox" hidden [disabled]="!broker.allowScanningToggle" [(ngModel)]="broker.autoInvoicingEnabled" (ngModelChange)="updateCarrierBrokerSettings($event, broker)" />
-								<em [ngClass]="{'form-switcher':broker.allowScanningToggle, 'form-switcher-placeholder':!broker.allowScanningToggle}"></em>
-							</label>
-						</div>
-					</div>
+          <div class="profile-broker-list-table-row">
+            <div class="profile-broker-list-table-cell form-label -text">
+              Broker Name/ID
+            </div>
+            <div class="profile-broker-list-table-cell form-label -text">
+              Driver Can Submit Documents Directly to Broker?
+            </div>
+            <div class="profile-broker-list-table-cell form-label -text">
+              Automatically Create Invoice?
+            </div>
+          </div>
+          <div class="profile-broker-list-table-row" *ngFor="let broker of filteredBrokerSettings">
+            <div class="profile-broker-list-table-cell">
+              <h5>{{broker.name}} &nbsp;-&nbsp; {{broker.fleetId}}</h5>
+              <span class="label-danger" [hidden]="!broker.isHover || broker.allowScanningToggle">Broker has scanning disabled</span>
+            </div>
+            <div class="profile-broker-list-table-cell center-text" (mouseenter)="broker.isHover=true" (mouseleave)="broker.isHover=false">
+              <label>
+                <input type="checkbox" hidden [disabled]="!broker.allowScanningToggle" [(ngModel)]="broker.scanningEnabled" (ngModelChange)="updateCarrierBrokerSettings($event, broker)" />
+                <em [ngClass]="{'form-switcher':broker.allowScanningToggle, 'form-switcher-placeholder':!broker.allowScanningToggle}"></em>
+              </label>
+            </div>
+            <div class="profile-broker-list-table-cell center-text" (mouseenter)="broker.isHover=true" (mouseleave)="broker.isHover=false">
+              <label>
+                <input type="checkbox" hidden [disabled]="!broker.allowScanningToggle" [(ngModel)]="broker.autoInvoicingEnabled" (ngModelChange)="updateCarrierBrokerSettings($event, broker)" />
+                <em [ngClass]="{'form-switcher':broker.allowScanningToggle, 'form-switcher-placeholder':!broker.allowScanningToggle}"></em>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -86,9 +86,18 @@ export class RangePickerDirective implements OnInit, OnChanges, OnDestroy {
 	};
 
 	setDate(start, end, label) {
+
+		if (start && !start._isAMomentObject){
+			console.log("unrecognized start object:" + JSON.stringify(start));
+		}
+
+		if (end && !end._isAMomentObject){
+			console.log("unrecognized end object:" + JSON.stringify(end))
+		}
+
 		this.daterange = {
-			startDate: start && start.toDate(),
-			endDate: end && end.toDate()
+			startDate: start && start._isAMomentObject && start.toDate(),
+			endDate: end && end._isAMomentObject && end.toDate()
 		};
 
 		this.daterangechanged.emit(this.daterange);
