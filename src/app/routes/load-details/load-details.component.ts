@@ -321,10 +321,8 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
 				})
 			}
 			
-			if (this.load.loadTracking) {
-				this.loadsService.getBreadcrumbs(this.loadId)
+			this.loadsService.getBreadcrumbs(this.loadId)
 				.then(this.deserealizeBreadcrumbs.bind(this));
-			}
 		}
 	};
 }
