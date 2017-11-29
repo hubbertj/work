@@ -1,5 +1,5 @@
 import { Directive, ElementRef, OnInit, Input, Output, EventEmitter, OnChanges, OnDestroy } from '@angular/core';
-import { Config } from '../../services/index';
+import { Config, HttpService } from '../../services/index';
 import * as moment from 'moment';
 
 declare var $: JQueryStatic;
@@ -21,19 +21,28 @@ export class MapDirective implements OnInit, OnChanges, OnDestroy {
 	@Input() nextStop: any = {};
 	@Input() show:boolean = false;
 	@Input() truck:any = {};
-	@Input() loadError:boolean = false;
+	@Output() loadError = new EventEmitter();
 
 	ngOnInit () {
-
+		this.checkMapquestAvailability('https://api.mqcdn.com/sdk/mapquest-js/v1.2.0/mapquest.js')
+        	.then((res) => {
+        		// console.log(res); 
+        	}).catch((ex) => {
+        		this.loadError.emit({error: true});
+        	}); 
 	};
 
 	ngAfterViewChecked () {
 		this.drawMap();
 	};
 
+	private checkMapquestAvailability (uri: string) {
+        return this.httpService.testGet(uri).toPromise();
+    };
+
     public drawMap() {
-        if (typeof this.mapKey == 'undefined') {
-        	this.loadError = true;
+        if (typeof this.mapKey == 'undefined' || typeof L == 'undefined' ) {
+        	this.loadError.emit({error: true});
             return;
         }else{        	
         	L.mapquest.key = this.mapKey;
@@ -54,8 +63,7 @@ export class MapDirective implements OnInit, OnChanges, OnDestroy {
 
 			this.map.setMaxBounds(bounds);
 			this.map.scrollWheelZoom.disable();
-
-			this.loadError = !this.map._loaded;
+			if(!this.map._loaded) this.loadError.emit({error: true, msg: ''});
 
 		} else {
 			this.map.invalidateSize();
@@ -68,7 +76,7 @@ export class MapDirective implements OnInit, OnChanges, OnDestroy {
 	};
 
     public drawPolyline() {
-        if (typeof this.mapKey == 'undefined') {
+        if (typeof this.mapKey == 'undefined' || typeof L == 'undefined') {
             return;
         }
 
@@ -146,7 +154,7 @@ export class MapDirective implements OnInit, OnChanges, OnDestroy {
 	};
 
     public drawStops() {
-        if (typeof this.mapKey == 'undefined') {
+        if (typeof this.mapKey == 'undefined' || typeof L == 'undefined') {
             return;
         }
 
@@ -188,7 +196,7 @@ export class MapDirective implements OnInit, OnChanges, OnDestroy {
 	};
 
     drawTruck() {
-        if (typeof this.mapKey == 'undefined') {
+        if (typeof this.mapKey == 'undefined' || typeof L == 'undefined') {
             return;
         }
 
@@ -257,7 +265,7 @@ export class MapDirective implements OnInit, OnChanges, OnDestroy {
 		}
 	};
 
-	constructor(el: ElementRef) {
+	constructor(el: ElementRef, private httpService: HttpService) {
 		this.id  = Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
 		this.el = el.nativeElement;
 		this.el.id = 'el' + this.id;

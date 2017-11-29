@@ -230,7 +230,7 @@
 
 <div class="map" *ngIf="load.showMap">
   <div class="map-wrapper">
-    <div class="map-container" map [breadcrumbs]="breadcrumbs" [truck]="load.truckLocation" [stops]="stops" [nextStop]="load.nextStop" [show]="load.showMap" style="height: 430px;">
+    <div class="map-container" map (loadError)="loadError = true"  [breadcrumbs]="breadcrumbs" [truck]="load.truckLocation" [stops]="stops" [nextStop]="load.nextStop" [show]="load.showMap" style="height: 430px;">
       <!-- if the map fails to load -->
       <div *ngIf="loadError" class="modal fade show" role="dialog" aria-hidden="true" style="display: block; position: absolute; height: 400px; top: 25%;">
           <div class="modal-dialog">

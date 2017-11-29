@@ -32,6 +32,7 @@ export class SharedLoadComponent implements OnInit {
   private load: any = {
         showMap: false
   };
+  	private loadError: boolean = false;
 
 	constructor (private router: Router, private http: HttpService) {
 		this.load = {};

@@ -70,6 +70,7 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
 	private notificationsDropdown = false;
 	private brokerInstructionAttributeName = '!BrokerInstructions';
 	private brokerInstructions;
+	private loadError: boolean = false;
 
 	constructor (
 		private router:Router,

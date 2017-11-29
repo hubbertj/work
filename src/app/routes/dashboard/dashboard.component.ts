@@ -8,7 +8,7 @@ import { DropdownComponent } from '../../components/dropdown/dropdown.component'
 import { MessagesDirective } from '../../directives/index';
 import { Observable } from 'rxjs/Observable';
 
-import { DashboardService, DivisionService, LoadsService, LocalStorageService } from '../../services/index';
+import { DashboardService, DivisionService, LoadsService, LocalStorageService, HttpService } from '../../services/index';
 import * as moment from 'moment';
 import { StatusFilterConst } from '../../constants/index';
 
@@ -60,6 +60,7 @@ export class DashboardComponent implements OnInit {
 	private deliveryLocations: boolean = true;
 	private availableDrivers: boolean = true;
 	private intransitDrivers: boolean = true;
+	private mapLoadError: boolean = false;
 	private brokerInstructionsAttributeName = '!BrokerInstructions';
 
 	public arrowMarker:any = [];
@@ -74,7 +75,8 @@ export class DashboardComponent implements OnInit {
 		private routeParams: RouteParams,
 		private loadsService: LoadsService,
 		private divisionService: DivisionService,
-		private localStorageService: LocalStorageService
+		private localStorageService: LocalStorageService,
+		private httpService: HttpService
 	) {};
 
 	private getClass(stat) {
@@ -572,9 +574,8 @@ export class DashboardComponent implements OnInit {
 
         if (typeof this.map == 'undefined') {
 
-			if(typeof this.mapKey == 'undefined'){
-        		this.map = {};
-				this.map._loaded = false;
+			if(typeof this.mapKey == 'undefined' || typeof L == 'undefined'){
+        		this.mapLoadError = true;
 				return;
         	} else {
         		L.mapquest.key = this.mapKey;
@@ -593,9 +594,8 @@ export class DashboardComponent implements OnInit {
 			  maxBoundsViscosity: 1.0
 			});
 
-			if(!this.map || !this.map.hasOwnProperty('_loaded')){
-				this.map = {};
-				this.map._loaded = false;
+			if(this.map && this.map.hasOwnProperty('_loaded') && !this.map._loaded){
+				this.mapLoadError = true;
 				return;
 			};
 
@@ -636,6 +636,10 @@ export class DashboardComponent implements OnInit {
        return false;
 	};
 
+	private checkMapquestAvailability (uri: string) {
+        return this.httpService.testGet(uri).toPromise();
+    };
+
 	ngOnInit () {
 		let filteredDates = JSON.parse(this.localStorageService.getItem('dashboardDates'));
 		this.checkUserAuthorization();
@@ -660,14 +664,23 @@ export class DashboardComponent implements OnInit {
         this.loading = true;
 
         this.localStorageService.getItem('dashboardDates');
-        
-        this.drawMap();
-        if (!isNaN(this.divisionId)) {
-            this.dashboardService
-                .getStatistics(this.divisionId)
-                .then(this.parseStats.bind(this));
 
-            this.filterLocations();
-        }
+        this.checkMapquestAvailability('https://api.mqcdn.com/sdk/mapquest-js/v1.2.0/mapquest.js')
+        	.then((res) => {
+        		this.drawMap();
+        		this.mapLoadError = !this.map._loaded;
+			        if (!isNaN(this.divisionId)) {
+			            this.dashboardService
+			                .getStatistics(this.divisionId)
+			                .then(this.parseStats.bind(this));
+
+			            this.filterLocations();
+			        }
+
+        	}).catch((ex) => {
+        		console.error(ex);
+        		this.loading = false;
+        		this.mapLoadError = true;
+        	}); 
 	};
 }

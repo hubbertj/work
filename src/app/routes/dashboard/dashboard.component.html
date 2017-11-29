@@ -78,7 +78,7 @@
 
   <div class="home-center" id="map">
     <!-- if the map fails to load -->
-      <div *ngIf="!map._loaded" class="modal fade show" role="dialog" aria-hidden="true" style="display: block; position: absolute; height: 400px; top: 25%;">
+      <div *ngIf="mapLoadError" class="modal fade show" role="dialog" aria-hidden="true" style="display: block; position: absolute; height: 400px; top: 25%;">
          <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
