@@ -9,6 +9,7 @@ import { RegisterComponent } from './routes/register';
 import { RestoreComponent } from './routes/restore';
 import { DivisionsComponent } from './routes/divisions';
 import { TenderingComponent } from './routes/tendering';
+import { CustomerAccessManagementComponent } from './routes/customer-access-management';
 import { Error404Component } from './routes/404';
 
 
@@ -95,6 +96,7 @@ import '../svg/svg_chatgroup_active.svg';
     { path: '/division/:divId/loads/:loadId/edit', component: NewLoadComponent, name: 'EditLoad', data: { roles: [Role.AUTHROIZED] } },
     { path: '/division/:divId/loads/:loadId', component: LoadDetailsComponent, name: 'Load Details', data: { roles: [Role.AUTHROIZED] } },
     { path: '/division/:divId/profile', component: ProfileComponent, name: 'Profile', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/division/:divId/CustomerAccessManagement', component: CustomerAccessManagementComponent, name: 'CustomerAccessManagement', data: { roles: [Role.AUTHROIZED] } },
 
 
     { path: '/share/:shareId', component: SharedLoadComponent, name: 'SharedLoad', data: { roles: [Role.AUTHROIZED] } },

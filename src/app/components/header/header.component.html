@@ -39,6 +39,13 @@
           </a>
         </li>
         <li>
+          <a [routerLink]="['CustomerAccessManagement', { divId: selectedDivision.id }]" dropdownToggle>
+            Customer<br>
+            Access<br> 
+            Management
+          </a>
+        </li>
+        <li>
           <a (click)="showHelp()">
             Help
           </a>

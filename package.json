@@ -65,6 +65,7 @@
     "ts-loader": "^0.8.1"
   },
   "devDependencies": {
+    "@angular/cli": "^1.5.5",
     "webpack-dev-server": "^1.14.1"
   }
 }

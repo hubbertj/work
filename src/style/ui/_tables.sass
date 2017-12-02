@@ -227,6 +227,33 @@ table
     transform: rotate(225deg)
     bottom: -12px
 
+.customerAccessTable
+  border: 1px solid #d3d3d3
+  padding: 5px 
+  border-radius: 5px
+  transition: 0.2s
+  .fleet-header
+      margin: 0
+  table.fleet-table
+    border-top: 1px solid #d3d3d3
+    &.close
+      line-height: 0px
+      opacity: 0
+      display: none
+    &.open
+      line-height: 1em
+      opacity: 1
+      display: table
+  tr.close
+    line-height: 0px
+    opacity: 0
+    display: none
+  tr.show
+    line-height: 1em
+    opacity: 1
+    display: table
+  
+
 .table-head-short
   display: inline-block
   margin-left: -10px
