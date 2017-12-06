@@ -69,6 +69,7 @@
   //    background-color: $color-main
 
 .modal-close
+  z-index: 1000;
   cursor: pointer
   width: 16px
   height: 16px
@@ -81,6 +82,9 @@
   padding: 0
   text-indent: -999em
   background: none
+  &.alert
+    top: 0
+    right: 0
   &:hover
     opacity: 0.5
   //+breakpoint(xs)
@@ -311,5 +315,17 @@
   padding-top: 20px 
   //padding-right: 20px 
   padding-left: 20px 
-  
+
+.addNewUserModal
+  margin-top: 10%
+  .modal-dialog
+    position: relative
+    height: auto
+    min-height: auto
+    background: white
+    .modal-body
+      flex: none
+    .modal-footer
+      border-top: none
+
   

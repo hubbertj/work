@@ -2,7 +2,7 @@
 <div class="container">
     <form (submit)="onSubmit($event)" id="customerAccessManagementForm" name="customer-access-management-form" novalidate>
         <div class="form-group col-3">
-            <input autocomplete="off" class="form-control" placeholder="Find User" [(ngModel)]="filterStr" (ngModelChange)="onFilter($event)"/>
+            <input autocomplete="off" class="form-control" placeholder="Find User" [(ngModel)]="filterStr" (ngModelChange)="onFilter($event)" />
         </div>
         <div class="form-group col-12">&nbsp;</div>
         <table class="table table-bordered customerAccessTable" cellpadding="5">
@@ -16,33 +16,53 @@
             </thead>
             <template ngFor let-user [ngForOf]="filteredUsers" let-i="index">
                 <tr (click)="user.show = !user.show">
-                    <td><span class="button -outline -md">
-                      <ng-container *ngIf="user.show">-</ng-container>
-                      <ng-container *ngIf="!user.show">+</ng-container>
-                    </span>&nbsp;{{user.company}}</td>
+                    <td>
+                        <a class="button -outline -md">
+                            <ng-container *ngIf="user.show"><span class="minus"></span></ng-container>
+                            <ng-container *ngIf="!user.show"><span class="plus"></span></ng-container>
+                        </a>&nbsp;{{user.company}}</td>
                     <td>{{user.firstName}}</td>
                     <td>{{user.lastName}}</td>
                     <td>{{user.email}}</td>
                 </tr>
-                <template ngFor let-fleet [ngForOf]="user.fleet" let-i="idx">
+                <template ngFor let-fleet [ngForOf]="user.fleet" let-idx="index">
                     <tr [ngClass]="(user.show == true) ? 'open':'close'">
                         <td colspan="1">&nbsp;</td>
                         <td colspan="5">
-                            <h4 (click)="fleet.show = !fleet.show" class="fleet-header"><span class="button -outline -md">
-                              <ng-container *ngIf="fleet.show">-</ng-container>
-                              <ng-container *ngIf="!fleet.show">+</ng-container>
-                            </span>&nbsp;&nbsp;{{fleet.name}}</h4>
+                            <h4 class="fleet-header"><span class="button -outline -md" (click)="fleet.show = !fleet.show">
+                              <ng-container *ngIf="fleet.show"><span class="minus"></span></ng-container>
+                              <ng-container *ngIf="!fleet.show"><span class="plus"></span></ng-container>
+                              </span>&nbsp;&nbsp;{{fleet.name}}
+                              <span class="float-right"><span class="button">&#9998;</span>
+                              <button class="button" type="button" (click)="onEdit(i, idx)"><small>&#10060;</small></button></span>
+                            </h4>
                             <table class="fleet-table" [ngClass]="(fleet.show == true) ? 'open':'close'" width="100%">
-                                <tr align="right">
+                                <tr *ngIf="fleet.permissions">
                                     <td>
-                                        <input type="checkbox" [checked]="fleet.checked"/>
+                                        <input type="checkbox"/>
                                     </td>
-                                    <td><input type="text" class="form-control" placeholder="attribute" value="{{fleet.attribute}}"/></td>
-                                    <td><input type="text" class="form-control" placeholder="bol" value="{{fleet.bol}}"/></td>
-                                    <td><input type="text" class="form-control" placeholder="state" value="{{fleet.state}}"/></td>
                                     <td>
-                                        <span class="button">&#9998;</span>
-                                        <button class="button"><small>&#10060;</small></button>
+                                        <input type="text" class="form-control" placeholder="attribute" value="{{fleet.permissions.attribute}}" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="bol" placeholder="bol" value="{{fleet.permissions.bol}}" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="states" placeholder="state" value="{{fleet.permissions.state}}" />
+                                    </td>
+                                </tr>
+                                <tr *ngIf="fleet.delivery">
+                                    <td>
+                                        <input type="checkbox"/>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" placeholder="state" value="{{fleet.delivery.state}}" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="delivery" placeholder="state" value="{{fleet.delivery.delivery}}" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="aStates" placeholder="bol" value="{{fleet.delivery.states}}" />
                                     </td>
                                 </tr>
                             </table>
@@ -53,7 +73,81 @@
         </table>
         <div class="form-group col-12 ">&nbsp;</div>
         <div class="form-group col-12 ">
-            <button class="button float-right " type="submit ">Add New User</button>
+            <button class="button float-right" (click)="addNewUserModal.show()" type="button">Add New User</button>
         </div>
     </form>
+</div>
+<!-- modals -->
+<div bsModal #addNewUserModal="bs-modal" (onHide)="onCloseNewUserModal()" class="modal fade addNewUserModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <i class="modal-close" (click)="addNewUserModal.hide()"></i>
+        <div class="modal-content">
+            <div class="modal-head"></div>
+            <div class="modal-body">
+                <div *ngFor="let alert of alerts; let i = index" class="alert col-12 {{alert.class}}"><span>{{alert.message}}</span><i class="modal-close alert" (click)="removeAlert(i)"></i></div>
+                <form #searchUser name="search-user-form" validate role="form" (ngSubmit)="onUserSeach(emailSearchStr)">
+                    <div class="form-group flex justify-between">
+                        <div class="col-10 pr3">
+                            <input autocomplete="off" class="form-control" type="email" placeholder="Email" [(ngModel)]="emailSearchStr" required/>
+                        </div>
+                        <button class="button" type="submit">Search</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <form #addSearchUser name="add-search-user-form" validate role="form" (ngSubmit)="onAddUserPermission(newUserData)" [hidden]="!newUserData.id">
+                    <table class="table table-bordered addUserTable" width="100%" cellpadding="5">
+                        <thead>
+                            <tr>
+                                <th>Company</th>
+                                <th>First&nbsp;Name</th>
+                                <th>Last&nbsp;Name</th>
+                                <th>Email</th>
+                                <th>Password</th>
+                            </tr>
+                        </thead>
+                        <tr align="left">
+                            <td style="border: none">
+                                <input autocomplete="off" class="form-control" placeholder="Company" [(ngModel)]="newUserData.company" required />
+                            </td>
+                            <td style="border: none">
+                                <input autocomplete="off" class="form-control" placeholder="first Name" [(ngModel)]="newUserData.firstName" required />
+                            </td>
+                            <td style="border: none">
+                                <input autocomplete="off" class="form-control" placeholder="Last Name" [(ngModel)]="newUserData.lastName" required />
+                            </td>
+                            <td style="border: none">
+                                <input autocomplete="off" type="email" class="form-control" placeholder="Email" [(ngModel)]="newUserData.email" required/>
+                            </td>
+                            <td style="border: none">
+                                <input autocomplete="off" type="password" class="form-control" placeholder="password" [(ngModel)]="newUserData.password" />
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="form-group col-12 ">&nbsp;</div>
+                    <button class="button" type="submit"><span class="plus"></span>&nbsp;Add&nbsp;User</button>
+                </form>
+                <form #associateUser name="associate-user-form" validate role="form" (ngSubmit)="onAddUserPermission(userTableData)" [hidden]="userTableData.length <= 0">
+                    <table class="table table-bordered addUserTable" width="100%" cellpadding="5">
+                        <thead>
+                            <tr>
+                                <th>Company</th>
+                                <th>First&nbsp;Name</th>
+                                <th>Last&nbsp;Name</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tr *ngFor="let user of userTableData" align="left">
+                            <td style="border: none">{{user.company}}</td>
+                            <td style="border: none">{{user.firstName}}</td>
+                            <td style="border: none">{{user.lastName}}</td>
+                            <td style="border: none">{{user.email}}</td>
+                        </tr>
+                    </table>
+                    <div class="form-group col-12 ">&nbsp;</div>
+                    <button class="button" type="submit"><span class="plus"></span>&nbsp;Associate&nbsp;User</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

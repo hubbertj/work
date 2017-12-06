@@ -15,9 +15,37 @@ import { LocalStorageService } from '../localstorage/localstorage.service';
 export class DivisionService extends BaseService {
 	private divisionUrl = 'divisions';
 	private attributesUrl = 'loadattributes';
+	private permissionUrl = 'permissionuser';
 
 	constructor (private httpService:HttpService, protected popoverService: PopoverService, protected router: Router, protected localStorageService: LocalStorageService) {
 		super(popoverService, router, localStorageService);
+	};
+
+	public getPermissions (email) {
+		let body = JSON.stringify({
+			email: email
+		});
+
+		return this.httpService
+			.post(this.permissionUrl + '/' + 'get', body)
+			.toPromise()
+			.catch(this.error);
+	};
+
+	public addUserPermission (id: number, company: string, firstName: string, lastName: string, email: string, password: string) {
+		let body = JSON.stringify({
+			id: id,
+			company: company,
+			firstName: firstName,
+			lastName: lastName,
+			email: email,
+			password: password
+		});
+
+		return this.httpService
+			.post(this.permissionUrl + '/' + 'post', body)
+			.toPromise()
+			.catch(this.error);
 	};
 
 	public getBrokers (divisionId) {
@@ -26,7 +54,6 @@ export class DivisionService extends BaseService {
 			.toPromise()
 			.catch(this.error);
 	};
-
 
 	public getMessages (divisionId) {
 		return this.httpService
