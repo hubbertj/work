@@ -21,6 +21,13 @@ export class DivisionService extends BaseService {
 		super(popoverService, router, localStorageService);
 	};
 
+	public getAllPermissions (){
+		return this.httpService
+			.get(this.permissionUrl + '/' + 'get')
+			.toPromise()
+			.catch(this.error.bind(this));
+	};
+
 	public getPermissions (email) {
 		let body = JSON.stringify({
 			email: email

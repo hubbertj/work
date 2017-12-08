@@ -12,57 +12,58 @@
                     <th>First&nbsp;Name</th>
                     <th>Last&nbsp;Name</th>
                     <th>Email&nbsp;Address</th>
+                    <th>&nbsp;</th>
                 </tr>
             </thead>
             <template ngFor let-user [ngForOf]="filteredUsers" let-i="index">
-                <tr (click)="user.show = !user.show">
-                    <td>
+                <tr>
+                    <td (click)="user.show = !user.show">
                         <a class="button -outline -md">
                             <ng-container *ngIf="user.show"><span class="minus"></span></ng-container>
                             <ng-container *ngIf="!user.show"><span class="plus"></span></ng-container>
                         </a>&nbsp;{{user.company}}</td>
-                    <td>{{user.firstName}}</td>
-                    <td>{{user.lastName}}</td>
-                    <td>{{user.email}}</td>
+                    <td (click)="user.show = !user.show">{{user.firstName}}</td>
+                    <td (click)="user.show = !user.show">{{user.lastName}}</td>
+                    <td (click)="user.show = !user.show">{{user.email}}</td>
+                    <td><a class="button -outline -sm float-right" [hidden]="!user.show" (click)="onAddFleet(user)"><span class="plus"></span></a></td>
                 </tr>
-                <template ngFor let-fleet [ngForOf]="user.fleet" let-idx="index">
+                <template ngFor let-fleet [ngForOf]="user.Fleets" let-idx="index">
                     <tr [ngClass]="(user.show == true) ? 'open':'close'">
                         <td colspan="1">&nbsp;</td>
                         <td colspan="5">
-                            <h4 class="fleet-header"><span class="button -outline -md" (click)="fleet.show = !fleet.show">
-                              <ng-container *ngIf="fleet.show"><span class="minus"></span></ng-container>
-                              <ng-container *ngIf="!fleet.show"><span class="plus"></span></ng-container>
-                              </span>&nbsp;&nbsp;{{fleet.name}}
-                              <span class="float-right"><span class="button">&#9998;</span>
-                              <button class="button" type="button" (click)="onEdit(i, idx)"><small>&#10060;</small></button></span>
+                            <h4 class="fleet-header">
+                                <span class="button -outline -md" (click)="fleet.show = !fleet.show">
+                                    <ng-container *ngIf="fleet.show"><span class="minus"></span></ng-container>
+                                    <ng-container *ngIf="!fleet.show"><span class="plus"></span></ng-container>
+                                </span>&nbsp;&nbsp;{{fleet.FleetName}}
+                                <span class="float-right">
+                                    <button *ngIf="fleet.show" class="button -outline -md -icon" type="button" title="Edit" (click)="onAddPermission(fleet.Permissions)"><span class="plus"></span></button>
+                                    <button type="button" class="button -icon -outline-danger" title="Delete" (click)="removeFleet(i, idx)"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button></span>
                             </h4>
                             <table class="fleet-table" [ngClass]="(fleet.show == true) ? 'open':'close'" width="100%">
-                                <tr *ngIf="fleet.permissions">
+                                <tr *ngFor="let permission of fleet.Permissions; let permissionIndex = index">
                                     <td>
-                                        <input type="checkbox"/>
+                                        <input type="checkbox" [(ngModel)]="permission.isEnabled"/>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" placeholder="attribute" value="{{fleet.permissions.attribute}}" />
+                                        <select class="form-control" [(ngModel)]="permission.type" (ngModelChange)="onPermissionChange(permission)">
+                                            <option *ngFor="let permissionType of permissionTypes" [value]="permissionType.value">{{permissionType.string}}</option>
+                                        </select>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" name="bol" placeholder="bol" value="{{fleet.permissions.bol}}" />
+                                        <input type="text" class="form-control" [(ngModel)]="permission.key" name="key" placeholder="attribute" [attr.list]="'keyAttributes-' + i + idx + permissionIndex" [disabled]="(permission.type == 0)"/>
+                                        <datalist [id]="'keyAttributes-' + i + idx + permissionIndex">
+                                            <ng-container *ngIf="permission.type == 1"><option *ngFor="let attr of permissionAttributes" [value]="attr.string">{{attr.string}}</option></ng-container>
+                                            <ng-container *ngIf="permission.type == 2"><option  *ngFor="let attr of permissionStates" [value]="attr.string">{{attr.string}}</option></ng-container>
+                                        </datalist>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" name="states" placeholder="state" value="{{fleet.permissions.state}}" />
-                                    </td>
-                                </tr>
-                                <tr *ngIf="fleet.delivery">
-                                    <td>
-                                        <input type="checkbox"/>
+                                        <input *ngIf="permission.type != 2" type="text" class="form-control" name="value" placeholder="value" value="{{permission.value}}" [disabled]="(permission.type == 0)"/>
+                                        <!-- <input *ngIf="permission.type == 2" type="text" class="form-control" name="value" placeholder="value" value="tx;az;ca"/> -->
+                                        <transflo-dropdown *ngIf="permission.type == 2" [list]="ustates" [selectedList]="[]" (listChanged)="stateChanged($event)" placeholder="Select states"></transflo-dropdown>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" placeholder="state" value="{{fleet.delivery.state}}" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="delivery" placeholder="state" value="{{fleet.delivery.delivery}}" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="aStates" placeholder="bol" value="{{fleet.delivery.states}}" />
+                                        <button type="button" class="button -icon -outline-danger float-right -sm" title="removePermission" (click)="fleet.Permissions.splice(permissionIndex, 1)"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button>
                                     </td>
                                 </tr>
                             </table>
@@ -78,14 +79,39 @@
     </form>
 </div>
 <!-- modals -->
+<div bsModal #addFleetModal="bs-modal" (onHide)="onCloseAddFleetModal()" class="modal fade addFleetModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+                <div class="modal-content -center">
+                        <div class="modal-header col-12">
+                                <button aria-label="Close" class="modal-close" tabindex="-1" title="Close" type="button" (click)="addFleetModal.hide()"></button>
+                                <h1 class="modal-title inline-block">Add&nbsp;Fleet</h1>
+                        </div>
+                        <div class="modal-body col-12">
+                                <div *ngFor="let alert of alerts; let i = index" class="alert col-12 {{alert.class}}"><span>{{alert.message}}</span><i class="modal-close alert" (click)="removeAlert(i)"></i></div>
+                                <form [id]="'addFleetForm'" name="add-fleet-form" role="form" (ngSubmit)="addFleet(userDivisions[modalIndex])" validate>
+                                        <div class="form-group flex justify-between">
+                                                <div class="col-10 pr3">
+                                                        <select class="form-control" placeholder="fleet" [id]="'fleetSelect'" [(ngModel)]="modalIndex" required>
+                                                                <option *ngFor="let fleet of userDivisions; let i = index" [value]="i">{{fleet.name}}</option>
+                                                        </select>
+                                                </div>
+                                                <button class="button" type="submit">Add</button>
+                                        </div>
+                                </form>
+                        </div>
+                        <div class="modal-footer col-12"></div>
+                </div>
+        </div>
+</div>
+
 <div bsModal #addNewUserModal="bs-modal" (onHide)="onCloseNewUserModal()" class="modal fade addNewUserModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <i class="modal-close" (click)="addNewUserModal.hide()"></i>
-        <div class="modal-content">
+        <div class="modal-content -center">
             <div class="modal-head"></div>
-            <div class="modal-body">
+            <div class="modal-body col-12">
                 <div *ngFor="let alert of alerts; let i = index" class="alert col-12 {{alert.class}}"><span>{{alert.message}}</span><i class="modal-close alert" (click)="removeAlert(i)"></i></div>
-                <form #searchUser name="search-user-form" validate role="form" (ngSubmit)="onUserSeach(emailSearchStr)">
+                <form [id]="'searchUser'" name="search-user-form" validate role="form" (ngSubmit)="onUserSeach(emailSearchStr)">
                     <div class="form-group flex justify-between">
                         <div class="col-10 pr3">
                             <input autocomplete="off" class="form-control" type="email" placeholder="Email" [(ngModel)]="emailSearchStr" required/>
@@ -94,8 +120,8 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <form #addSearchUser name="add-search-user-form" validate role="form" (ngSubmit)="onAddUserPermission(newUserData)" [hidden]="!newUserData.id">
+            <div class="modal-footer col-12">
+                <form [id]="'addSearchUser'" name="add-search-user-form" validate role="form" (ngSubmit)="onAddUserPermission(newUserData)" [hidden]="!newUserData.id">
                     <table class="table table-bordered addUserTable" width="100%" cellpadding="5">
                         <thead>
                             <tr>
@@ -127,7 +153,7 @@
                     <div class="form-group col-12 ">&nbsp;</div>
                     <button class="button" type="submit"><span class="plus"></span>&nbsp;Add&nbsp;User</button>
                 </form>
-                <form #associateUser name="associate-user-form" validate role="form" (ngSubmit)="onAddUserPermission(userTableData)" [hidden]="userTableData.length <= 0">
+                <form [id]="'associateUser'" name="associate-user-form" validate role="form" (ngSubmit)="onAddUserPermission(userTableData)" [hidden]="userTableData.length <= 0">
                     <table class="table table-bordered addUserTable" width="100%" cellpadding="5">
                         <thead>
                             <tr>
