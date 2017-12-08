@@ -9,6 +9,9 @@ export var PermissionTypes: Array < any > = [{
     {
         value: 2,
         string: "State"
+    },
+    {
+        value: 3,
+        string: "Company"
     }
-
 ];

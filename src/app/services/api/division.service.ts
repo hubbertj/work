@@ -55,12 +55,14 @@ export class DivisionService extends BaseService {
 			.catch(this.error);
 	};
 
+
 	public getBrokers (divisionId) {
 		return this.httpService
 			.get(this.divisionUrl + '/' + divisionId + '/brokers/')
 			.toPromise()
 			.catch(this.error);
 	};
+
 
 	public getMessages (divisionId) {
 		return this.httpService

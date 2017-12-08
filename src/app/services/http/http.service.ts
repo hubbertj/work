@@ -56,7 +56,7 @@ export class HttpService {
     public testGet (url:string) {
         return this.http.get(url);
     };
-    
+
     public fileUpload(url: string, file: File): Promise<any> {
 
         url = this.baseUrl + url;

@@ -54,7 +54,8 @@
                                         <input type="text" class="form-control" [(ngModel)]="permission.key" name="key" placeholder="attribute" [attr.list]="'keyAttributes-' + i + idx + permissionIndex" [disabled]="(permission.type == 0)"/>
                                         <datalist [id]="'keyAttributes-' + i + idx + permissionIndex">
                                             <ng-container *ngIf="permission.type == 1"><option *ngFor="let attr of permissionAttributes" [value]="attr.string">{{attr.string}}</option></ng-container>
-                                            <ng-container *ngIf="permission.type == 2"><option  *ngFor="let attr of permissionStates" [value]="attr.string">{{attr.string}}</option></ng-container>
+                                            <ng-container *ngIf="permission.type == 2"><option *ngFor="let attr of permissionStates" [value]="attr.string">{{attr.string}}</option></ng-container>
+                                            <ng-container *ngIf="permission.type == 3"><option *ngFor="let attr of permissionCompanies" [value]="attr.string">{{attr.string}}</option></ng-container>
                                         </datalist>
                                     </td>
                                     <td>
@@ -111,7 +112,7 @@
             <div class="modal-head"></div>
             <div class="modal-body col-12">
                 <div *ngFor="let alert of alerts; let i = index" class="alert col-12 {{alert.class}}"><span>{{alert.message}}</span><i class="modal-close alert" (click)="removeAlert(i)"></i></div>
-                <form [id]="'searchUser'" name="search-user-form" validate role="form" (ngSubmit)="onUserSeach(emailSearchStr)">
+                <form [id]="'searchUser'" name="search-user-form" validate role="form" (ngSubmit)="onUserSearch(emailSearchStr)">
                     <div class="form-group flex justify-between">
                         <div class="col-10 pr3">
                             <input autocomplete="off" class="form-control" type="email" placeholder="Email" [(ngModel)]="emailSearchStr" required/>

@@ -63,7 +63,8 @@ export class MapDirective implements OnInit, OnChanges, OnDestroy {
 
 			this.map.setMaxBounds(bounds);
 			this.map.scrollWheelZoom.disable();
-			if(!this.map._loaded) this.loadError.emit({error: true, msg: ''});
+
+			if(!this.map._loaded) this.loadError.emit({error: true});
 
 		} else {
 			this.map.invalidateSize();

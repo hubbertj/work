@@ -98,7 +98,6 @@ import '../svg/svg_chatgroup_active.svg';
     { path: '/division/:divId/profile', component: ProfileComponent, name: 'Profile', data: { roles: [Role.AUTHROIZED] } },
     { path: '/division/:divId/CustomerAccessManagement', component: CustomerAccessManagementComponent, name: 'CustomerAccessManagement', data: { roles: [Role.AUTHROIZED] } },
 
-
     { path: '/share/:shareId', component: SharedLoadComponent, name: 'SharedLoad', data: { roles: [Role.AUTHROIZED] } },
 
     { path: '/register', component: RegisterComponent, name: 'Register', data: { roles: [] } },

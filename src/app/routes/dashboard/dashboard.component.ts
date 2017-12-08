@@ -664,7 +664,7 @@ export class DashboardComponent implements OnInit {
         this.loading = true;
 
         this.localStorageService.getItem('dashboardDates');
-
+        
         this.checkMapquestAvailability('https://api.mqcdn.com/sdk/mapquest-js/v1.2.0/mapquest.js')
         	.then((res) => {
         		this.drawMap();

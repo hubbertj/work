@@ -5,9 +5,5 @@ export var PermissionStates: Array < any > = [{
     {
         value: 1,
         string: "Delivery"
-    },
-    {
-        value: 2,
-        string: "Both"
     }
 ];
