@@ -7,6 +7,7 @@ import { HttpService } from '../http/http.service';
 import { PopoverService } from '../popover-service/popover-service.service';
 import { Router } from '@angular/router-deprecated';
 import { LocalStorageService } from '../localstorage/localstorage.service';
+import { Permission } from '../../models/index';
 
 
 
@@ -19,6 +20,39 @@ export class DivisionService extends BaseService {
 
 	constructor (private httpService:HttpService, protected popoverService: PopoverService, protected router: Router, protected localStorageService: LocalStorageService) {
 		super(popoverService, router, localStorageService);
+	};
+
+	public deletePermissionUserPermissions(permissionUserId: number, fleetId: number, fleetName: string, permissions: Array < Permission >){
+		let body = JSON.stringify({
+	        fleetId: fleetId,
+	        fleetName: fleetName,
+	        permissions: permissions
+	    });
+	    let postUrl: string = this.permissionUrl + '/permissions/' + permissionUserId;
+	     return this.httpService
+	            .delete(postUrl, body)
+	            .toPromise()
+	            .catch(this.error);
+	}; 
+
+	public savePermissionUserPermissions(permissionUserId: number, fleetId: number, fleetName: string, permissions: Array < Permission > , isNew: boolean) {
+	    let body = JSON.stringify({
+	        fleetId: fleetId,
+	        fleetName: fleetName,
+	        permissions: permissions
+	    });
+	    let postUrl: string = this.permissionUrl + '/permissions/' + permissionUserId;
+	    if (isNew) {
+	        return this.httpService
+	            .post(postUrl, body)
+	            .toPromise()
+	            .catch(this.error);
+	    } else {
+	        return this.httpService
+	            .put(postUrl, body)
+	            .toPromise()
+	            .catch(this.error);
+	    }
 	};
 
 	public getAllPermissions (){

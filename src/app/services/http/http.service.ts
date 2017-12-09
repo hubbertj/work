@@ -49,8 +49,13 @@ export class HttpService {
 		return this.http.put(this.baseUrl + url, body, this.options);
 	};
 
-	delete (url:string, options?: RequestOptionsArgs) {
-		return this.http.delete(this.baseUrl + url, this.options);
+	delete(url: string, body: string, options ? : RequestOptionsArgs) {
+        if (body) {
+            let requestOptions = new RequestOptions(this.options);
+            requestOptions.body = body
+            return this.http.delete(this.baseUrl + url, requestOptions);
+        }
+        return this.http.delete(this.baseUrl + url, this.options);
     };
 
     public testGet (url:string) {

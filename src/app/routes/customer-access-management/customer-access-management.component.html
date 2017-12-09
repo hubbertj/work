@@ -38,7 +38,7 @@
                                 </span>&nbsp;&nbsp;{{fleet.FleetName}}
                                 <span class="float-right">
                                     <button *ngIf="fleet.show" class="button -outline -md -icon" type="button" title="Edit" (click)="onAddPermission(fleet.Permissions)"><span class="plus"></span></button>
-                                    <button type="button" class="button -icon -outline-danger" title="Delete" (click)="removeFleet(i, idx)"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button></span>
+                                    <button type="button" class="button -icon -outline-danger" title="Delete" (click)="onDeleteFleet(i, idx)"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button></span>
                             </h4>
                             <table class="fleet-table" [ngClass]="(fleet.show == true) ? 'open':'close'" width="100%">
                                 <tr *ngFor="let permission of fleet.Permissions; let permissionIndex = index">
@@ -46,12 +46,12 @@
                                         <input type="checkbox" [(ngModel)]="permission.isEnabled"/>
                                     </td>
                                     <td>
-                                        <select class="form-control" [(ngModel)]="permission.type" (ngModelChange)="onPermissionChange(permission)">
+                                        <select class="form-control" [(ngModel)]="permission.type" (ngModelChange)="permission.changed = true; onPermissionChange(permission)">
                                             <option *ngFor="let permissionType of permissionTypes" [value]="permissionType.value">{{permissionType.string}}</option>
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" [(ngModel)]="permission.key" name="key" placeholder="attribute" [attr.list]="'keyAttributes-' + i + idx + permissionIndex" [disabled]="(permission.type == 0)"/>
+                                        <input type="text" class="form-control" [(ngModel)]="permission.key" name="key" placeholder="attribute" [attr.list]="'keyAttributes-' + i + idx + permissionIndex" [disabled]="(permission.type == 0)" (ngModelChange)="permission.changed = true"/>
                                         <datalist [id]="'keyAttributes-' + i + idx + permissionIndex">
                                             <ng-container *ngIf="permission.type == 1"><option *ngFor="let attr of permissionAttributes" [value]="attr.string">{{attr.string}}</option></ng-container>
                                             <ng-container *ngIf="permission.type == 2"><option *ngFor="let attr of permissionStates" [value]="attr.string">{{attr.string}}</option></ng-container>
@@ -59,12 +59,15 @@
                                         </datalist>
                                     </td>
                                     <td>
-                                        <input *ngIf="permission.type != 2" type="text" class="form-control" name="value" placeholder="value" value="{{permission.value}}" [disabled]="(permission.type == 0)"/>
-                                        <!-- <input *ngIf="permission.type == 2" type="text" class="form-control" name="value" placeholder="value" value="tx;az;ca"/> -->
-                                        <transflo-dropdown *ngIf="permission.type == 2" [list]="ustates" [selectedList]="[]" (listChanged)="stateChanged($event)" placeholder="Select states"></transflo-dropdown>
+                                        <input *ngIf="permission.type != 2" type="text" class="form-control" name="value" placeholder="value" [(ngModel)]="permission.value" [disabled]="(permission.type == 0)" (ngModelChange)="permission.changed = true"/>
+                                        <input *ngIf="permission.type == 2" type="text" class="form-control" name="value" placeholder="select states" [(ngModel)]="permission.value" value="tx;az;ca"/>
+                                        <!-- <transflo-dropdown *ngIf="permission.type == 2" [list]="ustates" [selectedList]="[]" (listChanged)="stateChanged($event)" placeholder="Select states"></transflo-dropdown> -->
                                     </td>
                                     <td>
-                                        <button type="button" class="button -icon -outline-danger float-right -sm" title="removePermission" (click)="fleet.Permissions.splice(permissionIndex, 1)"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button>
+                                        <button type="button" class="button -icon -outline-danger float-right -sm" title="removePermission" 
+                                        (click)="onDeletePermission(user.id, fleet.fleetId, fleet.FleetName, permission, fleet.Permissions, permissionIndex)"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button>
+                                        <span class="float-right">&nbsp;</span>
+                                        <button type="button" class="button -icon -outline-primary float-right -sm" title="savePermission" (click)="onSavePermission(user.id, fleet.fleetId, fleet.FleetName, permission)" [hidden]="!(permission.changed)"><span class="plus"></span></button>
                                     </td>
                                 </tr>
                             </table>

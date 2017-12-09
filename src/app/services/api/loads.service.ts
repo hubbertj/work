@@ -104,7 +104,7 @@ export class LoadsService extends BaseService {
 
 	public deleteLoad (loadId) {
 		return this.httpService
-			.delete(this.loadUrl(loadId))
+			.delete(this.loadUrl(loadId), null)
 			.toPromise()
 			.catch(this.error.bind(this));
 	};

@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, EventEmitter, Input, OnChanges } from '@angular/core';
 import { MODAL_DIRECTVES, BS_VIEW_PROVIDERS } from 'ng2-bootstrap';
 import { DivisionService, UserService } from '../../services/index';
-import { UStates, PermissionAttributes, PermissionTypes, PermissionStates } from '../../constants/index';
-import { Permission, Fleet } from '../../models/index';
+import { UStates, PermissionAttributes, PermissionTypes, PermissionStates, PermissionCompanies } from '../../constants/index';
+import { Permission, Fleet, UserPermission } from '../../models/index';
 import { DropdownComponent } from '../../components/dropdown/dropdown.component';
 
 @Component({
@@ -17,10 +17,10 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
     @ViewChild('addNewUserModal') addNewUserModal;
     @ViewChild('addFleetModal') addFleetModal;
 
-    @Input() users: Array < any > = [];
+    @Input() users: Array < UserPermission > = [];
 
 
-    private filteredUsers: Array < any > = [];
+    private filteredUsers: Array < UserPermission > = [];
     private filterStr: string;
     private emailSearchStr: string;
     private userTableData: Array < any > = [];
@@ -28,6 +28,7 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
     private permissionAttributes: Array < any > = PermissionAttributes;
     private permissionTypes: Array < any > = PermissionTypes;
     private permissionStates: Array < any > = PermissionStates;
+    private permissionCompanies: Array < any > = PermissionCompanies;
     private ustates: Array < any > = UStates;
     private loading: boolean = false;
 
@@ -55,82 +56,53 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
      * Standard init fucntion
      */
     ngOnInit() {
-        // console.log(UStates);
+
         this.loading = true;
         this.users = [];
+
         //fake data;
-        this.users.push({
-            "id": 152,
-            "email": "bob@somewhere.com",
-            "firstName": "Bob",
-            "lastName": "Somebody",
-            "company": "Bod's Shipping",
-            "isAssociated": true,
-            "Fleets": [{
-                "FleetName": "Fleet A",
-                "fleetId": 156,
-                "Permissions": [{
-                    "id": 1656,
-                    "type": 0,
-                    "key": "",
-                    "value": "",
-                    "isEnabled": true,
-                    "errorMessage": " a error message"
-                }]
-            }]
-        });
+        let aPermission = new Permission();
+        aPermission.id = 1656;
+        aPermission.type = 1;
+        aPermission.key = "";
+        aPermission.value = "";
+        aPermission.isEnabled = true;
+        aPermission.errorMessage = " a error message";
 
-        this.users.push({
-            "id": 153,
-            "email": "ablebody@3plmanagement.com",
-            "firstName": "Able",
-            "lastName": "Body",
-            "company": "3PL Mangement",
-            "isAssociated": true,
-            "Fleets": [{
-                "FleetName": "Fleet B",
-                "fleetId": 230,
-                "Permissions": [{
-                    "id": 1562,
-                    "type": 1,
-                    "key": "Fragile",
-                    "value": "avalue _ string",
-                    "isEnabled": true,
-                    "errorMessage": " aa error message"
-                }]
-            }]
-        });
+        let aFleet = new Fleet();
+        aFleet.FleetName = "Fleet A";
+        aFleet.fleetId = 156;
+        aFleet.Permissions.push(aPermission);
 
-        this.users.push({
-            "id": 154,
-            "email": "allison@amfshipping.com",
-            "firstName": "Allison",
-            "lastName": "Fentriss",
-            "company": "Allison Shipping",
-            "isAssociated": true,
-            "Fleets": [{
-                "fleetId": 1651,
-                "FleetName": "Fleet C",
-                "Permissions": [{
-                        "id": 1656,
-                        "type": 2,
-                        "key": "Pickup",
-                        "value": "value _ string",
-                        "isEnabled": true,
-                        "errorMessage": " a error message"
-                    },
-                    {
-                        "id": 1565,
-                        "type": 0,
-                        "key": "",
-                        "value": "",
-                        "isEnabled": false,
-                        "errorMessage": " a error message"
-                    }
-                ]
-            }]
-        });
 
+        let aUser = new UserPermission();
+        aUser.id = 152;
+        aUser.email = "bob@somewhere.com";
+        aUser.firstName = "Bob";
+        aUser.lastName = "Somebody";
+        aUser.company = "Bod's Shipping";
+        aUser.isAssociated = true;
+        aUser.Fleets.push(aFleet);
+
+        this.users.push(aUser);
+
+        let bUser: UserPermission = < UserPermission > JSON.parse(JSON.stringify(aUser));
+        bUser.email = "ablebody@3plmanagement.com";
+        bUser.firstName = "Able";
+        bUser.lastName = "Body";
+        bUser.company = "3PL Mangement";
+        bUser.isAssociated = false;
+        this.users.push(bUser);
+
+        let cUser: UserPermission = < UserPermission > JSON.parse(JSON.stringify(aUser));
+        cUser.id = 154;
+        cUser.email = "allison@amfshipping.com";
+        cUser.firstName = "Allison";
+        cUser.lastName = "Fentriss";
+        cUser.company = "Allison Shipping";
+        cUser.isAssociated = true;
+        this.users.push(cUser);
+        //end fake data
 
         this.divisionService.getAllPermissions()
             .then((response) => {
@@ -138,7 +110,8 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
                 let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
                 switch (code) {
                     case 200:
-                        this.users.concat(response);
+                        let resUsers: Array < UserPermission > = response.text() && response.json();
+                        this.users.concat(resUsers);
                         break;
                     case 403:
                         this.divisionService.error(response);
@@ -149,12 +122,12 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
                 }
                 this.filteredUsers = this.users;
             });
-
     };
 
 
     // @override
     ngOnChanges(changes) {
+        console.log("we are jere");
         console.log(changes);
     };
 
@@ -200,12 +173,6 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
         this.fleetModalUser = null;
     };
 
-
-    private removeFleet(userIndex, fleetIndex) {
-        this.users[userIndex].Fleets.splice(fleetIndex, 1);
-    };
-
-
     private onPermissionChange(permission: any) {
         permission.value = null;
         if (permission.type == 0) {
@@ -228,7 +195,7 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
         this.alerts = [];
 
         var found = this.fleetModalUser.Fleets.find((element) => {
-            return element.id === division.id;
+            return element.fleetId === division.id;
         });
 
         if (found) {
@@ -257,19 +224,30 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
         }
     };
 
+    /**
+     * Removes a alert from our alert list
+     * @param {[number]} index [the index of the element to remove]
+     */
     private removeAlert(index) {
         this.alerts.splice(index, 1);
     };
 
+    /**
+     * [adds a permission to the our permission modal]
+     * @param {[array<permission>]} permissions [a array of permissions]
+     */
     private onAddPermission(permissions) {
-        permissions.push(new Permission());
+        var permission = new Permission();
+        permission['changed'] = true;
+        permissions.push(permission);
         return false;
     };
 
     /**
-     * [onUserSeach description]
+     * [The submit process for user permission seaerch form]
+     * @param {string} email [a email string]
      */
-    private onUserSeach(email: string) {
+    private onUserSearch(email: string) {
         this.clearForms();
 
         this.divisionService.getPermissions(email)
@@ -315,8 +293,8 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
     };
 
     /**
-     * [onAddSearchUser description]
-     * @param {[type]} users [description]
+     * [This adds a permission for a user, submit process for the add user permission form]
+     * @param {[user]} users [The user we have found or are adding a permission for]
      */
     private onAddUserPermission(aUser) {
         let user: any = (aUser instanceof Array && aUser.length > 0) ? aUser[0] : aUser;
@@ -362,16 +340,118 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
         return false;
     };
 
-    private onSave() {
+    /**
+     * [The saving of a permission row]
+     * @param {Permission} permission The permission we want to save.
+     */
+    private onSavePermission(permissionUserId: number, fleetId: number, fleetName: string, permission: Permission) {
+        let isNew: boolean = (!permission.id || permission.id == -1);
+        let permissionArr: Array < Permission > = [];
+        permissionArr.push(permission);
 
+        this.divisionService.savePermissionUserPermissions(permissionUserId, fleetId, fleetName, permissionArr, isNew)
+            .then((response) => {
+                let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
+                switch (code) {
+                    case 200:
+                        let aPermissionsArr: Array < Permission > = response.text() && response.json();
+                        if (aPermissionsArr.length > 0) permission.id = aPermissionsArr.shift().id;
+                        permission['changed'] = false;
+                        break;
+                    case 400:
+                        this.divisionService.error(response);
+                        break;
+                    case 403:
+                        this.divisionService.error(response);
+                        break;
+                    case 500:
+                        this.divisionService.showErrorBox({ details: [{ error: "Unexpected error on the server, failed to save permission" }] });
+                        break;
+                }
+            });
         return false;
     };
 
     /**
-     * funtion which is call when the form is submitted
+     * [Removes a permission from the permissionUser]
+     * @param {number}     permissionUserId Id of the user we are removing a permission from
+     * @param {number}     fleetId          The fleet id where the permission will be removed from.
+     * @param {string}     fleetName        Name of fleet, optional.
+     * @param {Permission} permission       The permission which is being removed.
+     */
+    private onDeletePermission(permissionUserId: number, fleetId: number, fleetName: string, permission: Permission, permissions: Array < Permission > , index: number) {
+        let permissionArr: Array < Permission > = [];
+        if (!permission.id || permission.id == -1) {
+            permissions.splice(index, 1);
+            return false;
+        }
+        permissionArr.push(permission);
+        this.divisionService.deletePermissionUserPermissions(permissionUserId, fleetId, fleetName, permissionArr)
+            .then((response) => {
+                let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
+                switch (code) {
+                    case 200:
+                        permissions.splice(index, 1);
+                        break;
+                    case 400:
+                        this.divisionService.error(response);
+                        break;
+                    case 403:
+                        this.divisionService.error(response);
+                        break;
+                    case 500:
+                        this.divisionService.showErrorBox({ details: [{ error: "Unexpected error on the server, failed to delete permission" }] });
+                        break;
+                }
+            });
+        return false;
+    };
+
+    /**
+     * [Removes a fleet from our user]
+     * @param {[number]} userIndex  index for the user
+     * @param {[number]} fleetIndex index for the fleet in the user fleet array.
+     */
+    private onDeleteFleet(userIndex: number, fleetIndex: number) {
+        let deletePermissions: Array < Permission > = [];
+        let fleet: Fleet = this.users[userIndex].Fleets[fleetIndex];
+        let permissionUserId: number = this.users[userIndex].id;
+
+        for (let permission of fleet.Permissions) {
+            let isNew: boolean = (!permission.id || permission.id == -1);
+            if (!isNew) deletePermissions.push(permission);
+        }
+        if (deletePermissions.length === 0) {
+            this.users[userIndex].Fleets.splice(fleetIndex, 1);
+            return false;
+        }
+
+        this.divisionService.deletePermissionUserPermissions(permissionUserId, fleet.fleetId, fleet.FleetName, deletePermissions)
+            .then((response) => {
+                let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
+                switch (code) {
+                    case 200:
+                        this.users[userIndex].Fleets.splice(fleetIndex, 1);
+                        break;
+                    case 400:
+                        this.divisionService.error(response);
+                        break;
+                    case 403:
+                        this.divisionService.error(response);
+                        break;
+                    case 500:
+                        this.divisionService.showErrorBox({ details: [{ error: "Unexpected server error, failed to delete fleet permissions" }] });
+                        break;
+                }
+            });
+        return false;
+    };
+
+    /**
+     * [Function which is called when the customerAccessManagementForm is submitted]
      */
     private onSubmit() {
-        console.log(arguments);
+        console.error("unknown error");
         return false;
     };
 
