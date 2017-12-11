@@ -3,11 +3,11 @@ import { MODAL_DIRECTVES, BS_VIEW_PROVIDERS } from 'ng2-bootstrap';
 import { DivisionService, UserService } from '../../services/index';
 import { UStates, PermissionAttributes, PermissionTypes, PermissionStates, PermissionCompanies } from '../../constants/index';
 import { Permission, Fleet, UserPermission } from '../../models/index';
-import { DropdownComponent } from '../../components/dropdown/dropdown.component';
+import { ModalSelectComponent } from '../../components/index';
 
 @Component({
     selector: 'app-customer-access-management',
-    directives: [MODAL_DIRECTVES, DropdownComponent],
+    directives: [MODAL_DIRECTVES, ModalSelectComponent],
     viewProviders: [BS_VIEW_PROVIDERS],
     template: require('./customer-access-management.component.html'),
     providers: [DivisionService, UserService]
@@ -127,16 +127,7 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
 
     // @override
     ngOnChanges(changes) {
-        console.log("we are jere");
         console.log(changes);
-    };
-
-    /**
-     * fires when we change states
-     * @param {[type]} event [description]
-     */
-    private stateChanged(event) {
-
     };
 
     /**

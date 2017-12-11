@@ -11,6 +11,7 @@ export * from './popovers/index';
 export * from './errors/index';
 export * from './eula/index';
 export * from './help/index';
+export * from './modal-select/index';
 
 //export * from './datepicker/index';
 
