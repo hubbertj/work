@@ -1,0 +1,26 @@
+<input class="form-control" [(ngModel)]="model"  (click)="selectModal.show()" [placeholder]="name"/>
+<!--Select Modal-->
+<div bsModal #selectModal="bs-modal" (onHide)="onSelectModalClose()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="selectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content -center">
+            <div class="modal-popup-close">
+                <button type="button" class="modal-close " aria-label="Close" (click)="selectModal.hide()" title="Close">&times;</button>
+            </div>
+            <div class="modal-popup">
+                <header class="modal-popup-header">
+                    <h1 style="margin: .5em 0;">Select&nbsp;{{name}}</h1>
+                </header>
+                <div class="modal-popup-content">
+                    <div class="flex-wrap -hover multiple-menu" style="display: flex;">
+                        <div *ngFor="let item of list; let i = index" style="width: 75px">
+                            <label>
+                                <input type="checkbox" [(ngModel)]="item.selected" />
+                                <span>{{item.name || item.text}}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
