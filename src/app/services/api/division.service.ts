@@ -32,7 +32,6 @@ export class DivisionService extends BaseService {
 	     return this.httpService
 	            .delete(postUrl, body)
 	            .toPromise()
-	            .catch(this.error);
 	}; 
 
 	public savePermissionUserPermissions(permissionUserId: number, fleetId: number, fleetName: string, permissions: Array < Permission > , isNew: boolean) {
@@ -46,12 +45,10 @@ export class DivisionService extends BaseService {
 	        return this.httpService
 	            .post(postUrl, body)
 	            .toPromise()
-	            .catch(this.error);
 	    } else {
 	        return this.httpService
 	            .put(postUrl, body)
 	            .toPromise()
-	            .catch(this.error);
 	    }
 	};
 
@@ -70,7 +67,6 @@ export class DivisionService extends BaseService {
 		return this.httpService
 			.post(this.permissionUrl + '/' + 'get', body)
 			.toPromise()
-			.catch(this.error);
 	};
 
 	public addUserPermission (id: number, company: string, firstName: string, lastName: string, email: string, password: string) {
@@ -86,7 +82,7 @@ export class DivisionService extends BaseService {
 		return this.httpService
 			.post(this.permissionUrl + '/' + 'post', body)
 			.toPromise()
-			.catch(this.error);
+			.catch(this.error.bind(this));
 	};
 
 

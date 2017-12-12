@@ -60,50 +60,6 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
         this.loading = true;
         this.users = [];
 
-        //fake data;
-        let aPermission = new Permission();
-        aPermission.id = 1656;
-        aPermission.type = 1;
-        aPermission.key = "";
-        aPermission.value = "";
-        aPermission.isEnabled = true;
-        aPermission.errorMessage = " a error message";
-
-        let aFleet = new Fleet();
-        aFleet.FleetName = "Fleet A";
-        aFleet.fleetId = 156;
-        aFleet.Permissions.push(aPermission);
-
-
-        let aUser = new UserPermission();
-        aUser.id = 152;
-        aUser.email = "bob@somewhere.com";
-        aUser.firstName = "Bob";
-        aUser.lastName = "Somebody";
-        aUser.company = "Bod's Shipping";
-        aUser.isAssociated = true;
-        aUser.Fleets.push(aFleet);
-
-        this.users.push(aUser);
-
-        let bUser: UserPermission = < UserPermission > JSON.parse(JSON.stringify(aUser));
-        bUser.email = "ablebody@3plmanagement.com";
-        bUser.firstName = "Able";
-        bUser.lastName = "Body";
-        bUser.company = "3PL Mangement";
-        bUser.isAssociated = false;
-        this.users.push(bUser);
-
-        let cUser: UserPermission = < UserPermission > JSON.parse(JSON.stringify(aUser));
-        cUser.id = 154;
-        cUser.email = "allison@amfshipping.com";
-        cUser.firstName = "Allison";
-        cUser.lastName = "Fentriss";
-        cUser.company = "Allison Shipping";
-        cUser.isAssociated = true;
-        this.users.push(cUser);
-        //end fake data
-
         this.divisionService.getAllPermissions()
             .then((response) => {
                 this.loading = false;
@@ -111,7 +67,9 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
                 switch (code) {
                     case 200:
                         let resUsers: Array < UserPermission > = response.text() && response.json();
-                        this.users.concat(resUsers);
+                        if (resUsers && resUsers.length){
+                            this.users = resUsers;
+                        }
                         break;
                     case 403:
                         this.divisionService.error(response);
@@ -185,7 +143,7 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
     private addFleet(division: any) {
         this.alerts = [];
 
-        var found = this.fleetModalUser.Fleets.find((element) => {
+        var found = this.fleetModalUser.fleets.find((element) => {
             return element.fleetId === division.id;
         });
 
@@ -197,7 +155,7 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
         } else {
             var fleet = new Fleet();
             fleet.fleetId = division.id;
-            fleet.FleetName = division.name;
+            fleet.fleetName = division.name;
             this.fleetModalUser.Fleets.push(fleet);
             this.addFleetModal.hide();
         }
@@ -243,11 +201,11 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
 
         this.divisionService.getPermissions(email)
             .then((response) => {
+                this.userTableData.push(response);
+            })
+            .catch((response) => {
                 let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
                 switch (code) {
-                    case 200:
-                        this.userTableData.push(response);
-                        break;
                     case 400:
                         this.alerts = [];
                         this.alerts.push({
@@ -278,7 +236,7 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
                             class: 'alert-danger'
                         });
                         break;
-                };
+                }
             });
         return false;
     };
@@ -342,18 +300,19 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
 
         this.divisionService.savePermissionUserPermissions(permissionUserId, fleetId, fleetName, permissionArr, isNew)
             .then((response) => {
+                let aPermissionsArr: Array < Permission > = response.text() && response.json();
+                if (aPermissionsArr.length > 0) permission.id = aPermissionsArr.shift().id;
+                    permission['changed'] = false;
+            })
+            .catch((response) => {
                 let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
                 switch (code) {
-                    case 200:
-                        let aPermissionsArr: Array < Permission > = response.text() && response.json();
-                        if (aPermissionsArr.length > 0) permission.id = aPermissionsArr.shift().id;
-                        permission['changed'] = false;
-                        break;
                     case 400:
-                        this.divisionService.error(response);
+                        let  result: Fleet = response.text() && response.json();
+                        this.divisionService.showErrorBox({ details: [{ error: result.errorMessage || result.permissions[0].errorMessage }] })
                         break;
                     case 403:
-                        this.divisionService.error(response);
+                        this.divisionService.showErrorBox({ details: [{ error: "Forbidden" }] })
                         break;
                     case 500:
                         this.divisionService.showErrorBox({ details: [{ error: "Unexpected error on the server, failed to save permission" }] });
@@ -379,11 +338,11 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
         permissionArr.push(permission);
         this.divisionService.deletePermissionUserPermissions(permissionUserId, fleetId, fleetName, permissionArr)
             .then((response) => {
+                let result: Fleet = response.json();
+                permissions = result.permissions;
+            }).catch((response) => {
                 let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
                 switch (code) {
-                    case 200:
-                        permissions.splice(index, 1);
-                        break;
                     case 400:
                         this.divisionService.error(response);
                         break;
@@ -408,7 +367,7 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
         let fleet: Fleet = this.users[userIndex].Fleets[fleetIndex];
         let permissionUserId: number = this.users[userIndex].id;
 
-        for (let permission of fleet.Permissions) {
+        for (let permission of fleet.permissions) {
             let isNew: boolean = (!permission.id || permission.id == -1);
             if (!isNew) deletePermissions.push(permission);
         }
@@ -417,7 +376,7 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
             return false;
         }
 
-        this.divisionService.deletePermissionUserPermissions(permissionUserId, fleet.fleetId, fleet.FleetName, deletePermissions)
+        this.divisionService.deletePermissionUserPermissions(permissionUserId, fleet.fleetId, fleet.fleetName, deletePermissions)
             .then((response) => {
                 let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
                 switch (code) {

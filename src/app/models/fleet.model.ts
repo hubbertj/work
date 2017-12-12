@@ -2,11 +2,12 @@ import { Permission } from './permission.model';
 
 export class Fleet {
     constructor() {
-        this.FleetName = "Fleet";
+        this.fleetName = "Fleet";
         this.fleetId = -1;
-        this.Permissions = []
+        this.permissions = [];
     };
-    FleetName: string;
+    fleetName: string;
     fleetId: number;
-    Permissions: Array<Permission>
+    permissions: Array<Permission>
+    errorMessage: string;
 }

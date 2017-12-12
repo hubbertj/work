@@ -27,7 +27,7 @@
                     <td (click)="user.show = !user.show">{{user.email}}</td>
                     <td><a class="button -outline -sm float-right" [hidden]="!user.show" (click)="onAddFleet(user)"><span class="plus"></span></a></td>
                 </tr>
-                <template ngFor let-fleet [ngForOf]="user.Fleets" let-idx="index">
+                <template ngFor let-fleet [ngForOf]="user.fleets" let-idx="index">
                     <tr [ngClass]="(user.show == true) ? 'open':'close'">
                         <td colspan="1">&nbsp;</td>
                         <td colspan="5">
@@ -35,13 +35,13 @@
                                 <span class="button -outline -md" (click)="fleet.show = !fleet.show">
                                     <ng-container *ngIf="fleet.show"><span class="minus"></span></ng-container>
                                     <ng-container *ngIf="!fleet.show"><span class="plus"></span></ng-container>
-                                </span>&nbsp;&nbsp;{{fleet.FleetName}}
+                                </span>&nbsp;&nbsp;{{fleet.fleetName}}
                                 <span class="float-right">
-                                    <button *ngIf="fleet.show" class="button -outline -md -icon" type="button" title="Edit" (click)="onAddPermission(fleet.Permissions)"><span class="plus"></span></button>
+                                    <button *ngIf="fleet.show" class="button -outline -md -icon" type="button" title="Edit" (click)="onAddPermission(fleet.permissions)"><span class="plus"></span></button>
                                     <button type="button" class="button -icon -outline-danger" title="Delete" (click)="onDeleteFleet(i, idx)"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button></span>
                             </h4>
                             <table class="fleet-table" [ngClass]="(fleet.show == true) ? 'open':'close'" width="100%">
-                                <tr *ngFor="let permission of fleet.Permissions; let permissionIndex = index">
+                                <tr *ngFor="let permission of fleet.permissions; let permissionIndex = index">
                                     <td>
                                         <input type="checkbox" [(ngModel)]="permission.isEnabled"/>
                                     </td>
@@ -60,13 +60,13 @@
                                     </td>
                                     <td>
                                         <input *ngIf="permission.type != 2" type="text" class="form-control" name="value" placeholder="value" [(ngModel)]="permission.value" [disabled]="(permission.type == 0)" (ngModelChange)="permission.changed = true"/>
-                                       <transflo-modal-select *ngIf="permission.type == 2" [items]="ustates" [name]="'States'" [model]="permission.value" (listChanged)="permission.value = $event"></transflo-modal-select>
+                                        <transflo-modal-select *ngIf="permission.type == 2" [items]="ustates" [name]="'States'" [model]="permission.value" (listChanged)="permission.value = $event"></transflo-modal-select>
                                     </td>
                                     <td>
                                         <button type="button" class="button -icon -outline-danger float-right -sm" title="removePermission" 
-                                        (click)="onDeletePermission(user.id, fleet.fleetId, fleet.FleetName, permission, fleet.Permissions, permissionIndex)"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button>
+                                        (click)="onDeletePermission(user.id, fleet.fleetId, fleet.fleetName, permission, fleet.permissions, permissionIndex)"><svg class="icon -trash"><use xlink:href="#svg_trash"/></svg></button>
                                         <span class="float-right">&nbsp;</span>
-                                        <button type="button" class="button -icon -outline-primary float-right -sm" title="savePermission" (click)="onSavePermission(user.id, fleet.fleetId, fleet.FleetName, permission)" [hidden]="!(permission.changed)"><span class="plus"></span></button>
+                                        <button type="button" class="button -icon -outline-primary float-right -sm" title="savePermission" (click)="onSavePermission(user.id, fleet.fleetId, fleet.fleetName, permission)" [hidden]="!(permission.changed)"><span class="plus"></span></button>
                                     </td>
                                 </tr>
                             </table>
