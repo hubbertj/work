@@ -8,7 +8,7 @@ export class UserPermission {
         this.lastName = "";
         this.company = "";
         this.isAssociated = false;
-        this.Fleets = [];
+        this.fleets = [];
     };
     id: number;
     email: string;
@@ -16,5 +16,5 @@ export class UserPermission {
     lastName: string;
     company: string;
     isAssociated: boolean;
-    Fleets: Array < Fleet >
+    fleets: Array < Fleet >
 }

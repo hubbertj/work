@@ -60,7 +60,7 @@
                                     </td>
                                     <td>
                                         <input *ngIf="permission.type != 2" type="text" class="form-control" name="value" placeholder="value" [(ngModel)]="permission.value" [disabled]="(permission.type == 0)" (ngModelChange)="permission.changed = true"/>
-                                        <transflo-modal-select *ngIf="permission.type == 2" [items]="ustates" [name]="'States'" [model]="permission.value" (listChanged)="permission.value = $event"></transflo-modal-select>
+                                        <transflo-modal-select *ngIf="permission.type == 2" [items]="ustates" [name]="'States'" [model]="permission.value" (listChanged)="permission.value = $event; permission.changed = true"></transflo-modal-select>
                                     </td>
                                     <td>
                                         <button type="button" class="button -icon -outline-danger float-right -sm" title="removePermission" 

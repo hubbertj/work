@@ -101,8 +101,8 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
         }
 
         for (var user in this.users) {
-            var jsonUser = JSON.stringify(this.users[user]);
-            if (jsonUser.search(val) > -1) filterArray.push(this.users[user]);
+            var jsonUser = JSON.stringify(this.users[user]).toUpperCase();
+            if (jsonUser.search(val.toUpperCase()) > -1) filterArray.push(this.users[user]);
         }
 
         this.filteredUsers = filterArray;
@@ -118,6 +118,7 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
     };
 
     private onCloseAddFleetModal() {
+        this.alerts = [];
         this.userDivisions = [];
         this.fleetModalUser = null;
     };
@@ -156,7 +157,7 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
             var fleet = new Fleet();
             fleet.fleetId = division.id;
             fleet.fleetName = division.name;
-            this.fleetModalUser.Fleets.push(fleet);
+            this.fleetModalUser.fleets.push(fleet);
             this.addFleetModal.hide();
         }
         return false;
@@ -300,9 +301,17 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
 
         this.divisionService.savePermissionUserPermissions(permissionUserId, fleetId, fleetName, permissionArr, isNew)
             .then((response) => {
-                let aPermissionsArr: Array < Permission > = response.text() && response.json();
-                if (aPermissionsArr.length > 0) permission.id = aPermissionsArr.shift().id;
-                    permission['changed'] = false;
+                let fleets: Array <Fleet> = response.text() && response.json();
+                let fleet: Fleet;
+                fleet = fleets.pop();
+            
+                if(isNew){
+                    //we are assuming the last element in fleets.permissions is the newest permission saved?
+                     let savedPermission: Permission = fleet.permissions.pop();
+                     permission.id = savedPermission.id;
+                }
+
+                permission['changed'] = false;
             })
             .catch((response) => {
                 let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
@@ -338,8 +347,12 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
         permissionArr.push(permission);
         this.divisionService.deletePermissionUserPermissions(permissionUserId, fleetId, fleetName, permissionArr)
             .then((response) => {
-                let result: Fleet = response.json();
-                permissions = result.permissions;
+                let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
+                // let result: Fleet = response.json();
+                // permissions = result.permissions;
+                if(code === 200 && index != null){
+                    permissions.splice(index, 1);
+                }
             }).catch((response) => {
                 let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
                 switch (code) {
@@ -364,7 +377,7 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
      */
     private onDeleteFleet(userIndex: number, fleetIndex: number) {
         let deletePermissions: Array < Permission > = [];
-        let fleet: Fleet = this.users[userIndex].Fleets[fleetIndex];
+        let fleet: Fleet = this.users[userIndex].fleets[fleetIndex];
         let permissionUserId: number = this.users[userIndex].id;
 
         for (let permission of fleet.permissions) {
@@ -372,16 +385,16 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
             if (!isNew) deletePermissions.push(permission);
         }
         if (deletePermissions.length === 0) {
-            this.users[userIndex].Fleets.splice(fleetIndex, 1);
+            this.users[userIndex].fleets.splice(fleetIndex, 1);
             return false;
         }
-
+        //TODO: Need a way to dissociation a fleet from a user remove a fleet in the backend.
         this.divisionService.deletePermissionUserPermissions(permissionUserId, fleet.fleetId, fleet.fleetName, deletePermissions)
             .then((response) => {
                 let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
                 switch (code) {
                     case 200:
-                        this.users[userIndex].Fleets.splice(fleetIndex, 1);
+                        this.users[userIndex].fleets.splice(fleetIndex, 1);
                         break;
                     case 400:
                         this.divisionService.error(response);
