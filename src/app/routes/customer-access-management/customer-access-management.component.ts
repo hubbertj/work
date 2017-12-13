@@ -414,7 +414,6 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
      * [Function which is called when the customerAccessManagementForm is submitted]
      */
     private onSubmit() {
-        console.error("unknown error");
         return false;
     };
 
