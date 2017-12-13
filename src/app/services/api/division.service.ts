@@ -82,7 +82,6 @@ export class DivisionService extends BaseService {
 		return this.httpService
 			.post(this.permissionUrl + '/' + 'post', body)
 			.toPromise()
-			.catch(this.error.bind(this));
 	};
 
 
