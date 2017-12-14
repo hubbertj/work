@@ -117,7 +117,7 @@
                 <form [id]="'searchUser'" name="search-user-form" validate role="form" (ngSubmit)="onUserSearch(emailSearchStr)">
                     <div class="form-group flex justify-between">
                         <div class="col-10 pr3">
-                            <input autocomplete="off" class="form-control" maxlength="99" type="email" placeholder="Email" [(ngModel)]="emailSearchStr" required/>
+                            <input autocomplete="off" class="form-control" maxlength="100" type="email" placeholder="Email" [(ngModel)]="emailSearchStr" required/>
                         </div>
                         <button class="button" type="submit">Search</button>
                     </div>
@@ -137,19 +137,19 @@
                         </thead>
                         <tr align="left">
                             <td style="border: none">
-                                <input autocomplete="off" class="form-control" placeholder="Company" [(ngModel)]="newUserData.company" required />
+                                <input autocomplete="off" class="form-control" placeholder="Company" maxlength="100" [(ngModel)]="newUserData.company" required />
                             </td>
                             <td style="border: none">
-                                <input autocomplete="off" class="form-control" placeholder="First Name" [(ngModel)]="newUserData.firstName" required />
+                                <input autocomplete="off" class="form-control" placeholder="First Name" maxlength="50" [(ngModel)]="newUserData.firstName" required />
                             </td>
                             <td style="border: none">
-                                <input autocomplete="off" class="form-control" placeholder="Last Name" [(ngModel)]="newUserData.lastName" required />
+                                <input autocomplete="off" class="form-control" placeholder="Last Name" maxlength="50" [(ngModel)]="newUserData.lastName" required />
                             </td>
                             <td style="border: none">
-                                <input autocomplete="off" type="email" class="form-control" placeholder="Email" [(ngModel)]="newUserData.email" required/>
+                                <input autocomplete="off" type="email" class="form-control" placeholder="Email" maxlength="100" [(ngModel)]="newUserData.email" required/>
                             </td>
                             <td style="border: none">
-                                <input autocomplete="off" type="password" class="form-control" placeholder="Password" [(ngModel)]="newUserData.password" />
+                                <input autocomplete="off" type="password" class="form-control" placeholder="Password" maxlength="50" [(ngModel)]="newUserData.password" />
                             </td>
                         </tr>
                     </table>

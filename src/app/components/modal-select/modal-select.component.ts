@@ -28,7 +28,7 @@ export class ModalSelectComponent implements OnInit {
 		});
 		
 		if(this.model){
-			this.selected = this.model.split(',').map( (item) => { return item.toUpperCase().trim(); });
+			this.selected = this.model.split(';').map( (item) => { return item.toUpperCase().trim(); });
 		}
 
 		this.list.map((item) =>{
@@ -43,7 +43,8 @@ export class ModalSelectComponent implements OnInit {
 		for(let item of this.list){
 			if(item.selected) valuesArr.push(item.name);
 		}
-		outStr = valuesArr.toString();
+
+		outStr = valuesArr.join(";");
 		
 		this.model = outStr;
 		this.listChanged.emit(outStr);
