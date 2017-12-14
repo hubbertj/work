@@ -7,6 +7,7 @@ import {SkeletonComponent} from '../../components/skeleton/index';
 import { DriversComponent} from '../../components/drivers/index';
 import { ShareComponent } from '../../components/share/index';
 import { DateComponent } from '../../components/date/index';
+import { User } from '../../models/index';
 
 import { MapDirective } from '../../directives/map/map.directive';
 
@@ -33,12 +34,9 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
 	private id;
 	private loadId;
 	private divisionId;
-    private isCarrier;
-    public isCommonCarrier;
 	private load:any = {
 		showMap: false
 	};
-
 	private loading:boolean;
 	private stops = [];
 	private shipments = [];
@@ -53,6 +51,12 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
 	private messages;
 	private subscribers: any = [];
 	private eventGroups: any = [];
+	private notificationsDropdown = false;
+	private brokerInstructionAttributeName = '!BrokerInstructions';
+	private brokerInstructions;
+	private loadError: boolean = false;
+
+	public user: User = new User({});
 	public newSubscriber = {
         label: <string> null,
         email: <string>null,
@@ -67,10 +71,6 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
         hideEmailinValid: <boolean> true,
         events: []
     };
-	private notificationsDropdown = false;
-	private brokerInstructionAttributeName = '!BrokerInstructions';
-	private brokerInstructions;
-	private loadError: boolean = false;
 
 	constructor (
 		private router:Router,
@@ -265,7 +265,9 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
 		this.divisionId = +this.router.root.currentInstruction.urlPath.split('/')[1];
 		this.loadId = +this.router.root.currentInstruction.urlPath.split('/')[3];
 
-		this.userService.getUser(this.setCarrier.bind(this));
+		this.userService.getUser((user) => {
+			this.user = user;
+		});
 
         this.loadsService.getLoad(this.loadId, this.divisionId)
 			.then(this.deserealizeLoad.bind(this));
@@ -283,15 +285,6 @@ export class LoadDetailsComponent implements OnInit, OnDestroy {
 				window.open(event.target.getAttribute('href'), '_blank');
 			};
 		});
-	};
-
-	public setCarrier (user) {
-        let division = user.divisions.find((div) => {
-            return div.id == this.divisionId;
-        });
-
-        this.isCarrier = division.type == 'carrier';
-        this.isCommonCarrier = division.isCommonCarrier;
 	};
 
 	public deserealizeLoad (jsonResult) {

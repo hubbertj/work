@@ -43,7 +43,6 @@ export class ModalSelectComponent implements OnInit {
 		for(let item of this.list){
 			if(item.selected) valuesArr.push(item.name);
 		}
-
 		outStr = valuesArr.join(";");
 		
 		this.model = outStr;

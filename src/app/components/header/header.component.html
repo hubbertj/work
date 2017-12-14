@@ -25,7 +25,7 @@
   <ul class="header-item header-menu">
     <li><a [routerLink]="['Home', {divId: selectedDivision.id}]">Home</a></li>
     <li><a [routerLink]="['Loads', {divId: selectedDivision.id, ddl: getDate(), dsh: getDate()}]">Loads</a></li>
-	  <li [hidden]="!selectedDivision.isCarrier"><a messages [divisionId]="selectedDivision.id">Drivers</a></li>
+	  <li *ngIf="selectedDivision.isCarrier && !user.isPermissionUser"><a messages [divisionId]="selectedDivision.id">Drivers</a></li>
   </ul>
   <nav class="header-item header-profile">
     <div dropdown keyboardNav="true" autoClose="outsideClick">

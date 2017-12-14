@@ -27,8 +27,7 @@ export class BaseService {
 			case 500:
 				// Unexpected server error
 				this.showErrorBox();
-				break;
-			
+				break;			
 			case 401: 
 				// Unautorized
 				if (this.router.root.currentInstruction && !this.localStorageService.getItem('lastUrl')) {
@@ -38,12 +37,10 @@ export class BaseService {
 					}));
 				}
 
-
 				this.popoverService.hidePopovers('all');
 				this.router.navigate(['Signin']);
 
 				break;
-
 			case 400:
 				// validation error in create load page
 				if (this.router.root.currentInstruction.component.routeName == 'NewLoad') {
@@ -54,7 +51,6 @@ export class BaseService {
 				}
 
 				break;
-
 			default:
 				// other cases, FE App will expect array of error messages in details field.
 				// otherwise it will show popup with text: `An unexpected error has occurred. If the problem persists please contact your system administrator`

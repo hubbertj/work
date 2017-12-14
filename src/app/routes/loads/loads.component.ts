@@ -11,6 +11,7 @@ import {ShareComponent} from '../../components/share/index';
 
 import {SkeletonComponent} from '../../components/skeleton/index';
 import {AttributesComponent} from '../../components/attributes/index';
+import {User} from '../../models/index';
 
 
 import { RangePickerDirective } from '../../directives/rangepicker/rangepicker.directive';
@@ -106,8 +107,7 @@ export class LoadsComponent implements OnInit, OnDestroy {
 	public page: Array<any> = [];
 	public pages: Array<any> = [];
 	public loading: boolean = false;
-	public isCarrier: boolean;
-    public isCommonCarrier: boolean = false;
+	private user: User = new User({});
 	public filter: any;
 	public showPagination = true;
 
@@ -424,7 +424,10 @@ export class LoadsComponent implements OnInit, OnDestroy {
 		this.loading = true;
 		this.divisionId = this.router.root.currentInstruction.urlPath.split('/')[1];
 		this.deserealizeFilters(this.router.root.currentInstruction.urlParams);
-		this.userService.getUser((user) => this.setFilters(user));
+		this.userService.getUser((user) => {
+			this.user = user;
+			this.setFilters();
+		});
 
 		$('body').on('click.' + this.id, (event) => {
 			this.closeAllPopups();
@@ -650,14 +653,17 @@ export class LoadsComponent implements OnInit, OnDestroy {
 	};
 
     private getBrokers() {
-        this.userService.getUser((user) => this.setBrokerFilters(user));
+        this.userService.getUser((user) => {
+			this.user = user;
+			this.setBrokerFilters();
+		});
     };
 
-    private setBrokerFilters(user)
+    private setBrokerFilters()
     {
-        if (user.divisions) {
+        if (this.user.divisions) {
 
-			this.assignedByBrokers = user.divisions.map((div) => {
+			this.assignedByBrokers = this.user.divisions.map((div) => {
                 return {
                     type: div.type,
                     text: _.compact([div.name, div.code]).join(' — '), 
@@ -775,15 +781,12 @@ export class LoadsComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	private setFilters (user) {
-        if (user.divisions) {
-            let carrier = user.divisions.find((div) => {
-                return div.id == +this.divisionId
-            });
-            this.isCarrier = carrier.type == 'carrier';
-            this.isCommonCarrier = carrier.isCommonCarrier;
-
-            this.carriers = user.divisions.map((div) => {
+	private setFilters () {
+        if (this.user.divisions) {
+			this.filterStatus = (this.user.isPermissionUser) ? $.grep(this.filterStatus, (filter) => {
+				return filter.text.toLowerCase() !== 'declined' && filter.text.toLowerCase() !== 'offered';
+			}) : this.filterStatus;
+            this.carriers = this.user.divisions.map((div) => {
                 return {
                     type: div.type,
                     text: div.name,
@@ -793,7 +796,7 @@ export class LoadsComponent implements OnInit, OnDestroy {
                 return div.type == 'carrier';
 			});
 
-            this.carriersForMove = user.divisions.map((div) => {
+            this.carriersForMove = this.user.divisions.map((div) => {
                 return {
                     type: div.type,
                     text: _.compact([div.name, div.code]).join(' — '),// ? div.name + ' — ' : '' + div.code ? div.code : '',
@@ -841,11 +844,11 @@ export class LoadsComponent implements OnInit, OnDestroy {
 
 			})
 			.then(() =>{
-				if (this.isCarrier) {
+				if (this.user.getIsCarrier(this.divisionId)) {
 					this.loadDrivers();
 				} 	
 				
-				this.setBrokerFilters(user);
+				this.setBrokerFilters();
 			})
 			.catch(this.error);
         }

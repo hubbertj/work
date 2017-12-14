@@ -30,19 +30,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
 	public isSignInPage:boolean = true;
 
 	private partUrl: string = '';
-	private user: User;
+	private user: User = new User({});
 	private searchString: string;
 	private filteredDivisions: Array<Division>;
-	private selectedDivision: Division;
+	private selectedDivision: Division = new Division({});
 	private dontShowHeaderUrl: Array<string> = ['signin', 'restore', 'share', 'resetpassword', 'register'];
     private sub;
 	public loading = false;
 
 	constructor(private userService:UserService, private router: Router, private localStorageService: LocalStorageService) {
 		this.sub = router.subscribe((url) => this.checkPage(url));
-
-		this.selectedDivision = new Division({});
-		this.user = new User({});
 	};
 
 	ngOnDestroy () {

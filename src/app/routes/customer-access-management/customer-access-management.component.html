@@ -117,7 +117,7 @@
                 <form [id]="'searchUser'" name="search-user-form" validate role="form" (ngSubmit)="onUserSearch(emailSearchStr)">
                     <div class="form-group flex justify-between">
                         <div class="col-10 pr3">
-                            <input autocomplete="off" class="form-control" maxlength="100" type="email" placeholder="Email" [(ngModel)]="emailSearchStr" required/>
+                            <input autocomplete="off" class="form-control" type="email" maxlength="100" placeholder="Email" [(ngModel)]="emailSearchStr" required/>
                         </div>
                         <button class="button" type="submit">Search</button>
                     </div>

@@ -2,7 +2,7 @@
 <header class="page-header">
   <div class="flex items-center">
     <div class="col-7 items-baseline">
-      <h1>Load #{{isCarrier ? load.carrierLoadNumber : load.brokerLoadNumber}}<span [ngClass]="{'label-red': load.status === 'Declined', 'label-green': load.status !== 'Declined'}" class="label-lg pl2">{{load.status}}</span></h1>
+      <h1>Load #{{user.getIsCarrier(divisionId) ? load.carrierLoadNumber : load.brokerLoadNumber}}<span [ngClass]="{'label-red': load.status === 'Declined', 'label-green': load.status !== 'Declined'}" class="label-lg pl2">{{load.status}}</span></h1>
     </div>
     <div class="col-5 items-baseline">
       <transflo-share [loadId]="loadId" class="button-group" (onToggle)="closeNotifications($event)"></transflo-share>
@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="dropdown -inline -notification-dropdown"  [ngClass]="{'open': notificationsDropdown}">
-        <button type="button" [hidden]="isCommonCarrier" class="button -link -sm" (click)="openNotifications($event)">Notifications</button>
+        <button type="button" [hidden]="user.getIsCommonCarrier(divisionId)" class="button -link -sm" (click)="openNotifications($event)">Notifications</button>
         <div class="dropdown-menu -xlg2 -right" style="min-width: 500px; width: auto !important" role="menu">
           <button class="dropdown-close" type="button" (click)="closeNotifications($event)">&times;</button>
           <h2>Notifications</h2>
@@ -95,28 +95,13 @@
           </div>
         </div>
       </div>
-      <!-- Document scans, remove comments below in further releases -->
-      <!-- <div class="button -link -sm" dropdown keyboardNav="true" autoClose="outsideClick"  (onToggle)="closeNotifications($event)">
-        <button title="links" class="button -link -sm" type="button" dropdownToggle>Links</button>
-        <div class="dropdown-menu -right" dropdownMenu  role="menu">
-          <ul class="menu">
-            <li *ngFor="let link of load.menu" role="menuitem">
-              <a class="dropdown-item" target="_blank" href="{{link.url}}">
-              {{link.name}}
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div> -->
       <span class="buttons-separator"></span>
-
       <!-- Remove this span after implementation of links and document scans -->
       <span class="separator"></span>
-      <button type="button" class="button -primary" (click)="editLoad()">Edit Load</button>
+      <button type="button" class="button -primary" (click)="editLoad()" *ngIf="!user.isPermissionUser">Edit Load</button>
     </div>
   </div>
 </header>
-
 <div class="page-content">
   <div class="form-group">
     <div class="flex form-group">
@@ -126,23 +111,22 @@
           <div class="fs15 medium">{{load.bolNumber}}</div>
         </div>
         <div class="form-group -x2">
-          <div [hidden]="isCarrier">
+          <div [hidden]="user.getIsCarrier(divisionId)">
             <div class="form-label -text">
               Carrier
               <button class="button -outline -xs -icon" type="button" title="Edit" [hidden]="!load.carrierFleetId" (click)="goTendering()">
                 <svg class="icon -pen"><use xlink:href="#svg_pen"/></svg>
               </button>
-            </div>
-            
-            <div class="form-group" [hidden]="load.carrierFleetId">
+            </div>            
+            <div class="form-group" [hidden]="load.carrierFleetId" *ngIf="!user.isPermissionUser">
               <button class="button -outline -xs" type="button" (click)="goTendering()">+ Assign</button>
-			  <transflo-drivers [drivers]="load.carrierTenderingInfo" [isCarrier]="isCarrier" [loadId]="load.id" [divisionId]="divisionId" [loadStatus]="load.status"></transflo-drivers>
+			        <transflo-drivers [drivers]="load.carrierTenderingInfo" [isCarrier]="user.getIsCarrier(divisionId)" [loadId]="load.id" [divisionId]="divisionId" [loadStatus]="load.status"></transflo-drivers>
             </div>
             <div class="form-group -x05">
               <div>{{load.brokerTenderingInfo && load.brokerTenderingInfo.length > 0 ? load.brokerTenderingInfo[0].name : '' }}</div>
             </div>
           </div>
-          <div [hidden]="!isCarrier">
+          <div [hidden]="!user.getIsCarrier(divisionId)">
               <div class="form-label -text">Broker</div>
               <div>{{load.brokerTenderingInfo && load.brokerTenderingInfo.length > 0 ? load.brokerTenderingInfo[0].name : '-'}}</div>
           </div>
@@ -165,29 +149,14 @@
       </div>
     </div>
     <div class="flex items-end form-group -x2">
-	  <div class="col-3 pr4">
-	  <div *ngIf="isCarrier">
-	    <div class="form-label -text">Drivers</div>
-	    <div [hidden]="load.carrierTenderingInfo && load.carrierTenderingInfo.length"></div>
-	    <transflo-drivers [drivers]="load.carrierTenderingInfo" [isCarrier]="isCarrier" [loadId]="load.id" [divisionId]="divisionId" [loadStatus]="load.status"></transflo-drivers>
-	  </div>
-		  <!--<div class="form-group -x05">
-		    <div class="label-title">{{load.carrierDivision && load.carrierDivision.code}}</div>
-		    <div>{{load.carrierDivision && load.carrierDivision.name}}</div>
-		  </div>
-		 
-		  <div [hidden]="!isCarrier">
-		    <div class="label-title">{{load.brokerDivision && load.brokerDivision.code}}</div>
-		    <div>{{load.brokerDivision && load.brokerDivision.name}}</div>
-		  </div>-->
-	 
-	
-	  </div>
-        <!--<div class="form-label -text">Drivers</div>
-        <div [hidden]="load.carrierTenderingInfo && load.carrierTenderingInfo.length"> - </div>
-        <transflo-drivers [drivers]="load.carrierTenderingInfo" [isCarrier]="isCarrier" [loadId]="load.id" [divisionId]="divisionId" [loadStatus]="load.status"></transflo-drivers>-->
-    
-      <div class="pr4 pl3">
+      <div class="col-3 pr4">
+        <div *ngIf="user.getIsCarrier(divisionId) && !user.isPermissionUser">
+          <div class="form-label -text">Drivers</div>
+          <div [hidden]="load.carrierTenderingInfo && load.carrierTenderingInfo.length"></div>
+          <transflo-drivers [drivers]="load.carrierTenderingInfo" [isCarrier]="user.getIsCarrier(divisionId)" [loadId]="load.id" [divisionId]="divisionId" [loadStatus]="load.status"></transflo-drivers>
+        </div> 	
+      </div>
+      <div class="pr4 pl3" *ngIf="!user.isPermissionUser">
         <div class="form-label -text">Freight Terms</div>
         <div class="fs15 medium">{{load.freightTerms}}</div>
       </div>
@@ -195,7 +164,7 @@
         <div class="form-label -text form-group">Attributes</div>
         <transflo-attributes class="flex items-center form-group -x05" [attrs]="load.loadAttributes"></transflo-attributes>
       </div>
-      <div class="pr4 pl3">
+      <div class="pr4 pl3" *ngIf="!user.isPermissionUser">
         <div class="form-label -text">Special Instructions</div>
         <div dropdown keyboardNav="true">
           <button type="button" class="button -link -sm -dotted" dropdownToggle>Read Instructions</button>
@@ -215,19 +184,17 @@
           </div>
         </div>
       </div>
-	  <div class="flex-auto right-align pl3">
-	    <div class="form-label -text">Load Tracking</div>
-	    <div class="fs15 medium">{{load.loadTracking ? 'On' : 'Off'}}</div>
-	  </div>
       <div class="flex-auto right-align pl3">
+        <div class="form-label -text">Load Tracking</div>
+        <div class="fs15 medium">{{load.loadTracking ? 'On' : 'Off'}}</div>
+      </div>
+      <div class="flex-auto right-align pl3" *ngIf="!user.isPermissionUser">
         <div class="form-label -text">Rate</div>
         <div class="fs15 medium">${{load.rate || 0}}</div>
       </div>
 	  </div>
-    </div>
-  
+  </div>  
 </div>
-
 <div class="map" *ngIf="load.showMap">
   <div class="map-wrapper">
     <div class="map-container" map (loadError)="loadError = true" [breadcrumbs]="breadcrumbs" [truck]="load.truckLocation" [stops]="stops" [nextStop]="load.nextStop" [show]="load.showMap" style="height: 430px;">

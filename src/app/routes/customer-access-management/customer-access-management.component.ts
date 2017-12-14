@@ -198,11 +198,11 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
      * @param {string} email [a email string]
      */
     private onUserSearch(email: string) {
-         this.clearForms();
+        this.clearForms();
 
-         this.divisionService.getPermissions(email)
-             .then((response) => {
-                 let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
+        this.divisionService.getPermissions(email)
+            .then((response) => {
+                let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
                  let userPermission: UserPermission;
                  if (code === 200) {
                      userPermission = response.text() && response.json();
@@ -213,77 +213,77 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
                          class: 'alert-danger'
                      });
                  }
-             })
-             .catch((response) => {
-                 let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
-                 switch (code) {
-                     case 400:
-                         this.alerts = [];
-                         this.alerts.push({
-                             message: 'Email is missing',
-                             class: 'alert-danger'
-                         });
-                         break;
-
-                     case 401:
+            })
+            .catch((response) => {
+                let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
+                switch (code) {
+                    case 400:
+                        this.alerts = [];
+                        this.alerts.push({
+                            message: 'Email is missing',
+                            class: 'alert-danger'
+                        });
+                        break;
+                    
+                    case 401:
                          this.onCloseNewUserModal();
                          this.addNewUserModal.hide();
                          this.divisionService.error(response);
                          break;
 
-                     case 403:
-                         this.alerts = [];
-                         this.alerts.push({
-                             message: 'AdminUser is a common carrier or a valid AdminUser is attempting to add another AdminUser as a third party which is currently disallowed',
-                             class: 'alert-danger'
-                         });
-                         break;
-                     case 404:
-                         this.alerts = [];
-                         this.alerts.push({
-                             message: 'User was not found',
-                             class: 'alert-success'
-                         });
-                         this.newUserData.id = -1;
-                         this.newUserData.email = email;
-                         break;
-                     default:
-                         this.alerts = [];
-                         this.alerts.push({
-                             message: 'Unknown error',
-                             class: 'alert-danger'
-                         });
-                         break;
-                 }
-             });
-         return false;
-     };
+                    case 403:
+                        this.alerts = [];
+                        this.alerts.push({
+                            message: 'AdminUser is a common carrier or a valid AdminUser is attempting to add another AdminUser as a third party which is currently disallowed',
+                            class: 'alert-danger'
+                        });
+                        break;
+                    case 404:
+                        this.alerts = [];
+                        this.alerts.push({
+                            message: 'User was not found',
+                            class: 'alert-success'
+                        });
+                        this.newUserData.id = -1;
+                        this.newUserData.email = email;
+                        break;
+                    default:
+                        this.alerts = [];
+                        this.alerts.push({
+                            message: 'Unknown error',
+                            class: 'alert-danger'
+                        });
+                        break;
+                }
+            });
+        return false;
+    };
 
     /**
      * [This adds a permission for a user, submit process for the add user permission form]
      * @param {[user]} users [The user we have found or are adding a permission for]
      */
     private onAddUserPermission(aUser) {
-         let user: any = (aUser instanceof Array && aUser.length > 0) ? aUser[0] : aUser;
-         this.divisionService.addUserPermission(null, user.company, user.firstName, user.lastName, user.email, user.password)
-             .then((response) => {
-                 let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
-                 switch (code) {
-                     case 200:
-                         this.ngOnInit();
-                         this.onCloseNewUserModal();
-                         this.addNewUserModal.hide();
-                         break;
-                     default:
-                         this.alerts = [];
-                         this.alerts.push({
-                             message: 'Unknown error',
-                             class: 'alert-danger'
-                         });
-                         break;
-                 }
-             })
-             .catch((response) => {
+        let user: any = (aUser instanceof Array && aUser.length > 0) ? aUser[0] : aUser;
+        this.divisionService.addUserPermission(null, user.company, user.firstName, user.lastName, user.email, user.password)
+            .then((response) => {
+                let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
+                switch (code) {
+                    case 200:
+                        this.ngOnInit();
+                        this.onCloseNewUserModal();
+                        this.addNewUserModal.hide();
+                        break;
+                    default:
+                        this.alerts = [];
+                        this.alerts.push({
+                            message: 'Unknown error',
+                            class: 'alert-danger'
+                        });
+                        break;
+                }
+            })
+            .catch((response) => {
                  let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
                  switch (code) {
                      case 400:
@@ -323,9 +323,8 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
                          break;
                  }
              });
-         return false;
-     };
-
+        return false;
+    };
 
     /**
      * [The saving of a permission row]
@@ -338,14 +337,14 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
 
         this.divisionService.savePermissionUserPermissions(permissionUserId, fleetId, fleetName, permissionArr, isNew)
             .then((response) => {
-                let fleets: Array < Fleet > = response.text() && response.json();
+                let fleets: Array <Fleet> = response.text() && response.json();
                 let fleet: Fleet;
                 fleet = fleets.pop();
-
-                if (isNew) {
+            
+                if(isNew){
                     //we are assuming the last element in fleets.permissions is the newest permission saved?
-                    let savedPermission: Permission = fleet.permissions.pop();
-                    permission.id = savedPermission.id;
+                     let savedPermission: Permission = fleet.permissions.pop();
+                     permission.id = savedPermission.id;
                 }
 
                 permission['changed'] = false;
@@ -354,7 +353,7 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
                 let code: number = (response === undefined || response.status === undefined || !response.status) ? 500 : response.status;
                 switch (code) {
                     case 400:
-                        let result: Fleet = response.text() && response.json();
+                        let  result: Fleet = response.text() && response.json();
                         this.divisionService.showErrorBox({ details: [{ error: result.errorMessage || result.permissions[0].errorMessage }] })
                         break;
                     case 401:
@@ -372,7 +371,6 @@ export class CustomerAccessManagementComponent implements OnInit, OnChanges {
             });
         return false;
     };
-
 
     /**
      * [Removes a permission from the permissionUser]

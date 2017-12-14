@@ -1,6 +1,6 @@
 <header class="page-header flex items-center" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
   <h1 class="pr3">Loads</h1>
-  <div [hidden]="isCommonCarrier">
+  <div *ngIf="!user.getIsCommonCarrier(divisionId) && !user.isPermissionUser">
     <a class="button -primary" [routerLink]="['NewLoad', {divId: divisionId}]"> <span class="plus">+</span>Create new load</a>
   </div>
 </header>
@@ -11,7 +11,7 @@
         <label class="form-label">Status</label>
         <transflo-dropdown [list]="filterStatus" (listChanged)="statusChanged($event)" [selectedList]="statusFilter" valueField="name" placeholder="Select statuses"></transflo-dropdown>
       </div>
-      <div class="col-4 pr4 pl3" [ngClass]="{'col-8': !isCarrier}">
+      <div class="col-4 pr4 pl3" [ngClass]="{'col-8': !user.getIsCarrier(divisionId)}">
         <label class="form-label" for="filter_identifiers">Parameters</label>
         <input autocomplete="off" class="form-control" type="text" placeholder="Load #, BOL #, attributes" id="filter_identifiers" [(ngModel)]="paramsFilter" />
       </div>
@@ -58,20 +58,20 @@
             <input autocomplete="off" class="form-control -select" placeholder="Select dates" range-picker [daterange]="filterDateDelivery" (daterangechanged)="filterChanged($event, 'delivery')" />
           </div>
         </div>
-        <div class="col-4">
-            <div class="form-group"  [hidden]="!isCarrier">
+        <div class="col-4" *ngIf="!user.isPermissionUser">
+            <div class="form-group"  [hidden]="!user.getIsCarrier(divisionId)">
                 <label class="form-label">Assigned by Broker</label>
                 <transflo-dropdown [list]="assignedByBrokers" (listChanged)="divisionChanged($event)" [selectedList]="divisionFilter" valueField="text" placeholder="Select broker"></transflo-dropdown>
               </div>
-          <div class="form-group" [hidden]="!isCarrier">
+          <div class="form-group" [hidden]="!user.getIsCarrier(divisionId)">
             <label class="form-label">Offered to Driver</label>
             <transflo-dropdown [list]="drivers" (listChanged)="driverChanged($event, 'offered')" [selectedList]="offeredDriversFilter" valueField="text" placeholder="Select driver"></transflo-dropdown>
           </div>
-          <div class="form-group"  [hidden]="!isCarrier">
+          <div class="form-group"  [hidden]="!user.getIsCarrier(divisionId)">
             <label class="form-label">Assigned to Driver</label>
             <transflo-dropdown [list]="drivers" (listChanged)="driverChanged($event, 'assigned')" [selectedList]="assignedDriversFilter" valueField="text" placeholder="Select driver"></transflo-dropdown>
           </div>
-          <div class="form-group"  [hidden]="isCarrier">
+          <div class="form-group"  [hidden]="user.getIsCarrier(divisionId)">
             <label class="form-label">Assigned to Carrier</label>
             <transflo-dropdown [list]="assignedToCarriers" (listChanged)="carrierChanged($event, 'assigned')" [selectedList]="assignedCarriersFilter" valueField="text" placeholder="Select carrier"></transflo-dropdown>
           </div>
@@ -95,14 +95,15 @@
         <th class="-half"><span class="table-head-short">Stops</span></th>
         <th class="-half">Destination</th>
         <th>Identifiers</th>
-        <th [hidden]="isCarrier">Carrier</th>
-        <th [hidden]="!isCarrier">Broker</th>
-        <th [hidden]="!isCarrier">Driver</th>
-	      <th [hidden]="isCarrier"></th>
-        <th>Status</th>
-	
+        <th *ngIf="!user.isPermissionUser">
+          {{ user.getIsCarrier(divisionId) ? "Broker" : "Carrier" }}
+        </th>
+	      <th *ngIf="!user.isPermissionUser">
+          {{ user.getIsCarrier(divisionId) ? "Driver" : "" }}
+        </th>
+        <th>Status</th>	
         <th >Attrs</th>
-        <th width="1%" class="-half"></th>
+        <th *ngIf="!user.isPermissionUser" width="1%" class="-half"></th>
       </tr>
     </thead>
     <tbody>
@@ -120,11 +121,11 @@
         </td>
         <td class="-half">{{load.lastStop.addressLines.join(' ')}}, {{load.lastStop.city}} {{load.lastStop.state}} {{load.lastStop.postalCode}}</td>
         <td>
-          <div class="form-group" [hidden]="!isCarrier">
+          <div class="form-group" *ngIf="user.getIsCarrier(divisionId)">
             <span class="label-title">Load#</span>
             <span class="nowrap">{{load.carrierLoadNumber}}</span>
           </div>
-          <div class="form-group" [hidden]="isCarrier">
+          <div class="form-group" *ngIf="!user.getIsCarrier(divisionId)">
             <span class="label-title">Load#</span>
             <span class="nowrap">{{load.brokerLoadNumber}}</span>
           </div>
@@ -134,41 +135,42 @@
           </div>
         </td>
 		<!--Broker carrier-->
-        <td [hidden]="isCarrier">
-          <div class="form-group">
-            <span *ngIf="(!load.brokerTenderingInfo[0])" class="label-title nowrap">          
-			        <button class="button -outline -xs" type="button" *ngIf="(!load.carrierDivision || !load.carrierDivision.code)" [disabled]="load.status == 'Delivered'" (click)="gotoTendering(load.id, $event)"><span class="plus">+</span> Assign</button>
-            </span>            
-          </div>
-          <div class="form-group -x05">
-            <div class="label-title">{{load.carrierDivision && load.carrierDivision.code}}</div>
-            <div>
-              <div [hidden]="!load.brokerTenderingInfo[0]">
-                <span class="label-title nowrap">
-                  Assigned to&nbsp;
-                  <button class="button -outline -xs -icon" type="button" title="Edit" (click)="gotoTendering(load.id, $event)">
-                    <svg class="icon -pen"><use xlink:href="#svg_pen" /></svg>
-                  </button>
-                </span>
-                {{load.brokerTenderingInfo[0] ? load.brokerTenderingInfo[0].name : ''}}
+        <td *ngIf="!user.isPermissionUser">
+          <div *ngIf="!user.getIsCarrier(divisionId)">
+            <div class="form-group">
+              <span *ngIf="(!load.brokerTenderingInfo[0])" class="label-title nowrap">          
+                <button class="button -outline -xs" type="button" *ngIf="(!load.carrierDivision || !load.carrierDivision.code)" [disabled]="load.status == 'Delivered'" (click)="gotoTendering(load.id, $event)"><span class="plus">+</span> Assign</button>
+              </span>            
+            </div>
+            <div class="form-group -x05">
+              <div class="label-title">{{load.carrierDivision && load.carrierDivision.code}}</div>
+              <div>
+                <div [hidden]="!load.brokerTenderingInfo[0]">
+                  <span class="label-title nowrap">
+                    Assigned to&nbsp;
+                    <button class="button -outline -xs -icon" type="button" title="Edit" (click)="gotoTendering(load.id, $event)">
+                      <svg class="icon -pen"><use xlink:href="#svg_pen" /></svg>
+                    </button>
+                  </span>
+                  {{load.brokerTenderingInfo[0] ? load.brokerTenderingInfo[0].name : ''}}
+                </div>
               </div>
             </div>
           </div>
+          <div *ngIf="user.getIsCarrier(divisionId)">
+            <div class="label-title">{{load.brokerTenderingInfo[0] ? load.brokerTenderingInfo[0].name : '' }}</div>
+          </div>
         </td>
-        <td [hidden]="!isCarrier">
-          <div class="label-title">{{load.brokerTenderingInfo[0] ? load.brokerTenderingInfo[0].name : '' }}</div>
+        <td *ngIf="!user.isPermissionUser">
+          <transflo-drivers (onToggle)="setOpenedPopups($event)"  [drivers]="load.carrierTenderingInfo" [isCarrier]="user.getIsCarrier(divisionId)" [divisionId]="divisionId" [loadId]="load.id" [loadStatus]="load.status"></transflo-drivers>
         </td>
         <td>
-          <transflo-drivers (onToggle)="setOpenedPopups($event)"  [drivers]="load.carrierTenderingInfo" [isCarrier]="isCarrier" [divisionId]="divisionId" [loadId]="load.id" [loadStatus]="load.status"></transflo-drivers>
-        </td>
-        <td >
           <span class="nowrap" [ngClass]="{'label-green': load.status == 'Available', 'label-red': load.status == 'Declined'}">{{load.status}}</span>    
         </td>
-        <td >
+        <td>
           <transflo-attributes [attrs]="load.loadAttributes" (onToggle)="setOpenedPopups($event)" >{{load.loadAttributes}}</transflo-attributes>
         </td>
-        <td></td>
-        <td class="-half">
+        <td *ngIf="!user.isPermissionUser" class="-half">
           <div class="height100">
             <div class="dropdown" dropdown (onToggle)="setOpenedPopups($event)" keyboardNav="true" autoClose="outsideClick">
               <button class="table-actions" title="Actions" type="button" dropdownToggle>&bull;</button>
@@ -180,9 +182,9 @@
                 </li>
                 <li role="menuitem">
 				          <a class="dropdown-item" (click)="editLoad(load, $event)" [hidden]="load.status=='Delivered'">Edit</a></li>
-                <li role="menuitem" [hidden]="isCommonCarrier" [ngClass]="{'-disabled': isCommonCarrier}">
+                <li role="menuitem" [hidden]="user.getIsCommonCarrier(divisionId)" [ngClass]="{'-disabled': user.getIsCommonCarrier(divisionId)}">
 				          <a class="dropdown-item" (click)="cloneLoad(load, $event)">Clone</a></li>
-                <li role="menuitem" [hidden]="isCarrier && load.brokerDivision" [ngClass]="{'-disabled': load.status != 'Available'}">
+                <li role="menuitem" [hidden]="user.getIsCarrier(divisionId) && load.brokerDivision" [ngClass]="{'-disabled': load.status != 'Available'}">
                   <a class="dropdown-item" (click)="showMoveLoadPopup(load, $event)" dropdownToggle>
                     Move to division
                   </a>
@@ -196,7 +198,7 @@
                 <!--li role="menuitem" *ngFor="let link of load.menu">
                   <a class="dropdown-item" dropdownToggle href="{{link.url}}" target="_blank">{{link.name}}</a>
                 </li-->
-                <li role="menuitem" [hidden]="isCommonCarrier" [ngClass]="{'-disabled': isCommonCarrier}">
+                <li role="menuitem" [hidden]="user.getIsCommonCarrier(divisionId)" [ngClass]="{'-disabled': user.getIsCommonCarrier(divisionId)}">
 				        <a class="dropdown-item label-red" (click)="deleteLoad(load, $event)">Delete</a></li>
               </ul>
             </div>
@@ -263,10 +265,10 @@
               <h2>Move load to other division</h2>
               <div class="form-group flex">
                 <div class="col-8 pr2">
-                  <select [hidden]="isCarrier" class="form-control" [(ngModel)]="moveDivision">
+                  <select [hidden]="user.getIsCarrier(divisionId)" class="form-control" [(ngModel)]="moveDivision">
                     <option *ngFor="let div of brokersForMove" [ngValue]="div">{{div.text}}</option>
                   </select>
-                  <select [hidden]="!isCarrier" class="form-control" [(ngModel)]="moveDivision">
+                  <select [hidden]="!user.getIsCarrier(divisionId)" class="form-control" [(ngModel)]="moveDivision">
                     <option *ngFor="let div of carriersForMove" [ngValue]="div">{{div.text}}</option>
                   </select>
                 </div>
@@ -275,10 +277,6 @@
                 </div>
               </div>
               <hr />
-              <!--div class="form-group">
-                <strong class="label-danger">Driver</strong> assignation <strong class="label-danger">will be dropped</strong>
-                because Sebastian P. Fletcher isn’t related to Div NY.
-              </div-->
             </div>
           </div>
         </td>
@@ -301,9 +299,6 @@
     <h3>Please refine filters</h3>
   </div>
 </div>
-
-
-
 <!-- load details modal -->
 <div bsModal #loadDetailsPopup="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
@@ -323,20 +318,3 @@
     </form>
   </div>
 </div>
-
-
-<!--div class="modal-backdrop in fade" tabindex="-1" role="dialog" [hidden]="!loadMovePopupShown" (click)="hideMoveLoadPopup()">
-    <div class="form-group flex" (click)="formClicked($event);">
-      <h1>Move load to other division</h1>
-      <div>{{moveDivision.text}}</div>
-      <select [hidden]="isCarrier" [(ngModel)]="moveDivision">
-        <option *ngFor="let div of filterDivision" [ngValue]="div">{{div.text}}</option>
-      </select>
-      <select [hidden]="!isCarrier" [(ngModel)]="moveDivision">
-        <option *ngFor="let div of carriers" [ngValue]="div">{{div.text}}</option>
-      </select>
-      <button (click)="moveToDivision()">Move load</button>
-      <p>Driver changed</p>
-
-    </div>
-</div-->

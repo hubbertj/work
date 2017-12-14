@@ -86,29 +86,29 @@ import '../svg/svg_chatgroup_active.svg';
 })
 
 @RouteConfig([
-    { path: '/', component: DivisionsComponent, name: 'Divisions', data: { roles: [Role.AUTHROIZED] } },
-    { path: '/divisions/:divId/loads', component: LoadsComponent, name: 'Loads', data: { roles: [Role.AUTHROIZED] } },
-    { path: '/divisions/:divId/dashboard', component: DashboardComponent, name: 'Home', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/', component: DivisionsComponent, name: 'Divisions', data: { roles: [Role.AUTHORIZED] } },
+    { path: '/divisions/:divId/loads', component: LoadsComponent, name: 'Loads', data: { roles: [Role.AUTHORIZED] } },
+    { path: '/divisions/:divId/dashboard', component: DashboardComponent, name: 'Home', data: { roles: [Role.AUTHORIZED] } },
 
-    { path: '/division/:divId/loads/create', component: NewLoadComponent, name: 'NewLoad', data: { roles: [Role.AUTHROIZED] } },
-    { path: '/division/:divId/loads/:loadId/tendering', component: TenderingComponent, name: 'TenderingLoad', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/division/:divId/loads/create', component: NewLoadComponent, name: 'NewLoad', data: { roles: [Role.AUTHORIZED] } },
+    { path: '/division/:divId/loads/:loadId/tendering', component: TenderingComponent, name: 'TenderingLoad', data: { roles: [Role.AUTHORIZED] } },
 
-    { path: '/division/:divId/loads/:loadId/edit', component: NewLoadComponent, name: 'EditLoad', data: { roles: [Role.AUTHROIZED] } },
-    { path: '/division/:divId/loads/:loadId', component: LoadDetailsComponent, name: 'Load Details', data: { roles: [Role.AUTHROIZED] } },
-    { path: '/division/:divId/profile', component: ProfileComponent, name: 'Profile', data: { roles: [Role.AUTHROIZED] } },
-    { path: '/division/:divId/CustomerAccessManagement', component: CustomerAccessManagementComponent, name: 'CustomerAccessManagement', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/division/:divId/loads/:loadId/edit', component: NewLoadComponent, name: 'EditLoad', data: { roles: [Role.AUTHORIZED] } },
+    { path: '/division/:divId/loads/:loadId', component: LoadDetailsComponent, name: 'Load Details', data: { roles: [Role.AUTHORIZED] } },
+    { path: '/division/:divId/profile', component: ProfileComponent, name: 'Profile', data: { roles: [Role.AUTHORIZED] } },
+    { path: '/division/:divId/CustomerAccessManagement', component: CustomerAccessManagementComponent, name: 'CustomerAccessManagement', data: { roles: [Role.AUTHORIZED] } },
 
-    { path: '/share/:shareId', component: SharedLoadComponent, name: 'SharedLoad', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/share/:shareId', component: SharedLoadComponent, name: 'SharedLoad', data: { roles: [Role.AUTHORIZED] } },
 
     { path: '/register', component: RegisterComponent, name: 'Register', data: { roles: [] } },
 
     { path: '/signin', useAsDefault: true, component: SigninComponent, name: 'Signin', data: { roles: [] } },
     { path: '/restore', component: RestoreComponent, name: 'Restore', data: { roles: [] } },
-    { path: '/division/:divId/error', component: ErrorComponent, name: 'ErrorDivision', data: { roles: [Role.AUTHROIZED] } },
-    { path: '/error', component: ErrorComponent, name: 'Error', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/division/:divId/error', component: ErrorComponent, name: 'ErrorDivision', data: { roles: [Role.AUTHORIZED] } },
+    { path: '/error', component: ErrorComponent, name: 'Error', data: { roles: [Role.AUTHORIZED] } },
     { path: '/resetpassword', component: ResetComponent, name: 'Reset', data: { roles: [] } },
-    { path: '/404', component: Error404Component, name: '404', data: { roles: [Role.AUTHROIZED] } },
-    { path: '/velocity', component: VelocityComponent, name: 'Velocity', data: { roles: [Role.AUTHROIZED] } },
+    { path: '/404', component: Error404Component, name: '404', data: { roles: [Role.AUTHORIZED] } },
+    { path: '/velocity', component: VelocityComponent, name: 'Velocity', data: { roles: [Role.AUTHORIZED] } },
     { path: '**', redirectTo:['Signin'] },
 
 //  {path: '/*path', redirectTo: ['404']},
@@ -159,7 +159,7 @@ export class AppComponent {
         if (shouldRedirectToLogin) {
             this._router.navigate([loginPageName]);
             return true;
-        } else if (page.toUpperCase() === loginPageName.toUpperCase() && !(userRoles.indexOf(Role.AUTHROIZED) < 0)) {
+        } else if (page.toUpperCase() === loginPageName.toUpperCase() && !(userRoles.indexOf(Role.AUTHORIZED) < 0)) {
             this._router.navigate([authHomePage]);
             return true;
         }

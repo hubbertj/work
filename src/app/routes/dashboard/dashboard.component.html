@@ -28,47 +28,37 @@
           <img src="./images/i_delivery.png" alt="" width="17" height="21" *ngIf="locationFilter == 'delivery'">
         </div>
         <div class="form-group -bordered -x2">
-          <!--label class="form-checkbox">
-            <input type="checkbox" [(ngModel)]="shippingLocations" (ngModelChange)="applyCheckboxes()"/>
-            <svg class="icon -checkbox form-checkbox-icon -green"><use xlink:href="#svg_checkbox"/></svg>
-            <span class="form-checkbox-text">Show Shipping Locations</span>
-          </label-->
           <label class="form-radio">
             <input type="radio" name="locationFilter" value="shipping" (click)="applyCheckboxes($event)" checked/>
             <span class="form-radio-text -green">Show Pickup Locations</span>
           </label>
         </div>
         <div class="form-group">
-          <!--label class="form-checkbox">
-            <input type="checkbox"  [(ngModel)]="deliveryLocations" (ngModelChange)="applyCheckboxes()"/>
-            <svg class="icon -checkbox form-checkbox-icon -blue"><use xlink:href="#svg_checkbox"/></svg>
-            <span class="form-checkbox-text">Show Delivery Locations</span>
-          </label-->
           <label class="form-radio">
             <input type="radio" name="locationFilter" value="delivery" (click)="applyCheckboxes($event)" />
             <span class="form-radio-text -blue">Show Delivery Locations</span>
           </label>
         </div>
 		
-        <div class="form-group -x3 -icon" [hidden]="!isCarrier">
+        <div class="form-group -x3 -icon" [hidden]="!user.getIsCarrier(divisionId)">
           <img src="./images/i_available.png" alt="" width="19" height="15" *ngIf="driverFilter == 'available'">
           <img src="./images/i_in_transit.png" alt="" width="19" height="15" *ngIf="driverFilter == 'intransit'">
         </div>
 
-        <div class="form-group -bordered -x2" [hidden]="!isCarrier">
+        <div class="form-group -bordered -x2" [hidden]="!user.getIsCarrier(divisionId)">
           <label class="form-radio">
             <input type="radio" name="driverFilter" value="available" (click)="applyCheckboxes($event)" />
             <span class="form-radio-text -yellow">Show Available Drivers</span>
           </label>
         </div>
-        <div class="form-group" [hidden]="!isCarrier">
+        <div class="form-group" [hidden]="!user.getIsCarrier(divisionId)">
           <label class="form-radio">
             <input type="radio" name="driverFilter" value="intransit" (click)="applyCheckboxes($event)" checked/>
             <span class="form-radio-text -light_blue">Show In Transit Drivers</span>
           </label>
         </div>
-        <div class="home-leftbar-footer">
-          <strong>{{loadsNumber}} Loads</strong><span> and </span><strong>{{driversNumber}} drivers</strong>
+        <div class="home-leftbar-footer" *ngIf="loadsNumber">
+          <span><strong>{{loadsNumber}} Loads</strong></span><span *ngIf="!user.isPermissionUser"> and <strong>{{driversNumber}} drivers</strong></span>
           <br />
           satisfy filtering conditions
         </div>
@@ -100,7 +90,7 @@
         <li [ngClass]="getClass(stat)" *ngFor="let stat of statistics" (click)="goToStat(stat)"><span>{{stat.value}}</span> {{stat.label}}</li>
       </ul>
       <!--2-->
-      <div class="home-info" *ngIf="mode == 'driver' && driver && driver.id && isCarrier">
+      <div class="home-info" *ngIf="mode == 'driver' && driver && driver.id && user.getIsCarrier(divisionId)">
           <div class="form-group fs23 medium">
             <div *ngFor="let name of driver.name && driver.name.split(' ')">{{name}}</div>
           </div>
@@ -129,7 +119,7 @@
       <div class="home-load" *ngIf="load && load.id">
        <a [routerLink]="['Load Details', {divId: divisionId, loadId: load.id}]" class="form-group -x3">
           <div class="form-label -text">Load #</div>
-          <span class="medium">{{isCarrier ? load.carrierLoadNumber : load.brokerLoadNumber}}</span>
+          <span class="medium">{{user.getIsCarrier(divisionId) ? load.carrierLoadNumber : load.brokerLoadNumber}}</span>
         </a>
         <div class="form-group -x3">
           <div class="form-label -text">BOL #</div>
@@ -146,12 +136,12 @@
           <div class="fs15 medium mb1">{{load.lastStop && load.lastStop.addressLines && load.lastStop.addressLines.join(' ')}}<br />{{load.lastStop && load.lastStop.city}}, {{load.lastStop && load.lastStop.state}} {{load.lastStop && load.lastStop.postalCode}} {{load.lastStop && load.lastStop.country}}</div>
           {{getDate(load.lastStop && load.lastStop.date)}} &mdash; {{load.lastStop && load.lastStop.time}}
         </div>
-        <div class="form-group -x3">
-          <transflo-drivers  [drivers]="load.carrierTenderingInfo" [isCarrier]="isCarrier" [loadId]="load.id" [divisionId]="divisionId"></transflo-drivers>
+        <div class="form-group -x3" *ngIf="!user.isPermissionUser">
+          <transflo-drivers  [drivers]="load.carrierTenderingInfo" [isCarrier]="user.getIsCarrier(divisionId)" [loadId]="load.id" [divisionId]="divisionId"></transflo-drivers>
         </div>
         <div class="form-group -x3">
-          <div class="form-label -text">{{isCarrier ? 'Broker' : 'Carrier'}}</div>
-          {{isCarrier ? load.brokerDivision && load.brokerDivision.name || '-' : load.carrierDivision && load.carrierDivision.name || '-'}}
+          <div class="form-label -text">{{user.getIsCarrier(divisionId) ? 'Broker' : 'Carrier'}}</div>
+          {{user.getIsCarrier(divisionId) ? load.brokerDivision && load.brokerDivision.name || '-' : load.carrierDivision && load.carrierDivision.name || '-'}}
         </div>
         <div class="form-group -x3">
           <div class="form-label -text">Attributes</div>
@@ -160,5 +150,4 @@
       </div>
     </div>
   </div>
-
 </div>

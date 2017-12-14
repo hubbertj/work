@@ -7,6 +7,7 @@ import { AttributesComponent } from '../../components/attributes/attributes.comp
 import { DropdownComponent } from '../../components/dropdown/dropdown.component';
 import { MessagesDirective } from '../../directives/index';
 import { Observable } from 'rxjs/Observable';
+import {User} from '../../models/index';
 
 import { DashboardService, DivisionService, LoadsService, LocalStorageService, HttpService } from '../../services/index';
 import * as moment from 'moment';
@@ -26,16 +27,12 @@ declare var MQ: any;
 })
 
 export class DashboardComponent implements OnInit {
-	private isCarrier: boolean;
+	private user: User = new User({});
 	private filterStatus: any = [];
 	private markers:any = [];
-
 	private loading: boolean;
-
 	private rawLocations: any = [];
-
 	private statusFilters = StatusFilterConst;
-	private divisionId: number;
 	private mode:string = 'map';
 	private statistics: Array<any> = [];
 	private filters: any = {};
@@ -52,10 +49,8 @@ export class DashboardComponent implements OnInit {
 		startDate: moment().toDate(),
 		endDate:  moment().add(1, 'w').toDate()
 	};
-
 	private locationFilter:any = 'shipping';
 	private driverFilter: any = 'intransit';
-
 	private shippingLocations: boolean = true;
 	private deliveryLocations: boolean = true;
 	private availableDrivers: boolean = true;
@@ -66,6 +61,7 @@ export class DashboardComponent implements OnInit {
 	public arrowMarker:any = [];
 	public driversNumber: number = 0;
 	public loadsNumber;
+	public divisionId: number;
 	private mapKey = Config.mapquestkey;
 
 	constructor(
@@ -133,25 +129,20 @@ export class DashboardComponent implements OnInit {
 		this.filterLocations();
 	};
 
-	private setCarrier (user) {
-        let found;
-
-        if (user.divisions) {
-            found = user.divisions.find((div) => {
-                return div.id == +this.divisionId
-            });
-
-            if (found) {
-                this.isCarrier = found.type == 'carrier';
-            } else {
+	private checkCarrier () {
+        if (this.user.divisions) {
+			if (!this.user.getCarrier(this.divisionId)){
                 this.router.navigate(['ErrorDivision', { divId: this.divisionId }]);
-            }
-        }
+            };
+        };
 	};
 
 	private parseStats(res) {
 		if (res) {
 			this.statistics = res.text() && res.json();
+
+			if (this.user.isPermissionUser)
+				this.statistics.length = 4;
 		}
 	};
 
@@ -400,7 +391,7 @@ export class DashboardComponent implements OnInit {
 
 		switch (point.type) {
             case 'intransitDriver':
-				if (!this.isCarrier) {
+				if (!this.user.getIsCarrier(this.divisionId)) {
 					this.mode = 'map';
 				} else {
 					this.mode = 'driver';
@@ -409,7 +400,7 @@ export class DashboardComponent implements OnInit {
 
 				break;
 			case 'availableDriver':
-				if (!this.isCarrier) {
+				if (!this.user.getIsCarrier(this.divisionId)) {
 					this.mode = 'map';
 				} else {
 					this.mode = 'driver';
@@ -426,7 +417,7 @@ export class DashboardComponent implements OnInit {
 				break;
 		};
 
-		if (this.mode != 'driver' || this.isCarrier) {
+		if (this.mode != 'driver' || this.user.getIsCarrier(this.divisionId)) {
 			this.getDataForTab();
 		}
 	};
@@ -520,7 +511,7 @@ export class DashboardComponent implements OnInit {
 			.on('click', (event) => this.setMode(point, event));
 
 
-			if (!this.isCarrier && (point.type == 'intransitDriver' || point.type == 'availableDriver')) {
+			if (!this.user.getIsCarrier(this.divisionId) && (point.type == 'intransitDriver' || point.type == 'availableDriver')) {
 				marker.bindPopup('' +
 	                '<div class="flex pt1 pb1">' +
 	                    '<div>' +
@@ -658,9 +649,11 @@ export class DashboardComponent implements OnInit {
 			this.setFilterDates();
 		}
 
-
 		this.divisionId = +this.routeParams.params['divId'];
-		this.userService.getUser(this.setCarrier.bind(this));
+		this.userService.getUser((user) => {
+			this.user = user;
+			this.checkCarrier();
+		});
         this.loading = true;
 
         this.localStorageService.getItem('dashboardDates');
